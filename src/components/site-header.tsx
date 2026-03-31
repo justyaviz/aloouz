@@ -55,6 +55,7 @@ export function SiteHeader() {
               width={40}
               height={40}
               priority
+              unoptimized
             />
             <div>
               <Image
@@ -63,6 +64,7 @@ export function SiteHeader() {
                 width={122}
                 height={33}
                 priority
+                unoptimized
               />
               <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
                 Smartfonlar bozori

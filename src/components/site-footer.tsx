@@ -15,6 +15,7 @@ export function SiteFooter() {
               alt="aloo mark"
               width={42}
               height={42}
+              unoptimized
             />
             <div>
               <Image
@@ -22,6 +23,7 @@ export function SiteFooter() {
                 alt="aloo"
                 width={122}
                 height={33}
+                unoptimized
               />
               <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
                 Texno hayotga ulanish!
