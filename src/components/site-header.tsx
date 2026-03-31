@@ -50,7 +50,7 @@ export function SiteHeader() {
         <div className="flex items-center justify-between gap-4 xl:min-w-[220px]">
           <Link href="/" className="flex items-center gap-3">
             <Image
-              src="/brand/aloo-favicon-dark.png"
+              src="/icon.png"
               alt="aloo mark"
               width={40}
               height={40}
@@ -58,14 +58,9 @@ export function SiteHeader() {
               unoptimized
             />
             <div>
-              <Image
-                src="/brand/aloo-logotype-dark.png"
-                alt="aloo"
-                width={122}
-                height={33}
-                priority
-                unoptimized
-              />
+              <p className="font-display text-[2rem] font-semibold leading-none text-foreground">
+                aloo
+              </p>
               <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
                 Smartfonlar bozori
               </p>

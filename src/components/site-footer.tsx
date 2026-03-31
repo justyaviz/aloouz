@@ -11,20 +11,16 @@ export function SiteFooter() {
         <div>
           <Link href="/" className="inline-flex items-center gap-3">
             <Image
-              src="/brand/aloo-favicon-dark.png"
+              src="/icon.png"
               alt="aloo mark"
               width={42}
               height={42}
               unoptimized
             />
             <div>
-              <Image
-                src="/brand/aloo-logotype-dark.png"
-                alt="aloo"
-                width={122}
-                height={33}
-                unoptimized
-              />
+              <p className="font-display text-[2rem] font-semibold leading-none text-foreground">
+                aloo
+              </p>
               <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
                 Texno hayotga ulanish!
               </p>
