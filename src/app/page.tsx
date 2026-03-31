@@ -2,303 +2,295 @@
 import Link from "next/link";
 
 import { ProductCard } from "@/components/product-card";
+import { ProductVisual } from "@/components/product-visual";
 import { SectionHeading } from "@/components/section-heading";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { articles, brands, categories, perks, products } from "@/data/store";
+import { articles, brands, categories, products } from "@/data/store";
+import { formatMonthly, formatSum } from "@/lib/format";
 
-const flashDeals = products.slice(0, 4);
-const latestDeals = products.slice(4, 8);
-const heroCategories = categories.slice(0, 7);
+const heroProduct = products[0];
+const productOfDay = products[3];
+const newItems = products.slice(0, 4);
+const hotOffers = products.slice(4, 8);
 
-const promoPanels = [
-  {
-    eyebrow: "Aksiyalar",
-    title: "iPhone va Samsung uchun 12 oygacha qulay to'lov",
-    description: "Flagman modellarda eski narx, yangi narx va oylik to'lov birga ko'rsatiladi.",
-    href: "/catalog?category=smartfonlar",
-    background: "linear-gradient(180deg, #ffffff 0%, #eef6ff 100%)",
-  },
-  {
-    eyebrow: "Tez yetkazish",
-    title: "Bugun buyurtma, bugun jo'natish",
-    description: "Toshkent bo'ylab tezkor delivery va pick-up oqimi e-commerce sahifasiga tayyor.",
-    href: "/catalog?category=quloqchinlar",
-    background: "linear-gradient(180deg, #fff7ef 0%, #ffffff 100%)",
-  },
+const popularCategories = [
+  { category: categories[0], caption: "iPhone va Android" },
+  { category: categories[1], caption: "Apple ekotizimi" },
+  { category: categories[2], caption: "Samsung va Xiaomi" },
+  { category: categories[3], caption: "Fitness va ulanish" },
+  { category: categories[4], caption: "AirPods va JBL" },
+  { category: categories[5], caption: "Ish va o'qish uchun" },
+  { category: categories[6], caption: "Fast charge aksessuarlari" },
+  { category: categories[7], caption: "Har kunlik texno gadjetlar" },
 ];
 
-const serviceCards = [
+const promoCards = [
   {
-    title: "Muddatli to'lov",
-    description: "Har kartochkada 12 oygacha bo'lib to'lash summasi ko'rinadi.",
+    title: "12 oygacha muddatli to'lov",
+    description: "Flagman smartfonlarda oylik to'lov va chegirma yonma-yon ko'rsatiladi.",
+    tone: "linear-gradient(180deg, #eef6ff 0%, #ffffff 100%)",
   },
   {
-    title: "Original va IMEI",
-    description: "Telefonlar original va ro'yxatdan o'tkazilgan holatda ko'rsatiladi.",
+    title: "Bugun buyurtma, bugun jo'natish",
+    description: "Toshkent bo'ylab delivery va pick-up oqimi market formatida joylashtirildi.",
+    tone: "linear-gradient(180deg, #fff5ec 0%, #ffffff 100%)",
   },
   {
-    title: "Tezkor delivery",
-    description: "Toshkent bo'ylab buyurtmalarni qisqa vaqt ichida yetkazish oqimi tayyor.",
-  },
-  {
-    title: "Konsultatsiya",
-    description: "Telegram, telefon va filial orqali tezkor maslahat berish uchun bloklar tayyor.",
+    title: "Original va IMEI tekshiruvli",
+    description: "Trust label va savdo argumentlari MediaPark uslubidagi retail bloklarga yaqinlashtirildi.",
+    tone: "linear-gradient(180deg, #f4f9ff 0%, #ffffff 100%)",
   },
 ];
 
 export default function Home() {
+  const heroDiscount = heroProduct.oldPrice
+    ? Math.round(((heroProduct.oldPrice - heroProduct.price) / heroProduct.oldPrice) * 100)
+    : 0;
+
   return (
     <>
       <SiteHeader />
 
       <main className="pb-16">
         <section className="shell pt-6">
-          <div className="grid gap-4 xl:grid-cols-[280px_minmax(0,1fr)]">
-            <aside className="overflow-hidden rounded-[30px] border border-line bg-white shadow-[0_18px_45px_rgba(13,31,55,0.08)]">
-              <div className="border-b border-line px-5 py-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
-                  Kategoriyalar
-                </p>
+          <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
+            <div className="relative overflow-hidden rounded-[32px] bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.22),transparent_32%),linear-gradient(125deg,#0056B8_0%,#1690F5_48%,#083270_100%)] p-8 text-white shadow-[0_24px_60px_rgba(10,44,96,0.24)] sm:p-10">
+              <div className="absolute left-5 top-1/2 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white text-2xl text-foreground lg:flex">
+                &lt;
+              </div>
+              <div className="absolute right-5 top-1/2 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white text-2xl text-foreground lg:flex">
+                &gt;
               </div>
 
-              <div className="divide-y divide-line/70">
-                {heroCategories.map((category) => (
-                  <Link
-                    key={category.slug}
-                    href={`/catalog?category=${category.slug}`}
-                    className="flex items-center justify-between gap-4 px-5 py-4 transition hover:bg-[#f7fbff]"
-                  >
-                    <div>
-                      <p className="font-semibold text-foreground">{category.name}</p>
-                      <p className="mt-1 text-xs text-muted">{category.itemCount} ta mahsulot</p>
-                    </div>
-                    <span className="text-sm font-semibold text-accent">Ko'rish</span>
-                  </Link>
-                ))}
+              <div className="grid gap-8 lg:grid-cols-[0.88fr_1.12fr] lg:items-center">
+                <div className="relative z-10">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <span className="rounded-full bg-white/12 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em]">
+                      aloo
+                    </span>
+                    <span className="rounded-full bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-accent">
+                      Smartfonlar bozori
+                    </span>
+                  </div>
 
-                <Link
-                  href="/catalog"
-                  className="flex items-center justify-between px-5 py-4 text-sm font-semibold text-accent transition hover:bg-[#f7fbff]"
-                >
-                  Barcha kategoriyalar
-                  <span>Ochish</span>
-                </Link>
-              </div>
-            </aside>
-
-            <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
-              <div className="overflow-hidden rounded-[34px] bg-[linear-gradient(135deg,#1690F5_0%,#0D6EC9_100%)] p-8 text-white shadow-[0_28px_70px_rgba(22,144,245,0.22)] sm:p-10">
-                <div className="flex flex-wrap items-center gap-3">
-                  <span className="rounded-full bg-white/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-white">
-                    Smartfonlar bozori
-                  </span>
-                  <span className="rounded-full bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-accent">
+                  <p className="mt-7 text-sm font-semibold uppercase tracking-[0.26em] text-white/70">
                     Texno hayotga ulanish!
-                  </span>
-                </div>
+                  </p>
+                  <h1 className="mt-4 font-display text-6xl font-semibold tracking-tight sm:text-7xl">
+                    -{heroDiscount}%
+                  </h1>
+                  <p className="mt-3 max-w-md text-xl font-medium leading-8 text-white/90">
+                    {heroProduct.name} uchun chegirma, muddatli to'lov va tezkor yetkazish bir
+                    joyda.
+                  </p>
 
-                <h1 className="mt-6 max-w-3xl font-display text-4xl font-semibold tracking-tight sm:text-5xl xl:text-6xl">
-                  aloo uchun retail storefront endi MediaPark ritmiga yaqinlashdi.
-                </h1>
-
-                <p className="mt-5 max-w-2xl text-base leading-8 text-white/82 sm:text-lg">
-                  Chapda kategoriya paneli, markazda aksiya banneri, pastda esa shelf uslubidagi
-                  mahsulot bloklari. Brend aloo bo'lib qoladi, ichki tuzilma esa yirik texno
-                  market kabi ishlaydi.
-                </p>
-
-                <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                  <Link
-                    href="/catalog?category=smartfonlar"
-                    className="inline-flex items-center justify-center rounded-2xl bg-white px-6 py-4 text-sm font-semibold text-accent transition hover:bg-[#eef6ff]"
-                  >
-                    Smartfonlarni ko'rish
-                  </Link>
-                  <Link
-                    href="/catalog?category=iphone"
-                    className="inline-flex items-center justify-center rounded-2xl border border-white/20 bg-white/10 px-6 py-4 text-sm font-semibold text-white transition hover:bg-white/15"
-                  >
-                    iPhone aksiyalarini ochish
-                  </Link>
-                </div>
-
-                <div className="mt-10 grid gap-3 sm:grid-cols-3">
-                  {[
-                    { value: "354+", label: "telefon va gadjet pozitsiyalari" },
-                    { value: "12 oy", label: "muddatli to'lov ko'rinishi" },
-                    { value: "90 min", label: "tezkor delivery messaging" },
-                  ].map((item) => (
-                    <div
-                      key={item.label}
-                      className="rounded-[24px] border border-white/15 bg-white/10 px-5 py-4"
+                  <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+                    <Link
+                      href={`/product/${heroProduct.slug}`}
+                      className="inline-flex items-center justify-center rounded-[18px] bg-white px-6 py-4 text-sm font-semibold text-accent transition hover:bg-[#eef6ff]"
                     >
-                      <p className="font-display text-3xl font-semibold text-white">{item.value}</p>
-                      <p className="mt-2 text-sm text-white/70">{item.label}</p>
-                    </div>
+                      Mahsulotni ko'rish
+                    </Link>
+                    <Link
+                      href="/catalog?category=smartfonlar"
+                      className="inline-flex items-center justify-center rounded-[18px] border border-white/20 bg-white/10 px-6 py-4 text-sm font-semibold text-white transition hover:bg-white/16"
+                    >
+                      Barcha smartfonlar
+                    </Link>
+                  </div>
+
+                  <div className="mt-8 grid gap-3 sm:grid-cols-3">
+                    {[
+                      { label: "Bo'lib to'lash", value: formatMonthly(heroProduct.monthlyPrice) },
+                      { label: "Yangi narx", value: formatSum(heroProduct.price) },
+                      { label: "Yetkazish", value: "90 min" },
+                    ].map((item) => (
+                      <div
+                        key={item.label}
+                        className="rounded-[20px] border border-white/15 bg-white/10 px-4 py-4"
+                      >
+                        <p className="text-xs uppercase tracking-[0.2em] text-white/65">
+                          {item.label}
+                        </p>
+                        <p className="mt-2 text-base font-semibold text-white">{item.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="relative z-10 lg:pl-8">
+                  <ProductVisual
+                    kind={heroProduct.kind}
+                    label={heroProduct.heroLabel}
+                    toneFrom="rgba(255,255,255,0.22)"
+                    toneTo="rgba(255,255,255,0.05)"
+                  />
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-center gap-2">
+                {[1, 2, 3, 4, 5, 6].map((dot) => (
+                  <span
+                    key={dot}
+                    className={`h-2.5 w-2.5 rounded-full ${
+                      dot === 2 ? "bg-white" : "bg-white/35"
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <aside className="rounded-[32px] border border-line bg-white p-6 shadow-[0_18px_45px_rgba(13,31,55,0.08)] sm:p-7">
+              <div className="flex items-start justify-between gap-4">
+                <h2 className="font-display text-4xl font-semibold tracking-tight text-foreground">
+                  Tovarlar kuni
+                </h2>
+                <div className="flex gap-1">
+                  {["0", "6", "2", "9", "4", "1"].map((item, index) => (
+                    <span
+                      key={`${item}-${index}`}
+                      className="inline-flex h-10 w-8 items-center justify-center rounded-[10px] bg-[#f3f7fb] text-sm font-semibold text-foreground"
+                    >
+                      {item}
+                    </span>
                   ))}
                 </div>
               </div>
 
-              <div className="grid gap-4">
-                {promoPanels.map((panel) => (
-                  <Link
-                    key={panel.title}
-                    href={panel.href}
-                    className="rounded-[28px] border border-line p-6 shadow-[0_18px_45px_rgba(13,31,55,0.08)] transition hover:-translate-y-1"
-                    style={{ background: panel.background }}
-                  >
-                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
-                      {panel.eyebrow}
-                    </p>
-                    <h2 className="mt-3 font-display text-2xl font-semibold leading-8 text-foreground">
-                      {panel.title}
-                    </h2>
-                    <p className="mt-3 text-sm leading-7 text-muted">{panel.description}</p>
-                    <p className="mt-5 text-sm font-semibold text-accent">Batafsil ko'rish</p>
-                  </Link>
-                ))}
+              <div className="mt-5">
+                <ProductVisual
+                  compact
+                  kind={productOfDay.kind}
+                  label={productOfDay.heroLabel}
+                  toneFrom={productOfDay.toneFrom}
+                  toneTo={productOfDay.toneTo}
+                />
               </div>
-            </div>
+
+              <div className="mt-5 flex flex-wrap gap-2">
+                <span className="rounded-full bg-[#ffec66] px-3 py-1 text-xs font-semibold text-foreground">
+                  -8%
+                </span>
+                <span className="rounded-full bg-support px-3 py-1 text-xs font-semibold text-white">
+                  Chegirma
+                </span>
+              </div>
+
+              <Link
+                href={`/product/${productOfDay.slug}`}
+                className="mt-4 block text-lg font-medium leading-7 text-foreground"
+              >
+                {productOfDay.name}
+              </Link>
+
+              <div className="mt-4 inline-flex rounded-[12px] border border-accent px-3 py-2 text-sm font-semibold text-accent">
+                {formatMonthly(productOfDay.monthlyPrice)}
+              </div>
+
+              {productOfDay.oldPrice ? (
+                <p className="mt-4 text-base text-muted line-through">
+                  {formatSum(productOfDay.oldPrice)}
+                </p>
+              ) : null}
+
+              <div className="mt-1 flex items-end justify-between gap-4">
+                <p className="text-4xl font-semibold tracking-tight text-foreground">
+                  {formatSum(productOfDay.price)}
+                </p>
+                <Link
+                  href={`/product/${productOfDay.slug}#purchase`}
+                  className="inline-flex h-12 w-12 items-center justify-center rounded-[16px] bg-support text-xl font-semibold text-white transition hover:bg-[#e25a00]"
+                >
+                  +
+                </Link>
+              </div>
+            </aside>
           </div>
         </section>
 
-        <section className="shell pt-4">
-          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-            {serviceCards.map((card) => (
-              <div
-                key={card.title}
-                className="rounded-[24px] border border-line bg-white px-5 py-5 shadow-[0_12px_30px_rgba(13,31,55,0.06)]"
+        <section className="shell pt-10">
+          <h2 className="font-display text-4xl font-semibold tracking-tight text-foreground">
+            Ommabop kategoriyalar
+          </h2>
+
+          <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {popularCategories.map(({ category, caption }) => (
+              <Link
+                key={category.slug}
+                href={`/catalog?category=${category.slug}`}
+                className="flex min-h-[120px] items-center justify-between gap-4 rounded-[24px] border border-line bg-[#f7f9fc] px-5 py-5 transition hover:-translate-y-1 hover:bg-white hover:shadow-[0_14px_35px_rgba(13,31,55,0.08)]"
               >
-                <p className="font-display text-2xl font-semibold text-foreground">{card.title}</p>
-                <p className="mt-3 text-sm leading-7 text-muted">{card.description}</p>
-              </div>
+                <div className="min-w-0">
+                  <p className="text-lg font-semibold leading-7 text-foreground">{category.name}</p>
+                  <p className="mt-1 text-sm text-muted">{caption}</p>
+                </div>
+                <div
+                  className="h-16 w-20 shrink-0 rounded-[18px]"
+                  style={{
+                    background: `linear-gradient(135deg, ${category.toneFrom}, ${category.toneTo})`,
+                  }}
+                />
+              </Link>
             ))}
           </div>
         </section>
 
-        <section className="shell pt-12">
+        <section className="shell pt-10">
           <SectionHeading
-            eyebrow="Tovarlar Kuni"
-            title="Bugun ko'p ko'rilayotgan smartfon va gadjetlar"
-            description="Mahsulot shelf'lari MediaParkga o'xshash retail oqimda joylashtirildi: oldin asosiy hitlar, keyin yangi kelganlar va brendlar."
-            ctaLabel="Barcha mahsulotlar"
-            ctaHref="/catalog"
+            eyebrow="Yangiliklar"
+            title="Yangi kelgan smartfon va gadjetlar"
+            description="MediaParkdagi kabi bosh sahifada to'g'ridan-to'g'ri mahsulot shelf'i ko'rinadi: badge, narx, oylik to'lov va savatga o'tish bir kartada."
           />
 
           <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-            {flashDeals.map((product) => (
+            {newItems.map((product) => (
               <ProductCard key={product.slug} product={product} />
             ))}
           </div>
         </section>
 
-        <section className="shell pt-12">
-          <div className="grid gap-4 xl:grid-cols-[0.86fr_1.14fr]">
-            <div className="rounded-[30px] border border-line bg-white p-6 shadow-[0_18px_45px_rgba(13,31,55,0.08)] sm:p-8">
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
-                Ommabop kategoriyalar
-              </p>
-              <h2 className="mt-4 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-                Ichki sahifa endi market uslubidagi merchandizing bilan ishlaydi.
-              </h2>
-              <p className="mt-4 text-sm leading-7 text-muted">
-                Category panel, promo banner, aksiyalar shelf'i va xizmat bloklari aloo
-                brendini saqlagan holda yirik texnika do'koni ritmida joylashtirildi.
-              </p>
-
-              <div className="mt-6 space-y-3">
-                {[
-                  "Katalog chap tomonda tez ko'rinadi",
-                  "Search va utility action'lar header ichida bir qatorda turadi",
-                  "Kartochkalarda narx, eski narx va bo'lib to'lash aniq ko'rinadi",
-                ].map((item) => (
-                  <div
-                    key={item}
-                    className="rounded-[20px] bg-[#f6faff] px-4 py-4 text-sm font-medium text-foreground"
-                  >
-                    {item}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-              {categories.map((category) => (
-                <Link
-                  key={category.slug}
-                  href={`/catalog?category=${category.slug}`}
-                  className="rounded-[26px] border border-line bg-white p-5 shadow-[0_12px_30px_rgba(13,31,55,0.06)] transition hover:-translate-y-1"
-                >
-                  <div
-                    className="h-24 rounded-[20px]"
-                    style={{
-                      background: `linear-gradient(135deg, ${category.toneFrom}, ${category.toneTo})`,
-                    }}
-                  />
-                  <h3 className="mt-4 font-display text-2xl font-semibold text-foreground">
-                    {category.name}
-                  </h3>
-                  <p className="mt-2 text-sm leading-6 text-muted">{category.description}</p>
-                  <p className="mt-4 text-sm font-semibold text-accent">
-                    {category.itemCount} ta mahsulot
-                  </p>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="shell pt-12">
-          <div className="grid gap-4 xl:grid-cols-[320px_minmax(0,1fr)]">
-            <div className="rounded-[30px] bg-[#0a1524] p-6 text-white shadow-[0_20px_50px_rgba(10,21,36,0.22)] sm:p-8">
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-white/70">
-                Smartfon Aksiyalari
-              </p>
-              <h2 className="mt-4 font-display text-3xl font-semibold tracking-tight">
-                Narx sezilarli, taklif aniq, xarid qilish esa tez.
-              </h2>
-              <p className="mt-4 text-sm leading-7 text-white/72">
-                Retail ichki sahifada alohida aksiya bloklari bo'lishi kerak. Bu yerda
-                iPhone, Android va audio shelf'lari alohida bo'lim sifatida ko'rsatiladi.
-              </p>
-
-              <div className="mt-6 space-y-3">
-                {[
-                  "Eski narx va yangi narx bir qarashda ko'rinadi",
-                  "IMEI va original label'lari kartochkada chiqadi",
-                  "Muddatli to'lov summasi har mahsulotda saqlanadi",
-                ].map((item) => (
-                  <div
-                    key={item}
-                    className="rounded-[20px] border border-white/10 bg-white/6 px-4 py-4 text-sm text-white/80"
-                  >
-                    {item}
-                  </div>
-                ))}
-              </div>
-
-              <Link
-                href="/catalog?category=smartfonlar"
-                className="mt-6 inline-flex items-center justify-center rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-foreground transition hover:bg-[#eef6ff]"
+        <section className="shell pt-10">
+          <div className="grid gap-4 lg:grid-cols-3">
+            {promoCards.map((promo) => (
+              <div
+                key={promo.title}
+                className="rounded-[28px] border border-line p-6 shadow-[0_12px_30px_rgba(13,31,55,0.06)]"
+                style={{ background: promo.tone }}
               >
-                Aksiyadagi mahsulotlar
-              </Link>
-            </div>
-
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-              {latestDeals.map((product) => (
-                <ProductCard key={product.slug} product={product} />
-              ))}
-            </div>
+                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
+                  Maxsus taklif
+                </p>
+                <h3 className="mt-4 font-display text-3xl font-semibold text-foreground">
+                  {promo.title}
+                </h3>
+                <p className="mt-3 text-sm leading-7 text-muted">{promo.description}</p>
+              </div>
+            ))}
           </div>
         </section>
 
-        <section className="shell pt-12">
+        <section className="shell pt-10">
+          <SectionHeading
+            eyebrow="Hot Offers"
+            title="Ko'p ko'rilayotgan boshqa takliflar"
+            description="Bosh sahifa birinchi ekranidan keyin yana retail shelf davom etadi, shu bilan foydalanuvchi darhol mahsulotlarni ko'radi."
+            ctaLabel="Katalogga o'tish"
+            ctaHref="/catalog"
+          />
+
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+            {hotOffers.map((product) => (
+              <ProductCard key={product.slug} product={product} />
+            ))}
+          </div>
+        </section>
+
+        <section className="shell pt-10">
           <SectionHeading
             eyebrow="Brendlar"
-            title="Mashhur smartfon, audio va gadjet brendlarini alohida ajratdik"
-            description="Retail ko'rinishda brend shelf'lari ham muhim. Katalog filtrlari bilan bosh sahifadagi brand grid bir yo'nalishda ishlaydi."
+            title="Mashhur nomlar alohida blokda"
+            description="Apple, Samsung, Xiaomi va boshqa brendlar ham bosh sahifada ko'rinib turadi."
           />
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -313,31 +305,11 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="shell pt-12">
+        <section className="shell pt-10">
           <SectionHeading
-            eyebrow="Nega aynan aloo?"
-            title="Servis bloklari ham endi retail-marketplace uslubida"
-            description="MediaPark'ga o'xshash e-commerce tajribasi uchun yetkazish, to'lov, kafolat va maslahat argumentlari alohida bloklarda chiqadi."
-          />
-
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {perks.map((perk) => (
-              <div
-                key={perk.title}
-                className="rounded-[24px] border border-line bg-white p-6 shadow-[0_12px_30px_rgba(13,31,55,0.06)]"
-              >
-                <p className="font-display text-2xl font-semibold text-foreground">{perk.title}</p>
-                <p className="mt-3 text-sm leading-7 text-muted">{perk.description}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="shell pt-12">
-          <SectionHeading
-            eyebrow="Kontent"
-            title="Blog va promo copy ham savdo ritmiga mos turadi"
-            description="Bosh sahifa faqat banner emas, balki qiziqish uyg'otadigan kontent kartalarini ham olib yuradi."
+            eyebrow="Blog"
+            title="Savdo va maslahat kontenti"
+            description="Promo va maslahat maqolalari ham bosh sahifada ko'rinadi, bu retail ichki oqimni boyitadi."
           />
 
           <div className="grid gap-4 lg:grid-cols-3">
