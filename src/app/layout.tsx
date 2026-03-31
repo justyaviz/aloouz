@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     template: "%s | aloo",
   },
   description:
-    "aloo — smartfonlar bozori. Texno hayotga ulanish uchun telefonlar va gadjetlar storefronti.",
+    "aloo - smartfonlar bozori. Texno hayotga ulanish uchun telefonlar va gadjetlar storefronti.",
   applicationName: "aloo",
 };
 
@@ -36,7 +36,7 @@ export default function RootLayout({
       lang="uz"
       className={`${manrope.variable} ${spaceGrotesk.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="flex min-h-full flex-col">{children}</body>
     </html>
   );
 }

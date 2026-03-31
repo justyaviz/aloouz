@@ -51,8 +51,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
     <>
       <SiteHeader />
 
-      <main className="shell py-8">
-        <nav className="mb-6 flex flex-wrap items-center gap-2 text-sm text-muted">
+      <main className="shell py-6 pb-16">
+        <nav className="mb-4 flex flex-wrap items-center gap-2 text-sm text-muted">
           <Link href="/" className="hover:text-foreground">
             Bosh sahifa
           </Link>
@@ -65,19 +65,33 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </nav>
 
         <section className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
-          <div className="glass-card rounded-[38px] p-6 sm:p-8">
-            <ProductVisual
-              kind={product.kind}
-              label={product.heroLabel}
-              toneFrom={product.toneFrom}
-              toneTo={product.toneTo}
-            />
+          <div className="rounded-[32px] border border-line bg-white p-6 shadow-[0_18px_45px_rgba(13,31,55,0.08)] sm:p-8">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-full bg-[#eef6ff] px-3 py-1.5 text-xs font-semibold text-accent">
+                {product.badge}
+              </span>
+              <span className="rounded-full bg-[#eff8ef] px-3 py-1.5 text-xs font-semibold text-[#2d7a46]">
+                IMEI + original
+              </span>
+              <span className="rounded-full bg-[#fff4eb] px-3 py-1.5 text-xs font-semibold text-support">
+                {product.rating} / {product.reviews}
+              </span>
+            </div>
 
-            <div className="mt-6 grid gap-4 sm:grid-cols-3">
+            <div className="mt-6">
+              <ProductVisual
+                kind={product.kind}
+                label={product.heroLabel}
+                toneFrom={product.toneFrom}
+                toneTo={product.toneTo}
+              />
+            </div>
+
+            <div className="mt-6 grid gap-3 sm:grid-cols-3">
               {product.highlights.map((highlight) => (
                 <div
                   key={highlight}
-                  className="rounded-[24px] border border-line bg-white/80 px-4 py-4 text-sm leading-6 text-foreground"
+                  className="rounded-[20px] bg-[#f6faff] px-4 py-4 text-sm leading-6 text-foreground"
                 >
                   {highlight}
                 </div>
@@ -85,17 +99,20 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </div>
           </div>
 
-          <div id="purchase" className="soft-card rounded-[38px] p-8">
-            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted">
-              {product.badge}
+          <div
+            id="purchase"
+            className="rounded-[32px] border border-line bg-white p-6 shadow-[0_18px_45px_rgba(13,31,55,0.08)] sm:p-8"
+          >
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
+              {product.brand}
             </p>
-            <h1 className="mt-4 font-display text-4xl font-semibold tracking-tight text-foreground">
+            <h1 className="mt-3 font-display text-4xl font-semibold tracking-tight text-foreground">
               {product.name}
             </h1>
-            <p className="mt-5 text-base leading-8 text-muted">{product.shortDescription}</p>
+            <p className="mt-4 text-base leading-8 text-muted">{product.shortDescription}</p>
 
-            <div className="mt-8 grid gap-4 sm:grid-cols-2">
-              <div className="rounded-[28px] bg-white p-5">
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+              <div className="rounded-[24px] bg-[#f6faff] p-5">
                 {product.oldPrice ? (
                   <p className="text-sm text-muted line-through">{formatSum(product.oldPrice)}</p>
                 ) : null}
@@ -105,15 +122,17 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 <p className="mt-2 text-sm text-muted">Naqd yoki karta orqali to'lov</p>
               </div>
 
-              <div className="rounded-[28px] bg-[#13201c] p-5 text-white">
-                <p className="text-xs uppercase tracking-[0.22em] text-white/65">Bo'lib to'lash</p>
+              <div className="rounded-[24px] bg-accent p-5 text-white">
+                <p className="text-xs uppercase tracking-[0.24em] text-white/70">
+                  Bo'lib to'lash
+                </p>
                 <p className="mt-2 text-3xl font-semibold">{formatMonthly(product.monthlyPrice)}</p>
-                <p className="mt-2 text-sm text-white/70">12 oyga qadar ko'rinish</p>
+                <p className="mt-2 text-sm text-white/75">12 oyga qadar qulay taqsimot</p>
               </div>
             </div>
 
-            <div className="mt-8">
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted">Ranglar</p>
+            <div className="mt-6">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted">Ranglar</p>
               <div className="mt-3 flex flex-wrap gap-3">
                 {product.colors.map((color) => (
                   <span
@@ -126,18 +145,32 @@ export default async function ProductPage({ params }: ProductPageProps) {
               </div>
             </div>
 
-            <div className="mt-8">
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted">Holat</p>
-              <p className="mt-3 text-lg font-semibold text-foreground">
-                Omborda {product.stock} dona mavjud
-              </p>
-              <p className="mt-2 text-sm leading-7 text-muted">{product.delivery}</p>
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+              <div className="rounded-[20px] border border-line bg-[#fbfdff] p-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">
+                  Ombor holati
+                </p>
+                <p className="mt-2 text-lg font-semibold text-foreground">
+                  Omborda {product.stock} dona mavjud
+                </p>
+                <p className="mt-2 text-sm leading-6 text-muted">{product.delivery}</p>
+              </div>
+
+              <div className="rounded-[20px] border border-line bg-[#fbfdff] p-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">
+                  Pickup va filial
+                </p>
+                <p className="mt-2 text-sm leading-6 text-muted">
+                  Filiallar moduli ulanadigan joy tayyor. Mahsulotni do'kondan olib ketish va
+                  joyida konsultatsiya olish oqimi shu blok bilan ishlaydi.
+                </p>
+              </div>
             </div>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
               <a
                 href="tel:+998911234567"
-                className="inline-flex flex-1 items-center justify-center rounded-full bg-foreground px-6 py-4 text-sm font-semibold text-background transition hover:bg-[#20352f]"
+                className="inline-flex items-center justify-center rounded-2xl bg-foreground px-6 py-4 text-sm font-semibold text-white transition hover:bg-[#12233b]"
               >
                 Bir klikda buyurtma
               </a>
@@ -145,44 +178,37 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 href="https://t.me/"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex flex-1 items-center justify-center rounded-full border border-line bg-white px-6 py-4 text-sm font-semibold text-foreground transition hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center rounded-2xl border border-line bg-white px-6 py-4 text-sm font-semibold text-foreground transition hover:border-accent/35 hover:text-accent"
               >
                 Telegram orqali yozish
               </a>
             </div>
 
-            <div className="mt-8 grid gap-4 sm:grid-cols-2">
-              <div className="rounded-[24px] border border-line bg-white/80 p-5">
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-muted">
-                  Delivery
-                </p>
-                <p className="mt-3 text-sm leading-7 text-foreground">
-                  Toshkent bo'ylab tezkor yetkazib berish, viloyatlarga esa alohida tarif
-                  bilan yuborish oqimini Aloo call-center bilan bog'laymiz.
-                </p>
-              </div>
-
-              <div className="rounded-[24px] border border-line bg-white/80 p-5">
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-muted">
-                  Pickup
-                </p>
-                <p className="mt-3 text-sm leading-7 text-foreground">
-                  Filiallar moduli keyingi iteratsiyada qo'shiladi, mahsulotni do'kondan
-                  olib ketish va joyida maslahat olish oqimi ham shu yerga ulanadi.
-                </p>
-              </div>
+            <div className="mt-6 space-y-3">
+              {[
+                "Retail detail ichida narx, oylik to'lov va ombor holati alohida ko'rsatiladi.",
+                "Aksiya va trust label'lari yuqorida bir qarashda ko'rinadi.",
+                "Keyingi bosqichda reviews, IMEI tekshiruv va filial bo'yicha stock qo'shiladi.",
+              ].map((item) => (
+                <div
+                  key={item}
+                  className="rounded-[18px] bg-[#f6faff] px-4 py-4 text-sm leading-6 text-foreground"
+                >
+                  {item}
+                </div>
+              ))}
             </div>
           </div>
         </section>
 
-        <section className="mt-8 grid gap-6 xl:grid-cols-[1fr_0.8fr]">
-          <div className="glass-card rounded-[36px] p-8">
-            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted">
+        <section className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
+          <div className="rounded-[32px] border border-line bg-white p-6 shadow-[0_12px_30px_rgba(13,31,55,0.06)] sm:p-8">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
               Texnik tavsif
             </p>
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {product.specs.map((spec) => (
-                <div key={spec.label} className="rounded-[24px] border border-line bg-white/85 p-5">
+                <div key={spec.label} className="rounded-[20px] bg-[#f6faff] p-5">
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">
                     {spec.label}
                   </p>
@@ -192,33 +218,46 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </div>
           </div>
 
-          <div className="soft-card rounded-[36px] p-8">
-            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted">
-              Commerce notes
-            </p>
-            <div className="mt-5 space-y-4">
-              {[
-                "Mahsulot detail sahifasi alohida SEO entry-point bo'ladi.",
-                "Bu blokka keyin reviews, IMEI tekshiruv va stock per filial logikasini qo'shamiz.",
-                "Prisma schema foundation orqali real products jadvaliga o'tish oson bo'ladi.",
-              ].map((item) => (
-                <div
-                  key={item}
-                  className="rounded-[24px] border border-line bg-white px-5 py-5 text-sm leading-7 text-foreground"
-                >
-                  {item}
-                </div>
-              ))}
+          <div className="space-y-4">
+            <div className="rounded-[28px] border border-line bg-white p-5 shadow-[0_12px_30px_rgba(13,31,55,0.06)]">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted">
+                Xizmatlar
+              </p>
+              <div className="mt-4 space-y-3">
+                {[
+                  "Tezkor delivery va pick-up",
+                  "Telefon va Telegram orqali konsultatsiya",
+                  "Muddatli to'lov va aksiya bannerlari",
+                ].map((item) => (
+                  <div
+                    key={item}
+                    className="rounded-[18px] bg-[#f6faff] px-4 py-4 text-sm text-foreground"
+                  >
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-[28px] bg-[#0a1524] p-5 text-white shadow-[0_20px_50px_rgba(10,21,36,0.2)]">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-white/65">
+                Commerce note
+              </p>
+              <p className="mt-3 text-sm leading-7 text-white/75">
+                Product detail ham bosh sahifa kabi retail uslubda soddalashtirildi. Bu
+                strukturada sticky purchase panel, sharhlar va real backend stock logikasi
+                qo'shish osonroq bo'ladi.
+              </p>
             </div>
           </div>
         </section>
 
         {relatedProducts.length > 0 ? (
-          <section className="mt-16">
+          <section className="mt-12">
             <SectionHeading
-              eyebrow="O'xshash mahsulotlar"
-              title="Shu kategoriya ichidagi boshqa pozitsiyalar"
-              description="Aloo vitrinasida detail sahifa ichida ham merchandizing shelf'lar ishlaydi."
+              eyebrow="O'xshash Mahsulotlar"
+              title="Shu kategoriya ichidagi boshqa tavsiyalar"
+              description="Detail sahifa ichida ham merchandizing shelf saqlanadi, bu retail tajriba uchun muhim."
             />
             <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
               {relatedProducts.map((relatedProduct) => (

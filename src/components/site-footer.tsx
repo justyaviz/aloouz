@@ -6,36 +6,36 @@ import { categories } from "@/data/store";
 
 export function SiteFooter() {
   return (
-    <footer className="mt-auto border-t border-white/10 bg-[#050B14] text-white">
-      <div className="shell grid gap-10 py-14 lg:grid-cols-[1.1fr_0.9fr_0.9fr_1fr]">
+    <footer className="mt-auto border-t border-line bg-white">
+      <div className="shell grid gap-8 py-12 lg:grid-cols-[1.1fr_0.8fr_0.8fr_1fr]">
         <div>
           <Link href="/" className="inline-flex items-center gap-3">
             <Image
-              src="/brand/aloo-favicon-light.png"
+              src="/brand/aloo-favicon-dark.png"
               alt="aloo mark"
               width={42}
               height={42}
             />
             <div>
               <Image
-                src="/brand/aloo-logotype-light.png"
+                src="/brand/aloo-logotype-dark.png"
                 alt="aloo"
                 width={122}
                 height={33}
               />
-              <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/55">
+              <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
                 Texno hayotga ulanish!
               </p>
             </div>
           </Link>
-          <p className="mt-4 max-w-sm text-sm leading-7 text-white/65">
-            aloo — mobil telefonlar va gadjetlar do'koni. Brendbookdagi ko'k,
-            qora va oq yo'nalish asosida yig'ilgan storefront foundation.
+          <p className="mt-4 max-w-sm text-sm leading-7 text-muted">
+            aloo - mobil telefonlar va gadjetlar do'koni. Brandbookdagi ko'k, qora va oq
+            yo'nalish asosida retail storefront sifatida yig'ilgan.
           </p>
         </div>
 
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-white/55">
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted">
             Kategoriyalar
           </p>
           <div className="mt-4 space-y-3 text-sm">
@@ -43,7 +43,7 @@ export function SiteFooter() {
               <Link
                 key={category.slug}
                 href={`/catalog?category=${category.slug}`}
-                className="block text-white transition hover:text-[#1690F5]"
+                className="block text-foreground transition hover:text-accent"
               >
                 {category.name}
               </Link>
@@ -52,10 +52,10 @@ export function SiteFooter() {
         </div>
 
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-white/55">
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted">
             Xizmatlar
           </p>
-          <div className="mt-4 space-y-3 text-sm text-white">
+          <div className="mt-4 space-y-3 text-sm text-foreground">
             <p>IMEI va original qurilmalar</p>
             <p>12 oygacha muddatli to'lov</p>
             <p>Tezkor delivery va pick-up</p>
@@ -64,13 +64,20 @@ export function SiteFooter() {
         </div>
 
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-white/55">Aloqa</p>
-          <div className="mt-4 space-y-3 text-sm text-white">
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted">Aloqa</p>
+          <div className="mt-4 space-y-3 text-sm text-foreground">
             <p>support@aloo.uz</p>
             <p>+998 91 123 45 67</p>
             <p>Toshkent, Amir Temur ko'chasi, 45-uy</p>
             <p>Dushanba - Yakshanba, 09:00 - 22:00</p>
           </div>
+        </div>
+      </div>
+
+      <div className="border-t border-line">
+        <div className="shell flex flex-col gap-2 py-4 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
+          <p>&copy; 2026 aloo. Barcha huquqlar himoyalangan.</p>
+          <p>Smartfonlar bozori va texno hayotga ulanish uchun yagona manzil.</p>
         </div>
       </div>
     </footer>
