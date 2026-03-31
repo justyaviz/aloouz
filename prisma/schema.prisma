@@ -46,8 +46,22 @@ model Product {
   compareAtPrice   Int?
   monthlyPrice     Int
   stock            Int            @default(0)
+  badge            String         @default("Yangi")
+  rating           Float          @default(5)
+  reviews          Int            @default(0)
+  heroLabel        String         @default("Original")
+  delivery         String         @default("Toshkent bo'ylab tezkor yetkazib berish mavjud")
+  highlights       Json
+  colors           Json
+  specs            Json
+  toneFrom         String         @default("#E9F4FF")
+  toneTo           String         @default("#A8D6FF")
+  imageUrl         String?
   isActive         Boolean        @default(true)
   isFeatured       Boolean        @default(false)
+  isNewArrival     Boolean        @default(false)
+  isDayDeal        Boolean        @default(false)
+  sortOrder        Int            @default(0)
   categoryId       String
   brandId          String
   category         Category       @relation(fields: [categoryId], references: [id])
@@ -59,6 +73,9 @@ model Product {
 
   @@index([categoryId])
   @@index([brandId])
+  @@index([isFeatured, isActive])
+  @@index([isNewArrival, isActive])
+  @@index([isDayDeal, isActive])
 }
 
 model ProductImage {
@@ -109,4 +126,36 @@ model OrderItem {
 
   @@index([orderId])
   @@index([productId])
+}
+
+model Article {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  tag         String
+  summary     String
+  publishedAt DateTime @default(now())
+  isPublished Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isPublished, sortOrder])
+}
+
+model PromoDeal {
+  id             String   @id @default(cuid())
+  eyebrow        String
+  title          String
+  description    String
+  ctaLabel       String
+  ctaHref        String
+  backgroundFrom String
+  backgroundTo   String
+  isActive       Boolean  @default(true)
+  sortOrder      Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([isActive, sortOrder])
 }

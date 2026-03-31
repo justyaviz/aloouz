@@ -39,6 +39,8 @@ export function ProductCard({ product }: ProductCardProps) {
         label={product.heroLabel}
         toneFrom={product.toneFrom}
         toneTo={product.toneTo}
+        imageUrl={product.imageUrl}
+        imageAlt={product.name}
       />
 
       <div className="flex flex-1 flex-col pt-5">

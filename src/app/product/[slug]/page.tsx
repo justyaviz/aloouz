@@ -8,8 +8,8 @@ import { ProductVisual } from "@/components/product-visual";
 import { SectionHeading } from "@/components/section-heading";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { getProduct, products } from "@/data/store";
 import { formatMonthly, formatSum } from "@/lib/format";
+import { getStorefrontProduct, getStorefrontSnapshot } from "@/lib/storefront";
 
 type ProductPageProps = {
   params: Promise<{
@@ -21,7 +21,7 @@ export async function generateMetadata({
   params,
 }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProduct(slug);
+  const product = await getStorefrontProduct(slug);
 
   if (!product) {
     return {
@@ -37,13 +37,14 @@ export async function generateMetadata({
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
-  const product = getProduct(slug);
+  const snapshot = await getStorefrontSnapshot();
+  const product = snapshot.products.find((item) => item.slug === slug);
 
   if (!product) {
     notFound();
   }
 
-  const relatedProducts = products
+  const relatedProducts = snapshot.products
     .filter((item) => item.categorySlug === product.categorySlug && item.slug !== product.slug)
     .slice(0, 3);
 
@@ -84,6 +85,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 label={product.heroLabel}
                 toneFrom={product.toneFrom}
                 toneTo={product.toneTo}
+                imageUrl={product.imageUrl}
+                imageAlt={product.name}
               />
             </div>
 

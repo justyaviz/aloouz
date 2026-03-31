@@ -14,7 +14,7 @@ const quickActions = [
   { href: "/catalog", label: "Taqqoslash" },
   { href: "/catalog", label: "Savat" },
   { href: "/catalog", label: "Sevimli" },
-  { href: "/catalog", label: "Kirish" },
+  { href: "/admin", label: "Admin" },
 ];
 
 const chips = [

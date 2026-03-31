@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ProductCard } from "@/components/product-card";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { brands, categories, products } from "@/data/store";
+import { getStorefrontSnapshot } from "@/lib/storefront";
 
 type CatalogPageProps = {
   searchParams: Promise<{
@@ -35,6 +35,7 @@ export const metadata = {
 };
 
 export default async function CatalogPage({ searchParams }: CatalogPageProps) {
+  const { brands, categories, products } = await getStorefrontSnapshot();
   const filters = await searchParams;
   const activeCategory = filters.category;
   const activeBrand = filters.brand;
@@ -167,7 +168,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
                 {[
                   "Muddatli to'lov summasi kartochkaning yuqori qismida ko'rinadi",
                   "Mahsulot detail sahifasi orqali batafsil tavsif va rang tanlovi beriladi",
-                  "SEO uchun category va product route'lari alohida tayyorlangan",
+                  "Admin panel orqali qo'shilgan mahsulotlar shu katalogga avtomatik tushadi",
                 ].map((item) => (
                   <div
                     key={item}
@@ -253,8 +254,8 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
                   Bu filter bo'yicha mahsulot topilmadi
                 </p>
                 <p className="mt-4 text-base leading-7 text-muted">
-                  Real backend ulangach bu yerga dynamic search, smart filter va related
-                  suggestion bloklari qo'shiladi.
+                  Filtrni o'zgartirib qayta urinib ko'ring yoki admin paneldan yangi mahsulot
+                  qo'shing.
                 </p>
                 <Link
                   href="/catalog"

@@ -6,47 +6,63 @@ import { ProductVisual } from "@/components/product-visual";
 import { SectionHeading } from "@/components/section-heading";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { articles, brands, categories, products } from "@/data/store";
 import { formatMonthly, formatSum } from "@/lib/format";
+import { getStorefrontSnapshot } from "@/lib/storefront";
 
-const heroProduct = products[0];
-const productOfDay = products[3];
-const newItems = products.slice(0, 4);
-const hotOffers = products.slice(4, 8);
-
-const popularCategories = [
-  { category: categories[0], caption: "iPhone va Android" },
-  { category: categories[1], caption: "Apple ekotizimi" },
-  { category: categories[2], caption: "Samsung va Xiaomi" },
-  { category: categories[3], caption: "Fitness va ulanish" },
-  { category: categories[4], caption: "AirPods va JBL" },
-  { category: categories[5], caption: "Ish va o'qish uchun" },
-  { category: categories[6], caption: "Fast charge aksessuarlari" },
-  { category: categories[7], caption: "Har kunlik texno gadjetlar" },
+const categoryCaptions = [
+  "iPhone va Android",
+  "Apple ekotizimi",
+  "Samsung va Xiaomi",
+  "Fitness va ulanish",
+  "AirPods va JBL",
+  "Ish va o'qish uchun",
+  "Fast charge aksessuarlari",
+  "Har kunlik texno gadjetlar",
 ];
 
-const promoCards = [
-  {
-    title: "12 oygacha muddatli to'lov",
-    description: "Flagman smartfonlarda oylik to'lov va chegirma yonma-yon ko'rsatiladi.",
-    tone: "linear-gradient(180deg, #eef6ff 0%, #ffffff 100%)",
-  },
-  {
-    title: "Bugun buyurtma, bugun jo'natish",
-    description: "Toshkent bo'ylab delivery va pick-up oqimi market formatida joylashtirildi.",
-    tone: "linear-gradient(180deg, #fff5ec 0%, #ffffff 100%)",
-  },
-  {
-    title: "Original va IMEI tekshiruvli",
-    description: "Trust label va savdo argumentlari MediaPark uslubidagi retail bloklarga yaqinlashtirildi.",
-    tone: "linear-gradient(180deg, #f4f9ff 0%, #ffffff 100%)",
-  },
-];
+export default async function Home() {
+  const { articles, brands, categories, products, promoDeals } = await getStorefrontSnapshot();
 
-export default function Home() {
-  const heroDiscount = heroProduct.oldPrice
-    ? Math.round(((heroProduct.oldPrice - heroProduct.price) / heroProduct.oldPrice) * 100)
-    : 0;
+  const heroProduct =
+    products.find((product) => product.isFeatured) ??
+    products.find((product) => product.isActive) ??
+    products[0];
+
+  const productOfDay =
+    products.find((product) => product.isDayDeal) ??
+    products.find((product) => product.slug !== heroProduct?.slug) ??
+    products[0];
+
+  const newItems = products.filter((product) => product.isNewArrival).slice(0, 4);
+  const visibleNewItems = newItems.length > 0 ? newItems : products.slice(0, 4);
+  const hotOffers = products
+    .filter((product) => product.slug !== heroProduct?.slug && product.slug !== productOfDay?.slug)
+    .slice(0, 4);
+
+  const visiblePromoDeals = promoDeals.slice(0, 3);
+  const heroDiscount =
+    heroProduct?.oldPrice && heroProduct.oldPrice > heroProduct.price
+      ? Math.round(((heroProduct.oldPrice - heroProduct.price) / heroProduct.oldPrice) * 100)
+      : 0;
+
+  if (!heroProduct || !productOfDay) {
+    return (
+      <>
+        <SiteHeader />
+        <main className="shell py-20">
+          <div className="rounded-[28px] border border-line bg-white p-10 text-center shadow-[0_12px_30px_rgba(13,31,55,0.06)]">
+            <p className="font-display text-3xl font-semibold text-foreground">
+              Mahsulotlar hali tayyor emas
+            </p>
+            <p className="mt-4 text-base text-muted">
+              Admin paneldan yangi mahsulotlar qo'shilgach storefront shu yerda chiqadi.
+            </p>
+          </div>
+        </main>
+        <SiteFooter />
+      </>
+    );
+  }
 
   return (
     <>
@@ -125,6 +141,8 @@ export default function Home() {
                     label={heroProduct.heroLabel}
                     toneFrom="rgba(255,255,255,0.22)"
                     toneTo="rgba(255,255,255,0.05)"
+                    imageUrl={heroProduct.imageUrl}
+                    imageAlt={heroProduct.name}
                   />
                 </div>
               </div>
@@ -165,13 +183,24 @@ export default function Home() {
                   label={productOfDay.heroLabel}
                   toneFrom={productOfDay.toneFrom}
                   toneTo={productOfDay.toneTo}
+                  imageUrl={productOfDay.imageUrl}
+                  imageAlt={productOfDay.name}
                 />
               </div>
 
               <div className="mt-5 flex flex-wrap gap-2">
-                <span className="rounded-full bg-[#ffec66] px-3 py-1 text-xs font-semibold text-foreground">
-                  -8%
-                </span>
+                {productOfDay.oldPrice ? (
+                  <span className="rounded-full bg-[#ffec66] px-3 py-1 text-xs font-semibold text-foreground">
+                    -{Math.max(
+                      1,
+                      Math.round(
+                        ((productOfDay.oldPrice - productOfDay.price) / productOfDay.oldPrice) *
+                          100,
+                      ),
+                    )}
+                    %
+                  </span>
+                ) : null}
                 <span className="rounded-full bg-support px-3 py-1 text-xs font-semibold text-white">
                   Chegirma
                 </span>
@@ -215,7 +244,7 @@ export default function Home() {
           </h2>
 
           <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            {popularCategories.map(({ category, caption }) => (
+            {categories.slice(0, 8).map((category, index) => (
               <Link
                 key={category.slug}
                 href={`/catalog?category=${category.slug}`}
@@ -223,7 +252,9 @@ export default function Home() {
               >
                 <div className="min-w-0">
                   <p className="text-lg font-semibold leading-7 text-foreground">{category.name}</p>
-                  <p className="mt-1 text-sm text-muted">{caption}</p>
+                  <p className="mt-1 text-sm text-muted">
+                    {categoryCaptions[index] ?? category.description}
+                  </p>
                 </div>
                 <div
                   className="h-16 w-20 shrink-0 rounded-[18px]"
@@ -240,32 +271,36 @@ export default function Home() {
           <SectionHeading
             eyebrow="Yangiliklar"
             title="Yangi kelgan smartfon va gadjetlar"
-            description="MediaParkdagi kabi bosh sahifada to'g'ridan-to'g'ri mahsulot shelf'i ko'rinadi: badge, narx, oylik to'lov va savatga o'tish bir kartada."
+            description="Admin paneldagi `Yangilik shelf'i` flag'i orqali bosh sahifadagi asosiy mahsulot kartalari boshqariladi."
           />
 
           <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-            {newItems.map((product) => (
-              <ProductCard key={product.slug} product={product} />
+            {visibleNewItems.map((product) => (
+              <ProductCard key={product.id ?? product.slug} product={product} />
             ))}
           </div>
         </section>
 
         <section className="shell pt-10">
           <div className="grid gap-4 lg:grid-cols-3">
-            {promoCards.map((promo) => (
-              <div
-                key={promo.title}
-                className="rounded-[28px] border border-line p-6 shadow-[0_12px_30px_rgba(13,31,55,0.06)]"
-                style={{ background: promo.tone }}
+            {visiblePromoDeals.map((promo) => (
+              <Link
+                key={promo.id ?? promo.title}
+                href={promo.ctaHref}
+                className="rounded-[28px] border border-line p-6 shadow-[0_12px_30px_rgba(13,31,55,0.06)] transition hover:-translate-y-1"
+                style={{
+                  background: `linear-gradient(180deg, ${promo.backgroundFrom} 0%, ${promo.backgroundTo} 100%)`,
+                }}
               >
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
-                  Maxsus taklif
+                  {promo.eyebrow}
                 </p>
                 <h3 className="mt-4 font-display text-3xl font-semibold text-foreground">
                   {promo.title}
                 </h3>
                 <p className="mt-3 text-sm leading-7 text-muted">{promo.description}</p>
-              </div>
+                <p className="mt-5 text-sm font-semibold text-accent">{promo.ctaLabel}</p>
+              </Link>
             ))}
           </div>
         </section>
@@ -281,7 +316,7 @@ export default function Home() {
 
           <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
             {hotOffers.map((product) => (
-              <ProductCard key={product.slug} product={product} />
+              <ProductCard key={product.id ?? product.slug} product={product} />
             ))}
           </div>
         </section>
@@ -309,13 +344,13 @@ export default function Home() {
           <SectionHeading
             eyebrow="Blog"
             title="Savdo va maslahat kontenti"
-            description="Promo va maslahat maqolalari ham bosh sahifada ko'rinadi, bu retail ichki oqimni boyitadi."
+            description="Yangiliklar bo'limidagi maqolalar bosh sahifada avtomatik chiqadi."
           />
 
           <div className="grid gap-4 lg:grid-cols-3">
             {articles.map((article) => (
               <article
-                key={article.title}
+                key={article.id ?? article.slug ?? article.title}
                 className="rounded-[24px] border border-line bg-white p-6 shadow-[0_12px_30px_rgba(13,31,55,0.06)]"
               >
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
@@ -324,6 +359,9 @@ export default function Home() {
                 <h3 className="mt-4 font-display text-2xl font-semibold text-foreground">
                   {article.title}
                 </h3>
+                {article.summary ? (
+                  <p className="mt-3 text-sm leading-7 text-muted">{article.summary}</p>
+                ) : null}
                 <p className="mt-4 text-sm text-muted">{article.date}</p>
               </article>
             ))}

@@ -14,7 +14,9 @@ export type Category = {
 };
 
 export type Product = {
+  id?: string;
   slug: string;
+  sku?: string;
   name: string;
   brand: string;
   category: string;
@@ -28,6 +30,7 @@ export type Product = {
   stock: number;
   kind: ProductKind;
   shortDescription: string;
+  description?: string;
   heroLabel: string;
   delivery: string;
   highlights: string[];
@@ -35,6 +38,37 @@ export type Product = {
   specs: Array<{ label: string; value: string }>;
   toneFrom: string;
   toneTo: string;
+  imageUrl?: string;
+  isActive?: boolean;
+  isFeatured?: boolean;
+  isNewArrival?: boolean;
+  isDayDeal?: boolean;
+  sortOrder?: number;
+};
+
+export type Article = {
+  id?: string;
+  slug?: string;
+  title: string;
+  date: string;
+  tag: string;
+  summary?: string;
+  publishedAt?: string;
+  isPublished?: boolean;
+  sortOrder?: number;
+};
+
+export type PromoDeal = {
+  id?: string;
+  eyebrow: string;
+  title: string;
+  description: string;
+  ctaLabel: string;
+  ctaHref: string;
+  backgroundFrom: string;
+  backgroundTo: string;
+  isActive?: boolean;
+  sortOrder?: number;
 };
 
 export const categories: Category[] = [
@@ -119,6 +153,9 @@ export const products: Product[] = [
     reviews: 138,
     stock: 12,
     kind: "phone",
+    isFeatured: true,
+    isNewArrival: true,
+    sortOrder: 1,
     shortDescription:
       "Titan korpus, Pro kamera va kuchli avtonomlik bilan aloo vitrinasidagi eng talabgir flagmanlardan biri.",
     heroLabel: "IMEI + 12 oy",
@@ -154,6 +191,8 @@ export const products: Product[] = [
     reviews: 102,
     stock: 9,
     kind: "phone",
+    isNewArrival: true,
+    sortOrder: 2,
     shortDescription:
       "Kuchli zoom, S Pen va premium korpus bilan texno hayotga ulanishni tezlatadigan Android flagman.",
     heroLabel: "200 MP + S Pen",
@@ -189,6 +228,8 @@ export const products: Product[] = [
     reviews: 76,
     stock: 18,
     kind: "phone",
+    isNewArrival: true,
+    sortOrder: 3,
     shortDescription:
       "Leica ruhi, kuchli quvvat va yuqori xotira bilan narx va imkoniyat balansi kuchli model.",
     heroLabel: "Leica vibes",
@@ -224,6 +265,9 @@ export const products: Product[] = [
     reviews: 69,
     stock: 24,
     kind: "phone",
+    isDayDeal: true,
+    isNewArrival: true,
+    sortOrder: 4,
     shortDescription:
       "Kamera, dizayn va qulay narxni birlashtirgan zamonaviy 5G model.",
     heroLabel: "5G + 256 GB",
@@ -259,6 +303,7 @@ export const products: Product[] = [
     reviews: 53,
     stock: 20,
     kind: "phone",
+    sortOrder: 5,
     shortDescription:
       "Kundalik foydalanishda tez, dizayni premium va narxi o'z o'rnida turgan balansli smartfon.",
     heroLabel: "Reno vibes",
@@ -293,6 +338,7 @@ export const products: Product[] = [
     reviews: 58,
     stock: 14,
     kind: "watch",
+    sortOrder: 6,
     shortDescription:
       "Sog'liq, trening va bildirishnomalarni bir soatda yig'adigan Apple ekotizimining kuchli qurilmasi.",
     heroLabel: "Health + Fitness",
@@ -328,6 +374,7 @@ export const products: Product[] = [
     reviews: 85,
     stock: 17,
     kind: "audio",
+    sortOrder: 7,
     shortDescription:
       "ANC, spatial audio va Apple qurilmalari bilan bir zumda ulanish uchun ideal premium quloqchin.",
     heroLabel: "ANC + USB-C",
@@ -363,6 +410,7 @@ export const products: Product[] = [
     reviews: 43,
     stock: 25,
     kind: "audio",
+    sortOrder: 8,
     shortDescription:
       "Simsiz tinglash, shaffof dizayn va kundalik yurishda qulay o'rinli audio tanlov.",
     heroLabel: "Ghost design",
@@ -398,6 +446,7 @@ export const products: Product[] = [
     reviews: 27,
     stock: 8,
     kind: "tablet",
+    sortOrder: 9,
     shortDescription:
       "O'qish, ish va kontent iste'moli uchun yengil, kuchli va Apple Pencil'ga tayyor planshet.",
     heroLabel: "M2 power",
@@ -444,21 +493,72 @@ export const perks = [
   },
 ];
 
-export const articles = [
+export const articles: Article[] = [
   {
+    slug: "yangi-iphone-bilan-hayot-boshqacha",
     title: "Yangi iPhone bilan hayot boshqacha",
     date: "31 mart, 2026",
     tag: "iPhone",
+    summary: "Yangi avlod iPhone xarid qilishda kamera, xotira va muddatli to'lov bo'yicha nimalarga qarash kerakligi haqida qisqa yo'riqnoma.",
+    publishedAt: "2026-03-31",
+    sortOrder: 1,
   },
   {
+    slug: "aloo-bilan-sevimli-telefoning-qolingda",
     title: "Aloo bilan sevimli telefoning qo'lingda",
     date: "30 mart, 2026",
     tag: "Campaign",
+    summary: "aloo brendining savdo va servis ohangini tushuntiradigan promo material va xarid ssenariylari.",
+    publishedAt: "2026-03-30",
+    sortOrder: 2,
   },
   {
+    slug: "muddatli-tolovga-telefon-tanlash-uchun-5-maslahat",
     title: "Muddatli to'lovga telefon tanlash uchun 5 maslahat",
     date: "29 mart, 2026",
     tag: "Guide",
+    summary: "Oylik to'lov, dastlabki badal va real ehtiyoj asosida to'g'ri model tanlash uchun qisqa qo'llanma.",
+    publishedAt: "2026-03-29",
+    sortOrder: 3,
+  },
+];
+
+export const promoDeals: PromoDeal[] = [
+  {
+    eyebrow: "Muddatli to'lov",
+    title: "Flagman smartfonlar uchun 12 oygacha qulay taklif",
+    description:
+      "Aksiya, eski narx va yangi narxni bir ekranda ko'rsatadigan promo blok admin panel orqali boshqariladi.",
+    ctaLabel: "Aksiyani ko'rish",
+    ctaHref: "/catalog?category=smartfonlar",
+    backgroundFrom: "#EEF6FF",
+    backgroundTo: "#FFFFFF",
+    isActive: true,
+    sortOrder: 1,
+  },
+  {
+    eyebrow: "Tezkor yetkazish",
+    title: "Bugun buyurtma, bugun jo'natish",
+    description:
+      "Toshkent bo'ylab tezkor delivery va pick-up oqimini alohida promo kartalar orqali boshqarish mumkin.",
+    ctaLabel: "Katalogga o'tish",
+    ctaHref: "/catalog",
+    backgroundFrom: "#FFF3E8",
+    backgroundTo: "#FFFFFF",
+    isActive: true,
+    sortOrder: 2,
+  },
+  {
+    eyebrow: "Original qurilmalar",
+    title: "IMEI tekshiruvli smartfon va gadjetlar",
+    description:
+      "Trust messaging, service argumentlari va sotuv CTA'larini home page promo qatorida ko'rsatish uchun.",
+    ctaLabel: "Mahsulotlarni ko'rish",
+    ctaHref: "/catalog?category=iphone",
+    backgroundFrom: "#F3F8FF",
+    backgroundTo: "#FFFFFF",
+    isActive: true,
+    sortOrder: 3,
   },
 ];
 

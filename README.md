@@ -1,13 +1,14 @@
 # aloo
 
-`aloo` uchun smartfonlar bozori storefront foundation. Loyiha `Next.js 16`, `TypeScript`, `Tailwind CSS 4` va `Prisma` bilan yig'ilgan. Hozircha demo data bilan ishlaydi, lekin structure real katalog va Railway PostgreSQL ulash uchun tayyor.
+`aloo` uchun smartfonlar bozori storefront foundation. Loyiha `Next.js 16`, `TypeScript`, `Tailwind CSS 4` va `Prisma` bilan yig'ilgan. Endi unda storefront bilan birga `/admin` boshqaruv paneli ham bor: mahsulot, yangilik va promo bloklarni shu yerda boshqarish mumkin.
 
 ## Nimalar tayyor
 
 - Home page uchun merchandizing bloklari, kategoriya shelf'lari va promo hero
 - `/catalog` route'i category va brand filter query'lari bilan
 - `/product/[slug]` detail sahifasi
-- Railway uchun `standalone` build konfiguratsiyasi
+- `/admin` route'i orqali product, article va promo CRUD
+- `DATABASE_URL` bo'lsa Prisma orqali persistent data, bo'lmasa fallback demo data
 - Prisma schema orqali category, brand, product va order foundation
 - GitHub Actions orqali `lint + build` tekshiruvi
 
@@ -27,6 +28,9 @@ Browser: [http://localhost:3000](http://localhost:3000)
 ```env
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/aloo?schema=public
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=alooadmin123
+ADMIN_SESSION_SECRET=change-me-for-production
 ```
 
 ## Prisma buyruqlari
@@ -47,21 +51,28 @@ npm run db:studio
 
 Repository push qilingandan keyin `.github/workflows/ci.yml` avtomatik ravishda build check ishlatadi.
 
+## Admin panel
+
+`/admin` sahifasida quyidagilar boshqariladi:
+
+- Mahsulot qo'shish, tahrirlash va o'chirish
+- Homepage hero, `Yangilik shelf'i` va `Tovarlar kuni` flag'lari
+- Promo kartalar va yangilik maqolalari
+- `imageUrl` orqali real mahsulot rasmlarini chiqarish
+
+Agar `DATABASE_URL` yo'q bo'lsa, panel fallback ma'lumotni ko'rsatadi, lekin saqlash ishlamaydi. To'liq CRUD uchun Railway PostgreSQL ulanishi kerak.
+
 ## Railway deploy
-
-Railway'ning rasmiy `Deploy a Next.js App` qo'llanmasiga ko'ra, GitHub repo orqali deploy qilishda `output: "standalone"` va standalone serverni ishga tushiradigan `start` script kerak bo'ladi. Shu ikkisi loyihada allaqachon yoqilgan:
-
-- Railway Next.js guide: [docs.railway.com/guides/nextjs](https://docs.railway.com/guides/nextjs)
-- GitHub autodeploy guide: [docs.railway.com/deployments/github-autodeploys](https://docs.railway.com/deployments/github-autodeploys)
 
 Deploy qadamlari:
 
 1. Railway'da yangi project oching.
-2. `Deploy from GitHub repo` ni tanlang.
-3. Shu repository'ni ulang.
-4. Deploy tugagach service ichida `Settings -> Networking -> Public Networking` bo'limiga o'ting.
-5. `Generate Domain` bosib vaqtinchalik Railway domain oling.
-6. Xohlasangiz `Wait for CI` ni yoqing, shunda Railway GitHub Actions muvaffaqiyatli tugashini kutadi.
+2. `Deploy from GitHub repo` ni tanlang yoki CLI orqali `railway up` qiling.
+3. Web service uchun env'larni kiriting: `DATABASE_URL`, `ADMIN_USERNAME`, `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`.
+4. Alohida PostgreSQL service yarating va uning `DATABASE_URL` qiymatini web service'ga ulang.
+5. `npm run db:push` ni Railway shell yoki local CLI orqali bir marta ishga tushiring.
+6. Deploy tugagach service ichida `Settings -> Networking -> Public Networking` bo'limiga o'ting.
+7. `Generate Domain` bosib vaqtinchalik Railway domain oling.
 
 ## Custom domain ulash
 
@@ -81,8 +92,8 @@ Cloudflare ishlatilsa, Railway domen hujjatida ko'rsatilganidek proxied domenlar
 
 ## Keyingi iteratsiya uchun tavsiya
 
-1. Real product CRUD uchun admin panel qo'shish
-2. Railway PostgreSQL service ochib `DATABASE_URL` ni ulash
-3. Prisma orqali demo datani seed qilish
-4. Checkout, savat va order status oqimini yozish
-5. Payment provider va installment API integratsiyasi
+1. Admin panelga fayl upload yoki media kutubxona qo'shish
+2. Checkout, savat va order status oqimini yozish
+3. Payment provider va installment API integratsiyasi
+4. Search autocomplete va smart filterlarni kuchaytirish
+5. Filiallar bo'yicha stock va buyurtma statusi modullarini ulash

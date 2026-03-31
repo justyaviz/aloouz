@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import type { ProductKind } from "@/data/store";
 
 type ProductVisualProps = {
@@ -5,6 +6,8 @@ type ProductVisualProps = {
   label: string;
   toneFrom: string;
   toneTo: string;
+  imageUrl?: string;
+  imageAlt?: string;
   compact?: boolean;
 };
 
@@ -13,6 +16,8 @@ export function ProductVisual({
   label,
   toneFrom,
   toneTo,
+  imageUrl,
+  imageAlt,
   compact = false,
 }: ProductVisualProps) {
   const heightClass = compact ? "h-48 rounded-[28px]" : "h-[26rem] rounded-[36px]";
@@ -29,14 +34,24 @@ export function ProductVisual({
       <div className="absolute bottom-8 right-8 h-28 w-28 rounded-full bg-black/10 blur-3xl" />
 
       <div className="absolute inset-0 flex items-center justify-center p-8">
-        {kind === "phone" ? (
+        {imageUrl ? (
+          <img
+            src={imageUrl}
+            alt={imageAlt ?? label}
+            className="h-full w-full object-contain drop-shadow-[0_24px_40px_rgba(0,0,0,0.22)]"
+            loading="lazy"
+            decoding="async"
+          />
+        ) : null}
+
+        {!imageUrl && kind === "phone" ? (
           <div className="relative h-full max-h-80 w-36 rounded-[2rem] border border-white/60 bg-slate-950/90 shadow-2xl">
             <div className="absolute left-1/2 top-3 h-1.5 w-16 -translate-x-1/2 rounded-full bg-white/25" />
             <div className="absolute inset-x-3 bottom-3 top-6 rounded-[1.5rem] bg-gradient-to-b from-white/95 via-white/70 to-white/20" />
           </div>
         ) : null}
 
-        {kind === "watch" ? (
+        {!imageUrl && kind === "watch" ? (
           <div className="relative flex h-full max-h-80 w-48 items-center justify-center">
             <div className="absolute inset-y-0 left-1/2 w-16 -translate-x-1/2 rounded-full bg-slate-950/80" />
             <div className="relative z-10 flex h-40 w-36 items-center justify-center rounded-[2rem] border border-white/60 bg-slate-950/90 shadow-2xl">
@@ -45,14 +60,14 @@ export function ProductVisual({
           </div>
         ) : null}
 
-        {kind === "tablet" ? (
+        {!imageUrl && kind === "tablet" ? (
           <div className="relative h-full max-h-80 w-full max-w-sm rounded-[2rem] border border-white/60 bg-slate-950/90 p-3 shadow-2xl">
             <div className="h-full w-full rounded-[1.5rem] bg-gradient-to-br from-white/90 via-white/55 to-white/10" />
             <div className="absolute left-1/2 top-1.5 h-1.5 w-16 -translate-x-1/2 rounded-full bg-white/25" />
           </div>
         ) : null}
 
-        {kind === "audio" ? (
+        {!imageUrl && kind === "audio" ? (
           <div className="relative flex w-full max-w-md flex-col items-center gap-5">
             <div className="h-16 w-full rounded-[1.4rem] border border-white/60 bg-slate-950/90 shadow-2xl" />
             <div className="h-32 w-32 rounded-full border border-white/60 bg-slate-950/90 shadow-2xl" />
