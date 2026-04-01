@@ -55,6 +55,31 @@ function isDarkColor(value: string) {
   return luminance < 150;
 }
 
+const internalCopyPatterns = [
+  /admin panel/i,
+  /foundation/i,
+  /home page/i,
+  /promo blok/i,
+  /boshqarish mumkin/i,
+  /trust messaging/i,
+  /service argument/i,
+  /ko'rsatadigan promo blok/i,
+];
+
+function sanitizePublicCopy(value: string | undefined, fallback: string) {
+  const copy = value?.trim();
+
+  if (!copy) {
+    return fallback;
+  }
+
+  if (internalCopyPatterns.some((pattern) => pattern.test(copy))) {
+    return fallback;
+  }
+
+  return copy;
+}
+
 export default async function Home() {
   const { articles, brands, categories, products, promoDeals } = await getStorefrontSnapshot();
 
@@ -117,8 +142,10 @@ export default async function Home() {
           ? `${product.name} uchun -${heroDiscount}% gacha`
           : product.name,
       description:
-        relatedPromo?.description ??
-        `${product.name} uchun qulay narx, muddatli to'lov va tezkor yetkazish bir joyda.`,
+        sanitizePublicCopy(
+          relatedPromo?.description,
+          `${product.name} uchun qulay narx, muddatli to'lov va tezkor yetkazib berish bir joyda.`,
+        ),
       primaryHref: `/product/${product.slug}`,
       primaryLabel: "Mahsulotni ko'rish",
       secondaryHref: relatedPromo?.ctaHref ?? "/catalog?category=smartfonlar",
@@ -205,25 +232,15 @@ export default async function Home() {
                     "linear-gradient(180deg, rgba(244,249,255,1) 0%, rgba(255,255,255,1) 100%)",
                 }}
               >
-                <div
-                  className="h-24 rounded-[16px] sm:h-28 sm:rounded-[18px] xl:h-20"
-                  style={{
-                    backgroundImage: "url('/brand/aloo-mark-light.png')",
-                    backgroundPosition: "right -10px bottom -10px",
-                    backgroundRepeat: "no-repeat",
-                    backgroundSize: "74px",
-                  }}
-                >
-                  <ProductVisual
-                    size="compact"
-                    kind={productOfDay.kind}
-                    label={productOfDay.heroLabel}
-                    toneFrom={productOfDay.toneFrom}
-                    toneTo={productOfDay.toneTo}
-                    imageUrl={productOfDay.imageUrl}
-                    imageAlt={productOfDay.name}
-                  />
-                </div>
+                <ProductVisual
+                  size="deal"
+                  kind={productOfDay.kind}
+                  label={productOfDay.heroLabel}
+                  toneFrom={productOfDay.toneFrom}
+                  toneTo={productOfDay.toneTo}
+                  imageUrl={productOfDay.imageUrl}
+                  imageAlt={productOfDay.name}
+                />
               </div>
 
               <div className="mt-4 flex flex-wrap gap-2">
@@ -526,7 +543,10 @@ export default async function Home() {
                       hasDarkTone ? "text-white/76" : "text-muted"
                     }`}
                   >
-                    {promo.description}
+                    {sanitizePublicCopy(
+                      promo.description,
+                      "Qulay narx, tezkor yetkazish va original qurilmalar bir joyda jamlandi.",
+                    )}
                   </p>
                   <p
                     className={`mt-5 text-sm font-semibold ${

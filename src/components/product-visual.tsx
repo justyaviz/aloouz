@@ -9,7 +9,7 @@ type ProductVisualProps = {
   toneTo: string;
   imageUrl?: string;
   imageAlt?: string;
-  size?: "compact" | "default" | "hero";
+  size?: "compact" | "deal" | "default" | "hero";
   compact?: boolean;
 };
 
@@ -26,16 +26,34 @@ export function ProductVisual({
   const visualSize = size ?? (compact ? "compact" : "default");
   const heightClass =
     visualSize === "hero"
-      ? "h-[11.5rem] rounded-[24px] sm:h-[12.8rem] lg:h-[13.6rem]"
+      ? "h-[12.5rem] rounded-[24px] sm:h-[14rem] lg:h-[15.2rem]"
+      : visualSize === "deal"
+        ? "h-[8.9rem] rounded-[18px] sm:h-[9.8rem] xl:h-[8.2rem]"
       : visualSize === "compact"
-        ? "h-36 rounded-[22px]"
-        : "h-[26rem] rounded-[36px]";
+        ? "h-[12.8rem] rounded-[22px] sm:h-[14.25rem]"
+        : "h-[27rem] rounded-[36px]";
   const paddingClass =
-    visualSize === "compact" ? "p-4" : visualSize === "hero" ? "p-4 sm:p-5" : "p-8";
-  const labelClass =
     visualSize === "compact"
+      ? "p-2.5 sm:p-3"
+      : visualSize === "deal"
+        ? "p-2 sm:p-2.5"
+        : visualSize === "hero"
+          ? "p-3 sm:p-4"
+          : "p-8";
+  const labelClass =
+    visualSize === "deal"
+      ? "bottom-2.5 left-2.5 px-2.5 py-1 text-[9px]"
+      : visualSize === "compact"
       ? "bottom-3 left-3 px-3 py-1.5 text-[10px]"
       : "bottom-4 left-4 px-4 py-2 text-xs";
+  const imageScaleClass =
+    visualSize === "hero"
+      ? "scale-[1.08]"
+      : visualSize === "deal"
+        ? "scale-[1.14]"
+        : visualSize === "compact"
+          ? "scale-[1.12]"
+          : "scale-100";
 
   return (
     <div
@@ -71,7 +89,7 @@ export function ProductVisual({
           <img
             src={imageUrl}
             alt={imageAlt ?? label}
-            className="h-full w-full object-contain drop-shadow-[0_24px_40px_rgba(0,0,0,0.22)]"
+            className={`h-full w-full object-contain object-center drop-shadow-[0_24px_40px_rgba(0,0,0,0.22)] ${imageScaleClass}`}
             loading="lazy"
             decoding="async"
           />

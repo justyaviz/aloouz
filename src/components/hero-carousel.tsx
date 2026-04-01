@@ -139,13 +139,13 @@ export function HeroCarousel({ slides }: { slides: HeroCarouselSlide[] }) {
                 <div className="mt-3.5 flex flex-col gap-3 sm:flex-row">
                   <Link
                     href={slide.primaryHref}
-                    className="inline-flex items-center justify-center gap-2 rounded-[16px] bg-white px-5 py-3 text-sm font-semibold text-accent transition hover:bg-[#eef6ff]"
+                    className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[16px] bg-support px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_rgba(255,107,43,0.28)] transition hover:bg-[#f05a1c]"
                   >
                     {slide.primaryLabel}
                   </Link>
                   <Link
                     href={slide.secondaryHref}
-                    className="hidden items-center justify-center rounded-[16px] border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/16 sm:inline-flex"
+                    className="hidden items-center justify-center whitespace-nowrap rounded-[16px] border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/16 sm:inline-flex"
                   >
                     {slide.secondaryLabel}
                   </Link>

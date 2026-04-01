@@ -24,7 +24,7 @@ export function ProductCard({ product }: ProductCardProps) {
   ].filter((item): item is { months: number; amount: number } => item !== null);
 
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-[22px] border border-line bg-white p-2.5 shadow-[0_16px_34px_rgba(13,31,55,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_50px_rgba(13,31,55,0.12)] sm:rounded-[24px] sm:p-3">
+    <article className="flex h-full flex-col overflow-hidden rounded-[22px] border border-line bg-white p-3 shadow-[0_16px_34px_rgba(13,31,55,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_50px_rgba(13,31,55,0.12)] sm:rounded-[24px] sm:p-3.5">
       <div className="mb-2.5 flex items-start justify-between gap-3">
         <div className="flex flex-wrap gap-2">
           <span className="rounded-full bg-[#eef6ff] px-2.5 py-1 text-[10px] font-semibold text-accent sm:px-3 sm:text-[11px]">
@@ -51,7 +51,7 @@ export function ProductCard({ product }: ProductCardProps) {
         imageAlt={product.name}
       />
 
-      <div className="flex flex-1 flex-col pt-3">
+      <div className="flex flex-1 flex-col pt-3.5">
         <div className="flex items-center justify-between gap-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted sm:text-[11px] sm:tracking-[0.18em]">
           <span>{product.brand}</span>
           <span className="hidden sm:inline">{product.branchStock ?? product.stock} dona mavjud</span>
@@ -59,12 +59,12 @@ export function ProductCard({ product }: ProductCardProps) {
 
         <Link
           href={`/product/${product.slug}`}
-          className="line-clamp-2 mt-2.5 min-h-[2.65rem] font-display text-[0.94rem] font-semibold leading-6 tracking-tight text-foreground sm:min-h-[2.8rem] sm:text-[0.98rem]"
+          className="line-clamp-2 mt-2.5 min-h-[2.9rem] font-display text-[1rem] font-semibold leading-6 tracking-tight text-foreground sm:min-h-[3rem] sm:text-[1.03rem]"
         >
           {product.name}
         </Link>
 
-        <p className="line-clamp-1 mt-1.5 min-h-[1.25rem] text-[12px] leading-5 text-muted">
+        <p className="line-clamp-2 mt-1.5 min-h-[2.4rem] text-[12px] leading-5 text-muted">
           {product.shortDescription}
         </p>
 
