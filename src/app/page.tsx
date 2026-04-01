@@ -212,33 +212,34 @@ export default async function Home() {
 
       <main className="page-enter pb-16">
         <section className="shell pt-4 sm:pt-5">
-          <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_286px] xl:items-start">
+          <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_286px] xl:items-stretch">
             <HeroCarousel slides={heroSlides} />
 
-            <aside className="reveal-up reveal-up-delay-1 rounded-[26px] border border-line bg-white p-4 shadow-[0_16px_38px_rgba(13,31,55,0.08)] sm:rounded-[30px] sm:p-5">
+            <aside className="reveal-up reveal-up-delay-1 rounded-[26px] border border-line bg-white p-4 shadow-[0_16px_38px_rgba(13,31,55,0.08)] sm:rounded-[30px] sm:p-5 xl:h-full xl:max-h-[294px] xl:overflow-hidden xl:p-4">
               <div className="flex items-end justify-between gap-4">
                 <div>
                   <p className="text-sm font-semibold text-foreground sm:text-xs sm:uppercase sm:tracking-[0.24em] sm:text-accent">
                     Kun mahsulotlari
                   </p>
-                  <h2 className="mt-1 font-display text-[1.2rem] font-semibold tracking-tight text-foreground sm:mt-2 sm:text-[1.55rem]">
+                  <h2 className="mt-1 font-display text-[1.2rem] font-semibold tracking-tight text-foreground sm:mt-2 sm:text-[1.55rem] xl:text-[1rem]">
                     Kun taklifi
                   </h2>
                 </div>
                 <CountdownTimer compact className="shrink-0 sm:hidden" />
               </div>
 
-              <CountdownTimer className="mt-3 hidden sm:block" />
+              <CountdownTimer className="mt-3 hidden sm:block xl:hidden" />
+              <CountdownTimer compact className="mt-2 hidden xl:block" />
 
               <div
-                className="mt-3 rounded-[20px] border border-line p-3 sm:rounded-[22px] sm:p-3.5"
+                className="mt-3 rounded-[20px] border border-line p-3 sm:rounded-[22px] sm:p-3.5 xl:mt-2 xl:p-2.5"
                 style={{
                   background:
                     "linear-gradient(180deg, rgba(244,249,255,1) 0%, rgba(255,255,255,1) 100%)",
                 }}
               >
                 <div
-                  className="h-24 rounded-[16px] sm:h-28 sm:rounded-[18px]"
+                  className="h-24 rounded-[16px] sm:h-28 sm:rounded-[18px] xl:h-20"
                   style={{
                     backgroundImage: "url('/brand/aloo-mark-light.png')",
                     backgroundPosition: "right -10px bottom -10px",
@@ -278,27 +279,27 @@ export default async function Home() {
 
               <Link
                 href={`/product/${productOfDay.slug}`}
-                className="line-clamp-2 mt-3.5 block text-[15px] font-semibold leading-6 text-foreground sm:text-base sm:leading-7"
+                className="line-clamp-2 mt-3.5 block text-[15px] font-semibold leading-6 text-foreground sm:text-base sm:leading-7 xl:mt-2.5 xl:text-[0.95rem] xl:leading-6"
               >
                 {productOfDay.name}
               </Link>
 
-              <div className="mt-3 inline-flex rounded-[12px] border border-accent px-3 py-1.5 text-sm font-semibold text-accent">
+              <div className="mt-3 inline-flex rounded-[12px] border border-accent px-3 py-1.5 text-sm font-semibold text-accent xl:mt-2 xl:text-[13px]">
                 {formatMonthly(productOfDay.installment12 ?? productOfDay.monthlyPrice)}
               </div>
 
               {productOfDay.oldPrice ? (
-                <p className="mt-3 text-sm text-muted line-through">
+                <p className="mt-3 text-sm text-muted line-through xl:mt-2 xl:text-[13px]">
                   {formatSum(productOfDay.oldPrice)}
                 </p>
               ) : null}
 
-              <div className="mt-1 flex items-end justify-between gap-4">
+              <div className="mt-1 flex items-end justify-between gap-4 xl:mt-0.5">
                 <div>
-                  <p className="text-[1.55rem] font-semibold tracking-tight text-foreground">
+                  <p className="text-[1.55rem] font-semibold tracking-tight text-foreground xl:text-[1rem]">
                     {formatSum(productOfDay.price)}
                   </p>
-                  <p className="mt-1 text-[12px] text-muted">
+                  <p className="mt-1 text-[12px] text-muted xl:hidden">
                     {productOfDay.stockLabel ||
                       productOfDay.branchName ||
                       `${productOfDay.stock} dona`}
