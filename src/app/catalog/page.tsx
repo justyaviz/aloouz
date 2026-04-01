@@ -234,7 +234,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
                 {[
                   "Muddatli to'lov summasi kartochkaning yuqori qismida ko'rinadi",
                   "Mahsulot detail sahifasi orqali batafsil tavsif va rang tanlovi beriladi",
-                  "Admin panel orqali qo'shilgan mahsulotlar shu katalogga avtomatik tushadi",
+                  "Yangi kelgan modellar shu katalogda avtomatik yangilanib boradi",
                 ].map((item) => (
                   <div
                     key={item}
@@ -380,8 +380,8 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
                   Bu filter bo'yicha mahsulot topilmadi
                 </p>
                 <p className="mt-4 text-base leading-7 text-muted">
-                  Filtrni o'zgartirib qayta urinib ko'ring yoki admin paneldan yangi mahsulot
-                  qo'shing.
+                  Filtrni o'zgartirib qayta urinib ko'ring yoki boshqa brend va kategoriya
+                  tanlang.
                 </p>
                 <Link
                   href="/catalog"

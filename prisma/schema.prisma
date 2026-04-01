@@ -84,6 +84,7 @@ model Product {
   brand            Brand          @relation(fields: [brandId], references: [id])
   imageAsset       MediaAsset?    @relation(fields: [imageAssetId], references: [id], onDelete: SetNull)
   images           ProductImage[]
+  comments         ProductComment[]
   orderItems       OrderItem[]
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
@@ -128,6 +129,20 @@ model ProductImage {
   productId String
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+}
+
+model ProductComment {
+  id          String   @id @default(cuid())
+  authorName  String
+  phone       String?
+  body        String
+  isPublished Boolean  @default(true)
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([productId, isPublished, createdAt])
 }
 
 model Customer {

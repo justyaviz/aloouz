@@ -75,8 +75,7 @@ export function CompareView({ products }: { products: Product[] }) {
             </h1>
             <p className="mt-4 max-w-3xl text-sm leading-7 text-muted">
               Narx, oylik to'lov, ombor holati va asosiy texnik tavsiflar bitta jadvalda
-              ko'rsatiladi. Endi bu bo'lim public storefront uchun ancha saranjom va foydalanishga
-              tayyor.
+              ko'rsatiladi. Shu yerning o'zida eng mos modelni tez solishtirish mumkin.
             </p>
           </div>
 
@@ -181,7 +180,7 @@ export function CompareView({ products }: { products: Product[] }) {
             ...specLabels.map((label) => ({
               label,
               render: (product: Product) =>
-                product.specs.find((spec) => spec.label === label)?.value ?? "—",
+                product.specs.find((spec) => spec.label === label)?.value ?? "-",
             })),
           ].map((row) => (
             <FragmentRow key={row.label} label={row.label}>

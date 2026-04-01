@@ -40,7 +40,7 @@ export function CartView({ products }: { products: Product[] }) {
         primaryLabel="O'tish"
         secondaryHref="/favorites"
         secondaryLabel="Sevimlilar"
-        footerText="Savat ichidagi mahsulotlar local qurilmada saqlanadi, shuning uchun foydalanuvchi tajribasi tez va silliq qoladi."
+        footerText="Tanlangan mahsulotlar savatda vaqtincha saqlanadi, shuning uchun xaridni istalgan payt davom ettirishingiz mumkin."
       />
     );
   }
@@ -56,7 +56,7 @@ export function CartView({ products }: { products: Product[] }) {
             </h1>
             <p className="mt-4 max-w-3xl text-sm leading-7 text-muted">
               Hozir savatda {cartProducts.length} ta mahsulot bor. Bo'sh holat, miqdor va xaridga
-              qaytish oqimi endi public storefront uchun ancha toza ko'rinishga keltirildi.
+              qaytish oqimi qulay va soddalashtirilgan ko'rinishda ishlaydi.
             </p>
           </div>
 
@@ -137,7 +137,7 @@ export function CartView({ products }: { products: Product[] }) {
           </div>
           <div className="mt-4 space-y-3 text-sm leading-7 text-muted">
             <p>Yetkazish, filial pick-up va muddatli to'lov tafsilotlari checkout bosqichida chiqadi.</p>
-            <p>Hozircha bu savat storefront ichidagi ishlaydigan client-side tayyor oqim.</p>
+            <p>Tanlangan mahsulotlar savatda saqlanadi va keyingi xarid bosqichiga shu yerdan o'tiladi.</p>
           </div>
           <Link
             href="/login"

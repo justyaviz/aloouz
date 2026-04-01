@@ -574,7 +574,7 @@ export const promoDeals: PromoDeal[] = [
     eyebrow: "Muddatli to'lov",
     title: "Flagman smartfonlar uchun 12 oygacha qulay taklif",
     description:
-      "Aksiya, eski narx va yangi narxni bir ekranda ko'rsatadigan promo blok admin panel orqali boshqariladi.",
+      "Aksiya, eski narx va yangi narxni bir ekranda ko'rsatadigan promo blok birinchi ekran uchun tayyorlangan.",
     ctaLabel: "Aksiyani ko'rish",
     ctaHref: "/catalog?category=smartfonlar",
     backgroundFrom: "#EEF6FF",

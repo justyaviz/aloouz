@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { AddToCartButton } from "@/components/add-to-cart-button";
+import { ProductCommentsSection } from "@/components/product-comments-section";
 import { ProductCard } from "@/components/product-card";
 import { ProductUtilityActions } from "@/components/product-utility-actions";
 import { ProductVisual } from "@/components/product-visual";
@@ -11,8 +12,13 @@ import { ProductViewTracker } from "@/components/product-view-tracker";
 import { SectionHeading } from "@/components/section-heading";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { getAuthViewer } from "@/lib/customer-auth";
 import { formatMonthly, formatSum } from "@/lib/format";
-import { getStorefrontProduct, getStorefrontSnapshot } from "@/lib/storefront";
+import {
+  getStorefrontProduct,
+  getStorefrontProductComments,
+  getStorefrontSnapshot,
+} from "@/lib/storefront";
 
 export const dynamic = "force-dynamic";
 
@@ -42,12 +48,14 @@ export async function generateMetadata({
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
-  const snapshot = await getStorefrontSnapshot();
+  const [snapshot, viewer] = await Promise.all([getStorefrontSnapshot(), getAuthViewer()]);
   const product = snapshot.products.find((item) => item.slug === slug);
 
   if (!product) {
     notFound();
   }
+
+  const comments = await getStorefrontProductComments(product.id ?? product.slug);
 
   const relatedProducts = snapshot.products
     .filter((item) => item.categorySlug === product.categorySlug && item.slug !== product.slug)
@@ -278,6 +286,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
               </p>
             </div>
           </div>
+        </section>
+
+        <section className="mt-6">
+          <ProductCommentsSection
+            productId={product.id ?? product.slug}
+            productSlug={product.slug}
+            comments={comments}
+            initialName={viewer?.firstName}
+            initialPhone={viewer?.phone}
+          />
         </section>
 
         {relatedProducts.length > 0 ? (

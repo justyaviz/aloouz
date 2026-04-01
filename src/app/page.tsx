@@ -78,8 +78,7 @@ export default async function Home() {
               Mahsulotlar hali tayyor emas
             </p>
             <p className="mt-4 text-base text-muted">
-              Admin paneldan yoki sync orqali mahsulotlar qo'shilgach bosh sahifa shu yerda
-              ishlaydi.
+              Yaqin orada yangi smartfonlar va aksiyalar shu sahifada ko'rsatiladi.
             </p>
           </div>
         </main>

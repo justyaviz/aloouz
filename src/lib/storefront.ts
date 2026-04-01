@@ -25,6 +25,14 @@ export type StorefrontSnapshot = {
   promoDeals: PromoDeal[];
 };
 
+export type ProductCommentView = {
+  id: string;
+  authorName: string;
+  phone?: string;
+  body: string;
+  createdAt: string;
+};
+
 export type AdminDashboardData = StorefrontSnapshot & {
   databaseEnabled: boolean;
   syncState: SyncProviderState | null;
@@ -186,8 +194,7 @@ async function seedDatabaseIfEmpty() {
     return;
   }
 
-  const [productCount, articleCount, promoCount] = await Promise.all([
-    prisma.product.count(),
+  const [articleCount, promoCount] = await Promise.all([
     prisma.article.count(),
     prisma.promoDeal.count(),
   ]);
@@ -209,9 +216,6 @@ async function seedDatabaseIfEmpty() {
     });
   }
 
-  const categoryRecords = await prisma.category.findMany();
-  const categoryMap = new Map(categoryRecords.map((category) => [category.slug, category]));
-
   for (const brand of fallback.brands) {
     const brandSlug = slugify(brand);
 
@@ -225,62 +229,6 @@ async function seedDatabaseIfEmpty() {
         slug: brandSlug,
       },
     });
-  }
-
-  const brandRecords = await prisma.brand.findMany();
-  const brandMap = new Map(brandRecords.map((brand) => [brand.slug, brand]));
-
-  if (productCount === 0) {
-    for (const product of fallback.products) {
-      const category = categoryMap.get(product.categorySlug);
-      const brand = brandMap.get(slugify(product.brand));
-
-      if (!category || !brand) {
-        continue;
-      }
-
-      await prisma.product.create({
-        data: {
-          name: product.name,
-          slug: product.slug,
-          sku: product.sku!,
-          shortDescription: product.shortDescription,
-          description: product.description,
-          kind: product.kind,
-          price: product.price,
-          compareAtPrice: product.oldPrice,
-          monthlyPrice: product.monthlyPrice,
-          installment6: product.installment6,
-          installment12: product.installment12 ?? product.monthlyPrice,
-          installment24: product.installment24,
-          stock: product.stock,
-          branchName: product.branchName,
-          branchStock: product.branchStock,
-          stockLabel: product.stockLabel,
-          badge: product.badge,
-          rating: product.rating,
-          reviews: product.reviews,
-          heroLabel: product.heroLabel,
-          delivery: product.delivery,
-          highlights: product.highlights,
-          colors: product.colors,
-          specs: product.specs,
-          toneFrom: product.toneFrom,
-          toneTo: product.toneTo,
-          imageUrl: product.imageUrl,
-          sourceType: product.sourceType === "se_one_sync" ? "SE_ONE_SYNC" : "MANUAL",
-          sourceExternalId: product.sourceExternalId,
-          sourceUpdatedAt: product.sourceUpdatedAt ? new Date(product.sourceUpdatedAt) : null,
-          isActive: product.isActive,
-          isFeatured: product.isFeatured,
-          isNewArrival: product.isNewArrival,
-          isDayDeal: product.isDayDeal,
-          sortOrder: product.sortOrder ?? 0,
-          categoryId: category.id,
-          brandId: brand.id,
-        },
-      });
-    }
   }
 
   if (articleCount === 0) {
@@ -558,7 +506,7 @@ export async function getStorefrontSnapshot(): Promise<StorefrontSnapshot> {
     return {
       products,
       categories,
-      brands: brands.length > 0 ? brands : fallbackBrands,
+      brands,
       articles,
       promoDeals,
     };
@@ -571,6 +519,32 @@ export async function getStorefrontSnapshot(): Promise<StorefrontSnapshot> {
 export async function getStorefrontProduct(slug: string) {
   const snapshot = await getStorefrontSnapshot();
   return snapshot.products.find((product) => product.slug === slug);
+}
+
+export async function getStorefrontProductComments(
+  productId: string,
+): Promise<ProductCommentView[]> {
+  if (!hasDatabaseUrl()) {
+    return [];
+  }
+
+  const comments = await prisma.productComment.findMany({
+    where: {
+      productId,
+      isPublished: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return comments.map((comment) => ({
+    id: comment.id,
+    authorName: comment.authorName,
+    phone: comment.phone ?? undefined,
+    body: comment.body,
+    createdAt: formatUzDate(comment.createdAt),
+  }));
 }
 
 export async function getAdminDashboardData(): Promise<AdminDashboardData> {
@@ -618,7 +592,7 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
       syncState: mapSyncProviderState(syncStateRecord),
       products,
       categories,
-      brands: brands.length > 0 ? brands : fallbackBrands,
+      brands,
       articles,
       promoDeals,
     };
