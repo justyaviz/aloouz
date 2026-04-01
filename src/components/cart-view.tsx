@@ -9,6 +9,7 @@ import { formatSum } from "@/lib/format";
 import { AddToCartButton } from "./add-to-cart-button";
 import { CartIcon, TrashIcon } from "./icons";
 import { ProductVisual } from "./product-visual";
+import { StorefrontEmptyState } from "./storefront-empty-state";
 import { useStorefrontState } from "./storefront-state-provider";
 
 export function CartView({ products }: { products: Product[] }) {
@@ -30,29 +31,17 @@ export function CartView({ products }: { products: Product[] }) {
 
   if (cartProducts.length === 0) {
     return (
-      <section className="rounded-[30px] border border-line bg-white p-8 shadow-[0_18px_45px_rgba(13,31,55,0.08)] sm:p-10">
-        <div className="mx-auto flex max-w-xl flex-col items-center text-center">
-          <div className="flex h-20 w-20 items-center justify-center rounded-[28px] bg-[#fff1ea] text-support">
-            <CartIcon className="h-8 w-8" />
-          </div>
-          <p className="mt-6 text-xs font-semibold uppercase tracking-[0.24em] text-accent">
-            Savat
-          </p>
-          <h1 className="mt-3 font-display text-4xl font-semibold tracking-tight text-foreground">
-            Savatchangiz hozircha bo'sh
-          </h1>
-          <p className="mt-4 text-sm leading-7 text-muted">
-            Mahsulot kartalaridagi `Savatga` tugmasi orqali tanlangan smartfon va gadjetlar shu
-            yerga yig'iladi.
-          </p>
-          <Link
-            href="/catalog"
-            className="mt-8 inline-flex items-center justify-center rounded-2xl bg-accent px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-accent-strong"
-          >
-            Xaridlarni boshlash
-          </Link>
-        </div>
-      </section>
+      <StorefrontEmptyState
+        eyebrow="Savatcha"
+        title="Savatchangiz hozircha bo'sh"
+        description="Asosiy sahifada yoki katalog ichida yoqqan smartfonlarni savatchaga qo'shing. Keyin shu joydan xaridni davom ettirasiz."
+        icon={CartIcon}
+        primaryHref="/catalog"
+        primaryLabel="O'tish"
+        secondaryHref="/favorites"
+        secondaryLabel="Sevimlilar"
+        footerText="Savat ichidagi mahsulotlar local qurilmada saqlanadi, shuning uchun foydalanuvchi tajribasi tez va silliq qoladi."
+      />
     );
   }
 
@@ -66,8 +55,8 @@ export function CartView({ products }: { products: Product[] }) {
               Xarid uchun tanlangan mahsulotlar
             </h1>
             <p className="mt-4 max-w-3xl text-sm leading-7 text-muted">
-              Hozir savatda {cartProducts.length} ta mahsulot bor. Keyingi bosqichda checkout va
-              buyurtma yuborish oqimini shu sahifaga ulash oson bo'ladi.
+              Hozir savatda {cartProducts.length} ta mahsulot bor. Bo'sh holat, miqdor va xaridga
+              qaytish oqimi endi public storefront uchun ancha toza ko'rinishga keltirildi.
             </p>
           </div>
 

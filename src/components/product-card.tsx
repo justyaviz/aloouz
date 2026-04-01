@@ -24,8 +24,8 @@ export function ProductCard({ product }: ProductCardProps) {
   ].filter((item): item is { months: number; amount: number } => item !== null);
 
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-[24px] border border-line bg-white p-3.5 shadow-[0_16px_34px_rgba(13,31,55,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_50px_rgba(13,31,55,0.12)]">
-      <div className="mb-3 flex items-start justify-between gap-3">
+    <article className="flex h-full flex-col overflow-hidden rounded-[24px] border border-line bg-white p-3 shadow-[0_16px_34px_rgba(13,31,55,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_50px_rgba(13,31,55,0.12)]">
+      <div className="mb-2.5 flex items-start justify-between gap-3">
         <div className="flex flex-wrap gap-2">
           <span className="rounded-full bg-[#eef6ff] px-3 py-1 text-[11px] font-semibold text-accent">
             {product.badge}
@@ -51,7 +51,7 @@ export function ProductCard({ product }: ProductCardProps) {
         imageAlt={product.name}
       />
 
-      <div className="flex flex-1 flex-col pt-4">
+      <div className="flex flex-1 flex-col pt-3">
         <div className="flex items-center justify-between gap-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
           <span>{product.brand}</span>
           <span>{product.branchStock ?? product.stock} dona mavjud</span>
@@ -59,16 +59,16 @@ export function ProductCard({ product }: ProductCardProps) {
 
         <Link
           href={`/product/${product.slug}`}
-          className="line-clamp-2 mt-3 min-h-[3.05rem] font-display text-[1rem] font-semibold leading-6 tracking-tight text-foreground"
+          className="line-clamp-2 mt-2.5 min-h-[2.8rem] font-display text-[0.98rem] font-semibold leading-6 tracking-tight text-foreground"
         >
           {product.name}
         </Link>
 
-        <p className="line-clamp-1 mt-2 min-h-[1.4rem] text-[13px] leading-5 text-muted">
+        <p className="line-clamp-1 mt-1.5 min-h-[1.25rem] text-[12px] leading-5 text-muted">
           {product.shortDescription}
         </p>
 
-        <div className="mt-3 flex flex-wrap items-center gap-2">
+        <div className="mt-2.5 flex flex-wrap items-center gap-2">
           <span className="rounded-full border border-accent/20 bg-[#f6faff] px-3 py-2 text-[11px] font-semibold text-accent">
             12 oy: {formatMonthly(product.installment12 ?? product.monthlyPrice)}
           </span>
@@ -87,12 +87,12 @@ export function ProductCard({ product }: ProductCardProps) {
           </div>
         </div>
 
-        <div className="mt-4 flex items-end justify-between gap-4">
+        <div className="mt-3 flex items-end justify-between gap-4">
           <div>
             {product.oldPrice ? (
               <p className="text-sm text-muted line-through">{formatSum(product.oldPrice)}</p>
             ) : null}
-            <p className="mt-1 text-xl font-semibold text-foreground">
+            <p className="mt-1 text-[1.1rem] font-semibold text-foreground">
               {formatSum(product.price)}
             </p>
             <p className="mt-1 text-[12px] text-muted">
@@ -104,7 +104,7 @@ export function ProductCard({ product }: ProductCardProps) {
           </span>
         </div>
 
-        <div className="mt-4 grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
+        <div className="mt-3 grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-center">
           <Link
             href={`/product/${product.slug}`}
             className="inline-flex items-center justify-center gap-2 rounded-2xl border border-line bg-white px-4 py-3 text-sm font-semibold text-foreground transition hover:border-accent/35 hover:text-accent"
@@ -113,9 +113,6 @@ export function ProductCard({ product }: ProductCardProps) {
             Batafsil
           </Link>
           <AddToCartButton productSlug={product.slug} />
-        </div>
-
-        <div className="mt-2 flex justify-end">
           <ProductUtilityActions productSlug={product.slug} productName={product.name} />
         </div>
       </div>

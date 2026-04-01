@@ -8,6 +8,7 @@ import { formatMonthly, formatSum } from "@/lib/format";
 
 import { CompareIcon } from "./icons";
 import { ProductVisual } from "./product-visual";
+import { StorefrontEmptyState } from "./storefront-empty-state";
 import { useStorefrontState } from "./storefront-state-provider";
 
 function compareSpecLabels(products: Product[]) {
@@ -47,33 +48,17 @@ export function CompareView({ products }: { products: Product[] }) {
 
   if (selectedProducts.length === 0) {
     return (
-      <section className="rounded-[30px] border border-line bg-white p-8 shadow-[0_18px_45px_rgba(13,31,55,0.08)] sm:p-10">
-        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
-          Taqqoslash
-        </p>
-        <h1 className="mt-3 font-display text-4xl font-semibold tracking-tight text-foreground">
-          Hozircha taqqoslanayotgan mahsulot yo'q
-        </h1>
-        <p className="mt-4 max-w-2xl text-sm leading-7 text-muted">
-          MediaPark uslubidagi taqqoslash moduli tayyor. Mahsulot kartasi yoki detail
-          sahifasidan `Taqqoslash` tugmasini bosing, tanlangan modellar shu yerda yonma-yon
-          ko'rinadi.
-        </p>
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Link
-            href="/catalog"
-            className="inline-flex items-center justify-center rounded-2xl bg-accent px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-accent-strong"
-          >
-            Mahsulot tanlash
-          </Link>
-          <Link
-            href="/favorites"
-            className="inline-flex items-center justify-center rounded-2xl border border-line bg-white px-6 py-3.5 text-sm font-semibold text-foreground transition hover:border-accent/35 hover:text-accent"
-          >
-            Sevimlilarni ko'rish
-          </Link>
-        </div>
-      </section>
+      <StorefrontEmptyState
+        eyebrow="Taqqoslash"
+        title="Mahsulotlarni taqqoslaymizmi?"
+        description="Xususiyatlari, narxi va bo'lib to'lash summalarini solishtirish uchun mahsulot kartalaridagi taqqoslash tugmasini bosing."
+        icon={CompareIcon}
+        primaryHref="/catalog"
+        primaryLabel="Katalogga o'tish"
+        secondaryHref="/favorites"
+        secondaryLabel="Sevimlilar"
+        footerText="Taqqoslash modulida narx, ombor holati va asosiy tavsiflar yonma-yon ko'rinishda chiqadi."
+      />
     );
   }
 
@@ -90,7 +75,8 @@ export function CompareView({ products }: { products: Product[] }) {
             </h1>
             <p className="mt-4 max-w-3xl text-sm leading-7 text-muted">
               Narx, oylik to'lov, ombor holati va asosiy texnik tavsiflar bitta jadvalda
-              ko'rsatiladi. Shu oqim MediaPark’dagi compare funksiyasiga yaqin tajriba beradi.
+              ko'rsatiladi. Endi bu bo'lim public storefront uchun ancha saranjom va foydalanishga
+              tayyor.
             </p>
           </div>
 
@@ -200,7 +186,11 @@ export function CompareView({ products }: { products: Product[] }) {
           ].map((row) => (
             <FragmentRow key={row.label} label={row.label}>
               {selectedProducts.map((product) => (
-                <CompareCell key={`${row.label}-${product.slug}`} product={product} render={row.render} />
+                <CompareCell
+                  key={`${row.label}-${product.slug}`}
+                  product={product}
+                  render={row.render}
+                />
               ))}
             </FragmentRow>
           ))}

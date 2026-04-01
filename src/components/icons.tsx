@@ -112,6 +112,32 @@ export function ArrowRightIcon({ className }: IconProps) {
   );
 }
 
+export function CloseIcon({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <path d="m6 6 12 12" />
+      <path d="M18 6 6 18" />
+    </Svg>
+  );
+}
+
+export function ChevronDownIcon({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <path d="m6 9 6 6 6-6" />
+    </Svg>
+  );
+}
+
+export function AppleIcon({ className }: IconProps) {
+  return (
+    <Svg className={className} viewBox="0 0 24 24">
+      <path d="M15.4 4.2c-.8.9-2 1.5-3.1 1.4-.2-1.1.3-2.3 1-3 .8-.8 2-1.4 3-1.4.1 1-.2 2.1-.9 3Z" />
+      <path d="M19.4 16.7c-.7 1-1 1.4-1.9 2.3-1.1 1.1-2 2-3.2 2-1 0-1.7-.3-2.8-.3s-1.8.3-2.8.3c-1.2 0-2.1-1-3.2-2-3-3.2-3.3-7-1.5-9.7 1.3-1.9 3.4-3 5.4-3 1.1 0 2.1.3 3 .6.9.3 1.4.5 2.2.5.7 0 1.1-.2 2-.5 1-.3 1.9-.7 3.1-.6 1 .1 2.4.4 3.6 1.8-2.8 1.5-2.3 5.5.1 6.6Z" />
+    </Svg>
+  );
+}
+
 export function PhoneIcon({ className }: IconProps) {
   return (
     <Svg className={className}>

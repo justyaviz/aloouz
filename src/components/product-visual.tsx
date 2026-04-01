@@ -26,12 +26,12 @@ export function ProductVisual({
   const visualSize = size ?? (compact ? "compact" : "default");
   const heightClass =
     visualSize === "hero"
-      ? "h-[14rem] rounded-[30px] sm:h-[17rem] lg:h-[19rem]"
+      ? "h-[12.5rem] rounded-[26px] sm:h-[14.5rem] lg:h-[15.5rem]"
       : visualSize === "compact"
         ? "h-36 rounded-[22px]"
         : "h-[26rem] rounded-[36px]";
   const paddingClass =
-    visualSize === "compact" ? "p-4" : visualSize === "hero" ? "p-6 sm:p-8" : "p-8";
+    visualSize === "compact" ? "p-4" : visualSize === "hero" ? "p-4 sm:p-6" : "p-8";
   const labelClass =
     visualSize === "compact"
       ? "bottom-3 left-3 px-3 py-1.5 text-[10px]"
