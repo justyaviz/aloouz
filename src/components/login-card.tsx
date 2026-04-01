@@ -16,6 +16,7 @@ import { CloseIcon, LockShieldIcon, TelegramIcon } from "@/components/icons";
 type LoginCardProps = {
   onClose?: () => void;
   className?: string;
+  redirectTo?: string;
 };
 
 const initialRequestState: TelegramLoginRequestState = {};
@@ -74,7 +75,7 @@ function VerifyButton() {
   );
 }
 
-export function LoginCard({ onClose, className }: LoginCardProps) {
+export function LoginCard({ onClose, className, redirectTo: redirectOverride }: LoginCardProps) {
   const pathname = usePathname();
   const [accepted, setAccepted] = useState(true);
   const [phone, setPhone] = useState("");
@@ -88,7 +89,7 @@ export function LoginCard({ onClose, className }: LoginCardProps) {
   );
 
   const formattedPhone = useMemo(() => formatPhone(phone), [phone]);
-  const redirectTo = pathname === "/login" ? "/profile" : pathname;
+  const redirectTo = redirectOverride ?? (pathname === "/login" ? "/profile" : pathname);
   const hasChallenge = Boolean(requestState.challengeId);
 
   return (

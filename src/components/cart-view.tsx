@@ -140,10 +140,10 @@ export function CartView({ products }: { products: Product[] }) {
             <p>Tanlangan mahsulotlar savatda saqlanadi va keyingi xarid bosqichiga shu yerdan o'tiladi.</p>
           </div>
           <Link
-            href="/profile"
+            href="/checkout"
             className="mt-6 inline-flex w-full items-center justify-center rounded-2xl bg-accent px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-accent-strong"
           >
-            Kirishni davom ettirish
+            Buyurtma berish
           </Link>
         </aside>
       </div>

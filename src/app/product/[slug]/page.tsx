@@ -204,10 +204,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
               <AddToCartButton productSlug={product.slug} className="w-full" />
               <Link
-                href="/profile"
+                href={`/checkout?product=${encodeURIComponent(product.slug)}`}
                 className="inline-flex items-center justify-center rounded-2xl border border-line bg-white px-6 py-4 text-sm font-semibold text-foreground transition hover:border-accent/35 hover:text-accent"
               >
-                Kirib buyurtma berish
+                Buyurtma berish
               </Link>
             </div>
 

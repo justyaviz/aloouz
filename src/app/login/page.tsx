@@ -12,11 +12,27 @@ export const metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default async function LoginPage() {
+type LoginPageProps = {
+  searchParams: Promise<{
+    redirectTo?: string;
+  }>;
+};
+
+function getSafeRedirectPath(value?: string) {
+  if (!value || !value.startsWith("/")) {
+    return "/profile";
+  }
+
+  return value;
+}
+
+export default async function LoginPage({ searchParams }: LoginPageProps) {
   const viewer = await getAuthViewer();
+  const params = await searchParams;
+  const redirectTo = getSafeRedirectPath(params.redirectTo);
 
   if (viewer) {
-    redirect("/profile");
+    redirect(redirectTo);
   }
 
   return (
@@ -28,7 +44,7 @@ export default async function LoginPage() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(254,102,0,0.08),transparent_24%)]" />
 
           <div className="relative flex min-h-[60vh] items-center justify-center">
-            <LoginCard />
+            <LoginCard redirectTo={redirectTo} />
           </div>
         </section>
       </main>
