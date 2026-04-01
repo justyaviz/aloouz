@@ -6,11 +6,7 @@ import { CountdownTimer } from "@/components/countdown-timer";
 import { HeroCarousel } from "@/components/hero-carousel";
 import {
   ArrowRightIcon,
-  BoltIcon,
-  ClockIcon,
   LocationIcon,
-  NewspaperIcon,
-  PackageIcon,
   TrendUpIcon,
 } from "@/components/icons";
 import { ProductCard } from "@/components/product-card";
@@ -32,34 +28,6 @@ const categoryCaptions = [
   "Ish va o'qish",
   "Klaviatura va setup",
   "Simsiz karnaylar",
-];
-
-const serviceCards = [
-  {
-    title: "90 daqiqalik yetkazish",
-    description: "Toshkent bo'ylab tezkor yetkazish va do'kondan olib ketish imkoniyati mavjud.",
-    icon: BoltIcon,
-    anchor: "/#delivery",
-  },
-  {
-    title: "12 oygacha to'lov",
-    description: "Narx, eski narx va oylik to'lov har mahsulot kartasida bir xil ko'rinishda chiqadi.",
-    icon: ClockIcon,
-    anchor: "/#installment",
-  },
-  {
-    title: "Faqat original qurilmalar",
-    description:
-      "IMEI, kafolat va rasmiy yetkazib beruvchi argumentlari har shelf ichida saqlanadi.",
-    icon: PackageIcon,
-    anchor: "/catalog",
-  },
-  {
-    title: "Kontent va maslahat",
-    description: "alooBlog ichida yangiliklar, tavsiyalar va foydali tanlov maqolalari jamlangan.",
-    icon: NewspaperIcon,
-    anchor: "/blog",
-  },
 ];
 
 function parseHexColor(value: string) {
@@ -308,39 +276,6 @@ export default async function Home() {
                 <AddToCartButton productSlug={productOfDay.slug} mode="icon" />
               </div>
             </aside>
-          </div>
-        </section>
-
-        <section id="delivery" className="shell reveal-up reveal-up-delay-1 hidden pt-6 md:block">
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {serviceCards.map((item, index) => {
-              const Icon = item.icon;
-
-              return (
-                <Link
-                  key={item.title}
-                  href={item.anchor}
-                  className="group relative overflow-hidden rounded-[28px] border border-line bg-white px-5 py-5 shadow-[0_12px_30px_rgba(13,31,55,0.06)] transition hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(13,31,55,0.1)]"
-                >
-                  <div
-                    className="absolute right-0 top-0 h-24 w-24 opacity-[0.06]"
-                    style={{
-                      backgroundImage: `url('${index % 2 === 0 ? "/brand/aloo-mark-dark.png" : "/brand/aloo-mark-light.png"}')`,
-                      backgroundPosition: "center",
-                      backgroundRepeat: "no-repeat",
-                      backgroundSize: "contain",
-                    }}
-                  />
-                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-[18px] bg-[#f4f8ff] text-accent transition group-hover:bg-accent group-hover:text-white">
-                    <Icon className="h-5 w-5" />
-                  </span>
-                  <h2 className="mt-4 font-display text-2xl font-semibold text-foreground">
-                    {item.title}
-                  </h2>
-                  <p className="mt-3 text-sm leading-7 text-muted">{item.description}</p>
-                </Link>
-              );
-            })}
           </div>
         </section>
 
