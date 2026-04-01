@@ -26,12 +26,12 @@ export function ProductVisual({
   const visualSize = size ?? (compact ? "compact" : "default");
   const heightClass =
     visualSize === "hero"
-      ? "h-[12.5rem] rounded-[24px] sm:h-[14rem] lg:h-[15.2rem]"
+      ? "h-[13.1rem] rounded-[24px] sm:h-[14.6rem] lg:h-[15.9rem]"
       : visualSize === "deal"
-        ? "h-[8.9rem] rounded-[18px] sm:h-[9.8rem] xl:h-[8.2rem]"
-      : visualSize === "compact"
-        ? "h-[12.8rem] rounded-[22px] sm:h-[14.25rem]"
-        : "h-[27rem] rounded-[36px]";
+        ? "h-[9.5rem] rounded-[18px] sm:h-[10.2rem] xl:h-[8.9rem]"
+        : visualSize === "compact"
+          ? "h-[12.8rem] rounded-[22px] sm:h-[14.25rem]"
+          : "h-[27rem] rounded-[36px]";
   const paddingClass =
     visualSize === "compact"
       ? "p-2.5 sm:p-3"

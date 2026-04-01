@@ -104,7 +104,7 @@ export function HeroCarousel({ slides }: { slides: HeroCarouselSlide[] }) {
         </>
       ) : null}
 
-      <div className="relative min-h-[10.8rem] sm:min-h-[14.5rem] lg:min-h-[14.75rem]">
+      <div className="relative min-h-[11.5rem] sm:min-h-[15rem] lg:min-h-[15.4rem]">
         {slides.map((slide, index) => (
           <div
             key={slide.id}

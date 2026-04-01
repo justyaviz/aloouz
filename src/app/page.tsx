@@ -209,7 +209,7 @@ export default async function Home() {
           <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_286px] xl:items-stretch">
             <HeroCarousel slides={heroSlides} />
 
-            <aside className="reveal-up reveal-up-delay-1 rounded-[26px] border border-line bg-white p-4 shadow-[0_16px_38px_rgba(13,31,55,0.08)] sm:rounded-[30px] sm:p-5 xl:h-full xl:max-h-[294px] xl:overflow-hidden xl:p-4">
+            <aside className="reveal-up reveal-up-delay-1 rounded-[26px] border border-line bg-white p-4 shadow-[0_16px_38px_rgba(13,31,55,0.08)] sm:rounded-[30px] sm:p-5 xl:h-full xl:max-h-[318px] xl:overflow-hidden xl:p-4">
               <div className="flex items-end justify-between gap-4">
                 <div>
                   <p className="text-sm font-semibold text-foreground sm:text-xs sm:uppercase sm:tracking-[0.24em] sm:text-accent">
