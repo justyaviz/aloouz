@@ -1,5 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
+
+import { StorefrontStateProvider } from "@/components/storefront-state-provider";
+
 import "./globals.css";
 
 const gilroy = localFont({
@@ -65,7 +68,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="uz" className={`${gilroy.variable} ${gilroyDisplay.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col">{children}</body>
+      <body className="flex min-h-full flex-col">
+        <StorefrontStateProvider>{children}</StorefrontStateProvider>
+      </body>
     </html>
   );
 }

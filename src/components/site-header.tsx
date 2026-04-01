@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 
 import {
@@ -12,10 +14,11 @@ import {
   SearchIcon,
   UserIcon,
 } from "@/components/icons";
+import { useStorefrontState } from "@/components/storefront-state-provider";
 import { SiteLogo } from "@/components/site-logo";
 
 const topLinks = [
-  { href: "/catalog", label: "alooblog" },
+  { href: "/#blog", label: "alooblog" },
   { href: "/catalog", label: "Yetkazib berish" },
   { href: "/catalog", label: "Filiallar" },
   { href: "/catalog?category=smartfonlar", label: "Muddatli to'lov" },
@@ -23,10 +26,10 @@ const topLinks = [
 ];
 
 const quickActions = [
-  { href: "/catalog", label: "Buyurtma", icon: ClipboardIcon },
-  { href: "/catalog", label: "Taqqoslash", icon: CompareIcon },
+  { href: "/order-status", label: "Status", icon: ClipboardIcon, countKey: null },
+  { href: "/compare", label: "Taqqoslash", icon: CompareIcon, countKey: "compare" as const },
   { href: "/catalog", label: "Savat", icon: CartIcon },
-  { href: "/catalog", label: "Sevimli", icon: HeartIcon },
+  { href: "/favorites", label: "Sevimli", icon: HeartIcon, countKey: "favorites" as const },
   { href: "/admin", label: "Admin", icon: UserIcon },
 ];
 
@@ -47,19 +50,26 @@ function Shortcut({
   href,
   label,
   icon: Icon,
+  count,
 }: {
   href: string;
   label: string;
   icon: (props: { className?: string }) => React.ReactNode;
+  count?: number;
 }) {
   return (
     <Link
       href={href}
-      className="group flex min-w-0 flex-col items-center gap-2 rounded-[20px] px-2 py-2 text-center transition hover:-translate-y-0.5"
+      className="group relative flex min-w-0 flex-col items-center gap-2 rounded-[20px] px-2 py-2 text-center transition hover:-translate-y-0.5"
     >
       <span className="flex h-11 w-11 items-center justify-center rounded-[16px] border border-[#dce8f3] bg-[#f5f9fd] text-[#0a336c] shadow-sm transition group-hover:bg-accent group-hover:text-white">
         <Icon className="h-5 w-5" />
       </span>
+      {count && count > 0 ? (
+        <span className="absolute right-1 top-0 inline-flex min-w-5 items-center justify-center rounded-full bg-support px-1.5 py-1 text-[10px] font-bold leading-none text-white shadow-[0_8px_18px_rgba(242,104,26,0.24)]">
+          {count}
+        </span>
+      ) : null}
       <span className="text-[12px] font-medium leading-4 text-foreground">{label}</span>
     </Link>
   );
@@ -83,6 +93,13 @@ function MobileAction({
 }
 
 export function SiteHeader() {
+  const { compare, favorites, hydrated } = useStorefrontState();
+
+  const counts = {
+    compare: hydrated ? compare.length : 0,
+    favorites: hydrated ? favorites.length : 0,
+  };
+
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-white/92 backdrop-blur-md">
       <div className="lg:hidden">
@@ -136,7 +153,13 @@ export function SiteHeader() {
 
           <div className="mt-3 grid grid-cols-4 gap-2">
             {mobileShortcuts.map((item) => (
-              <Shortcut key={item.label} href={item.href} label={item.label} icon={item.icon} />
+              <Shortcut
+                key={item.label}
+                href={item.href}
+                label={item.label}
+                icon={item.icon}
+                count={item.countKey ? counts[item.countKey] : undefined}
+              />
             ))}
           </div>
 
@@ -223,7 +246,13 @@ export function SiteHeader() {
 
           <div className="reveal-up reveal-up-delay-2 grid grid-cols-5 gap-2">
             {quickActions.map((item) => (
-              <Shortcut key={item.label} href={item.href} label={item.label} icon={item.icon} />
+              <Shortcut
+                key={item.label}
+                href={item.href}
+                label={item.label}
+                icon={item.icon}
+                count={item.countKey ? counts[item.countKey] : undefined}
+              />
             ))}
           </div>
         </div>

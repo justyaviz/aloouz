@@ -89,7 +89,15 @@ export function SiteFooter() {
             <p>IMEI va original qurilmalar</p>
             <p>12 oygacha muddatli to'lov</p>
             <p>Tezkor delivery va pick-up</p>
-            <p>Telegram konsultatsiya</p>
+            <Link href="/favorites" className="block transition hover:text-white">
+              Sevimlilar
+            </Link>
+            <Link href="/compare" className="block transition hover:text-white">
+              Taqqoslash
+            </Link>
+            <Link href="/order-status" className="block transition hover:text-white">
+              Buyurtma holati
+            </Link>
           </div>
         </div>
 

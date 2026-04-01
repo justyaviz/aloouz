@@ -4,7 +4,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { ProductCard } from "@/components/product-card";
+import { ProductUtilityActions } from "@/components/product-utility-actions";
 import { ProductVisual } from "@/components/product-visual";
+import { ProductViewTracker } from "@/components/product-view-tracker";
 import { SectionHeading } from "@/components/section-heading";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -51,6 +53,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   return (
     <>
       <SiteHeader />
+      <ProductViewTracker productSlug={product.slug} />
 
       <main className="shell py-5 pb-24 md:pb-16">
         <nav className="mb-4 hidden flex-wrap items-center gap-2 text-sm text-muted sm:flex">
@@ -187,11 +190,19 @@ export default async function ProductPage({ params }: ProductPageProps) {
               </a>
             </div>
 
+            <div className="mt-3">
+              <ProductUtilityActions
+                productSlug={product.slug}
+                productName={product.name}
+                layout="detail"
+              />
+            </div>
+
             <div className="mt-6 space-y-3">
               {[
                 "Retail detail ichida narx, oylik to'lov va ombor holati alohida ko'rsatiladi.",
                 "Aksiya va trust label'lari yuqorida bir qarashda ko'rinadi.",
-                "Keyingi bosqichda reviews, IMEI tekshiruv va filial bo'yicha stock qo'shiladi.",
+                "Sevimlilar va taqqoslash funksiyasi shu sahifadan ham bir klikda boshqariladi.",
               ].map((item) => (
                 <div
                   key={item}
@@ -231,6 +242,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   "Tezkor delivery va pick-up",
                   "Telefon va Telegram orqali konsultatsiya",
                   "Muddatli to'lov va aksiya bannerlari",
+                  "Buyurtma statusini alohida sahifada tekshirish",
                 ].map((item) => (
                   <div
                     key={item}

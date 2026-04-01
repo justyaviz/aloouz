@@ -1,10 +1,12 @@
 /* eslint-disable react/no-unescaped-entities */
+"use client";
 import Link from "next/link";
 
 import type { Product } from "@/data/store";
 import { formatMonthly, formatSum } from "@/lib/format";
 
 import { ArrowRightIcon, CartIcon } from "./icons";
+import { ProductUtilityActions } from "./product-utility-actions";
 import { ProductVisual } from "./product-visual";
 
 type ProductCardProps = {
@@ -97,6 +99,10 @@ export function ProductCard({ product }: ProductCardProps) {
             <CartIcon className="h-4 w-4" />
             Savatga
           </Link>
+        </div>
+
+        <div className="mt-2">
+          <ProductUtilityActions productSlug={product.slug} productName={product.name} />
         </div>
       </div>
     </article>
