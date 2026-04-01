@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { ArrowRightIcon } from "./icons";
+
 type SectionHeadingProps = {
   eyebrow: string;
   title: string;
@@ -29,8 +31,9 @@ export function SectionHeading({
       {ctaLabel && ctaHref ? (
         <Link
           href={ctaHref}
-          className="inline-flex items-center justify-center rounded-2xl border border-line bg-white px-5 py-3 text-sm font-semibold text-foreground transition hover:border-accent/35 hover:text-accent"
+          className="inline-flex items-center justify-center gap-2 rounded-2xl border border-line bg-white px-5 py-3 text-sm font-semibold text-foreground transition hover:border-accent/35 hover:text-accent"
         >
+          <ArrowRightIcon className="h-4 w-4" />
           {ctaLabel}
         </Link>
       ) : null}

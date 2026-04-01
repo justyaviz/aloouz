@@ -1,16 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f2f6fb;
-  --foreground: #0a1524;
-  --muted: #627286;
-  --surface: #f7fafe;
+  --background: #eef3f7;
+  --foreground: #081321;
+  --muted: #64758b;
+  --surface: #f8fbfd;
   --surface-strong: #ffffff;
   --line: rgba(10, 21, 36, 0.08);
   --accent: #1690f5;
   --accent-strong: #0b74d1;
   --support: #fe6600;
   --support-soft: #ffad00;
+  --catalog: #54c43a;
+  --catalog-strong: #43ab2c;
+  --navy: #0a336c;
   --shadow: 0 18px 40px rgba(13, 31, 55, 0.08);
 }
 
@@ -25,8 +28,11 @@
   --color-accent-strong: var(--accent-strong);
   --color-support: var(--support);
   --color-support-soft: var(--support-soft);
-  --font-sans: var(--font-manrope);
-  --font-display: var(--font-space-grotesk);
+  --color-catalog: var(--catalog);
+  --color-catalog-strong: var(--catalog-strong);
+  --color-navy: var(--navy);
+  --font-sans: var(--font-gilroy);
+  --font-display: var(--font-gilroy-display);
 }
 
 * {
@@ -39,9 +45,16 @@ html {
 
 body {
   min-height: 100vh;
-  background: linear-gradient(180deg, #fafcfe 0%, var(--background) 42%, #eef3f8 100%);
+  background:
+    radial-gradient(circle at top left, rgba(22, 144, 245, 0.08), transparent 28%),
+    radial-gradient(circle at top right, rgba(84, 196, 58, 0.08), transparent 20%),
+    linear-gradient(180deg, #fafcfe 0%, var(--background) 42%, #edf2f6 100%);
   color: var(--foreground);
-  font-family: var(--font-manrope), sans-serif;
+  font-family: var(--font-gilroy), sans-serif;
+}
+
+img {
+  user-select: none;
 }
 
 a {
@@ -79,8 +92,129 @@ a {
   background-position: center;
 }
 
+.line-clamp-2 {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.page-enter {
+  animation: page-enter 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-up {
+  opacity: 0;
+  animation: reveal-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.reveal-up-delay-1 {
+  animation-delay: 0.08s;
+}
+
+.reveal-up-delay-2 {
+  animation-delay: 0.16s;
+}
+
+.reveal-up-delay-3 {
+  animation-delay: 0.24s;
+}
+
+.animate-float-soft {
+  animation: float-soft 5.5s ease-in-out infinite;
+}
+
+.loader-glow {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 20px 60px rgba(0, 0, 0, 0.2),
+    0 0 50px rgba(22, 144, 245, 0.35);
+}
+
+.loader-track {
+  position: relative;
+  overflow: hidden;
+}
+
+.loader-track::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  animation: shimmer 1.6s linear infinite;
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-120%);
+  }
+
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (min-width: 640px) {
   .shell {
     padding-inline: 1.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .page-enter,
+  .reveal-up,
+  .animate-float-soft,
+  .loader-track::after {
+    animation: none !important;
+  }
+
+  .reveal-up {
+    opacity: 1;
   }
 }

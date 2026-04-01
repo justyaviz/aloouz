@@ -8,6 +8,7 @@ type ProductVisualProps = {
   toneTo: string;
   imageUrl?: string;
   imageAlt?: string;
+  size?: "compact" | "default" | "hero";
   compact?: boolean;
 };
 
@@ -18,9 +19,22 @@ export function ProductVisual({
   toneTo,
   imageUrl,
   imageAlt,
+  size,
   compact = false,
 }: ProductVisualProps) {
-  const heightClass = compact ? "h-48 rounded-[28px]" : "h-[26rem] rounded-[36px]";
+  const visualSize = size ?? (compact ? "compact" : "default");
+  const heightClass =
+    visualSize === "hero"
+      ? "h-[15.5rem] rounded-[30px] sm:h-[18rem] lg:h-[20rem]"
+      : visualSize === "compact"
+        ? "h-40 rounded-[24px]"
+        : "h-[26rem] rounded-[36px]";
+  const paddingClass =
+    visualSize === "compact" ? "p-4" : visualSize === "hero" ? "p-6 sm:p-8" : "p-8";
+  const labelClass =
+    visualSize === "compact"
+      ? "bottom-3 left-3 px-3 py-1.5 text-[10px]"
+      : "bottom-4 left-4 px-4 py-2 text-xs";
 
   return (
     <div
@@ -33,7 +47,7 @@ export function ProductVisual({
       <div className="absolute left-6 top-6 h-24 w-24 rounded-full bg-white/25 blur-2xl" />
       <div className="absolute bottom-8 right-8 h-28 w-28 rounded-full bg-black/10 blur-3xl" />
 
-      <div className="absolute inset-0 flex items-center justify-center p-8">
+      <div className={`absolute inset-0 flex items-center justify-center ${paddingClass}`}>
         {imageUrl ? (
           <img
             src={imageUrl}
@@ -75,7 +89,9 @@ export function ProductVisual({
         ) : null}
       </div>
 
-      <div className="absolute bottom-4 left-4 rounded-full bg-white/85 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-900">
+      <div
+        className={`absolute rounded-full bg-white/88 font-semibold uppercase tracking-[0.2em] text-slate-900 ${labelClass}`}
+      >
         {label}
       </div>
     </div>

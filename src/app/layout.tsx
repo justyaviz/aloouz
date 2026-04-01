@@ -1,15 +1,47 @@
 import type { Metadata, Viewport } from "next";
-import { Manrope, Space_Grotesk } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const manrope = Manrope({
-  variable: "--font-manrope",
-  subsets: ["latin"],
+const gilroy = localFont({
+  variable: "--font-gilroy",
+  src: [
+    {
+      path: "./fonts/Gilroy-Regular.ttf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "./fonts/Gilroy-Medium.ttf",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "./fonts/Gilroy-SemiBold.ttf",
+      weight: "600",
+      style: "normal",
+    },
+    {
+      path: "./fonts/Gilroy-Bold.ttf",
+      weight: "700",
+      style: "normal",
+    },
+  ],
 });
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
-  subsets: ["latin"],
+const gilroyDisplay = localFont({
+  variable: "--font-gilroy-display",
+  src: [
+    {
+      path: "./fonts/Gilroy-SemiBold.ttf",
+      weight: "600",
+      style: "normal",
+    },
+    {
+      path: "./fonts/Gilroy-Bold.ttf",
+      weight: "700",
+      style: "normal",
+    },
+  ],
 });
 
 export const metadata: Metadata = {
@@ -32,10 +64,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="uz"
-      className={`${manrope.variable} ${spaceGrotesk.variable} h-full antialiased`}
-    >
+    <html lang="uz" className={`${gilroy.variable} ${gilroyDisplay.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">{children}</body>
     </html>
   );

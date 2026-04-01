@@ -489,7 +489,7 @@ export const perks = [
   {
     title: "Maslahat + muloqot",
     description:
-      "Aloo g'oyasidagi aloqa, servis va maslahat ruhini header, CTA va product detail bloklarida ushladik.",
+      "aloo g'oyasidagi aloqa, servis va maslahat ruhini header, CTA va product detail bloklarida ushladik.",
   },
 ];
 
@@ -505,7 +505,7 @@ export const articles: Article[] = [
   },
   {
     slug: "aloo-bilan-sevimli-telefoning-qolingda",
-    title: "Aloo bilan sevimli telefoning qo'lingda",
+    title: "aloo bilan sevimli telefoning qo'lingda",
     date: "30 mart, 2026",
     tag: "Campaign",
     summary: "aloo brendining savdo va servis ohangini tushuntiradigan promo material va xarid ssenariylari.",
