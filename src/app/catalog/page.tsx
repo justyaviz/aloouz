@@ -201,8 +201,8 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
                 Buyurtma va konsultatsiya uchun tezkor kanal
               </h2>
               <p className="mt-3 text-sm leading-7 text-white/72">
-                Aloo g'oyasidagi muloqot ruhi katalog ichida ham qoladi. Telefon va Telegram
-                orqali bir klikda bog'lanish keyingi iteratsiyada ulanadi.
+                Aloo g'oyasidagi muloqot ruhi katalog ichida ham qoladi. Call-markaz, Telegram va
+                Instagram orqali mijozni bir klikda kerakli kanalga olib chiqish oqimi tayyor.
               </p>
             </div>
           </aside>

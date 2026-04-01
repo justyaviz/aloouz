@@ -25,6 +25,9 @@ import { LoginCard } from "@/components/login-card";
 import { useStorefrontState } from "@/components/storefront-state-provider";
 import { SiteLogo } from "@/components/site-logo";
 
+const callCenterLabel = "+998 78 122 08 00";
+const callCenterHref = "tel:+998781220800";
+const mapsHref = "https://yandex.uz/maps/?text=aloo";
 const topLinks = [
   { href: "/#about", label: "Biz haqimizda" },
   { href: "/blog", label: "alooBlog", pill: true },
@@ -354,14 +357,22 @@ export function SiteHeaderClient({ viewer }: { viewer: AuthViewer | null }) {
         <div className="border-b border-line/80 bg-white">
           <div className="shell flex flex-wrap items-center justify-between gap-3 py-2.5 text-[13px] text-muted">
             <div className="flex flex-wrap items-center gap-4">
-              <p className="inline-flex items-center gap-2 font-medium text-foreground">
+              <a
+                href={callCenterHref}
+                className="inline-flex items-center gap-2 font-medium text-foreground transition hover:text-accent"
+              >
                 <PhoneIcon className="h-4 w-4 text-accent" />
-                +998 71 203 33 33
-              </p>
-              <p className="inline-flex items-center gap-2">
+                {callCenterLabel}
+              </a>
+              <a
+                href={mapsHref}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 transition hover:text-accent"
+              >
                 <LocationIcon className="h-4 w-4 text-accent" />
                 Toshkent viloyati
-              </p>
+              </a>
             </div>
 
             <div className="hidden flex-wrap items-center gap-4 lg:flex">

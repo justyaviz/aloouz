@@ -7,6 +7,19 @@ import { SiteLogo } from "@/components/site-logo";
 import { categories } from "@/data/store";
 
 const paymentMethods = ["Uzcard", "Humo", "Click", "Payme", "Visa", "Mastercard"];
+const callCenterLabel = "+998 78 122 08 00";
+const callCenterHref = "tel:+998781220800";
+const mapsHref = "https://yandex.uz/maps/?text=aloo";
+const socialLinks = [
+  { href: "https://t.me/aloo_uzb", label: "Telegram" },
+  { href: "https://www.instagram.com/aloo.uz_/", label: "Instagram" },
+  { href: "https://www.youtube.com/@aloouz", label: "YouTube" },
+  { href: "https://www.facebook.com/aloo.uz", label: "Facebook" },
+  { href: "https://yandex.uz/maps/?text=aloo", label: "Yandex Maps" },
+  { href: "https://www.threads.com/@aloo.uz_", label: "Threads" },
+  { href: "https://www.tiktok.com/@aloo.uz", label: "TikTok" },
+  { href: "https://x.com/aloouz", label: "X" },
+];
 
 const infoLinks = [
   { href: "/#about", label: "Biz haqimizda" },
@@ -63,18 +76,42 @@ export function SiteFooter() {
           </div>
 
           <div className="mt-5 space-y-2 text-sm text-white/76">
-            <p className="inline-flex items-center gap-2">
+            <a href={callCenterHref} className="inline-flex items-center gap-2 transition hover:text-white">
               <PhoneIcon className="h-4 w-4 text-white/60" />
-              +998 71 203 33 33
-            </p>
-            <p className="inline-flex items-center gap-2">
+              {callCenterLabel}
+            </a>
+            <a
+              href={mapsHref}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 transition hover:text-white"
+            >
               <LocationIcon className="h-4 w-4 text-white/60" />
               Toshkent viloyati
-            </p>
+            </a>
             <p className="inline-flex items-center gap-2">
               <ClockIcon className="h-4 w-4 text-white/60" />
               Har kuni: 09:00 - 21:00
             </p>
+          </div>
+
+          <div className="mt-5">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/52">
+              Biz ijtimoiy tarmoqlarda
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {socialLinks.map((item) => (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-full border border-white/10 bg-white/8 px-3 py-2 text-[12px] font-medium text-white/88 transition hover:bg-white/14 hover:text-white"
+                >
+                  {item.label}
+                </a>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -96,18 +133,45 @@ export function SiteFooter() {
           </p>
 
           <div className="mt-6 space-y-3 text-sm text-white/82">
-            <p className="inline-flex items-center gap-2">
+            <a
+              href={callCenterHref}
+              className="inline-flex items-center gap-2 transition hover:text-white"
+            >
               <PhoneIcon className="h-4 w-4 text-white/62" />
-              +998 71 203 33 33
-            </p>
-            <p className="inline-flex items-center gap-2">
+              {callCenterLabel}
+            </a>
+            <a
+              href={mapsHref}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 transition hover:text-white"
+            >
               <LocationIcon className="h-4 w-4 text-white/62" />
               Toshkent viloyati
-            </p>
+            </a>
             <p className="inline-flex items-center gap-2">
               <ClockIcon className="h-4 w-4 text-white/62" />
               Har kuni: 09:00 - 21:00
             </p>
+          </div>
+
+          <div className="mt-6">
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-white/56">
+              Biz ijtimoiy tarmoqlarda
+            </p>
+            <div className="mt-4 flex max-w-md flex-wrap gap-2">
+              {socialLinks.map((item) => (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-full border border-white/10 bg-white/8 px-3 py-2 text-[13px] font-medium text-white/88 transition hover:bg-white/14 hover:text-white"
+                >
+                  {item.label}
+                </a>
+              ))}
+            </div>
           </div>
         </div>
 

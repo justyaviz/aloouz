@@ -253,7 +253,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <div className="mt-4 space-y-3">
                 {[
                   "Tezkor delivery va pick-up",
-                  "Telefon va Telegram orqali konsultatsiya",
+                  "Call-markaz, Telegram va Instagram orqali konsultatsiya",
                   "Muddatli to'lov va aksiya bannerlari",
                   "Buyurtma statusini alohida sahifada tekshirish",
                 ].map((item) => (
