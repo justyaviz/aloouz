@@ -151,11 +151,33 @@ model Customer {
   lastName  String?
   phone     String   @unique
   email     String?  @unique
+  birthDate DateTime?
+  gender    String?
+  smsOptIn  Boolean  @default(false)
   orders    Order[]
+  addresses CustomerAddress[]
   sessions  CustomerSession[]
   telegramIdentity TelegramIdentity?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model CustomerAddress {
+  id            String   @id @default(cuid())
+  title         String
+  recipientName String
+  phone         String
+  city          String
+  district      String?
+  line1         String
+  landmark      String?
+  isPrimary     Boolean  @default(false)
+  customerId    String
+  customer      Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([customerId, isPrimary])
 }
 
 model CustomerSession {
