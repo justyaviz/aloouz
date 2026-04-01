@@ -148,56 +148,6 @@ const loginMarkers = ["Autentifikatsiya", "login_r", "parol_r", "key_one_loogin=
 
 const categoryConfigs: SeOneCategoryConfig[] = [
   {
-    categorySlug: "klaviaturalar",
-    categoryName: "Klaviaturalar",
-    kind: "keyboard",
-    badge: "Sync",
-    heroLabel: "Keyboard",
-    delivery: "Filialdan olib ketish yoki mavjud bo'lsa courier orqali jo'natamiz",
-    toneFrom: "#F4F6FF",
-    toneTo: "#D5DCF9",
-  },
-  {
-    categorySlug: "kalonkalar",
-    categoryName: "Kalonkalar",
-    kind: "speaker",
-    badge: "Audio",
-    heroLabel: "Speaker",
-    delivery: "Mavjud filialdan olib ketish yoki tezkor jo'natish mavjud",
-    toneFrom: "#EEFDF7",
-    toneTo: "#BFEFD8",
-  },
-  {
-    categorySlug: "aqlli-soatlar",
-    categoryName: "Aqlli soatlar",
-    kind: "watch",
-    badge: "Smart watch",
-    heroLabel: "Aqlli soat",
-    delivery: "Filial mavjudligiga qarab pick-up va courier bilan beriladi",
-    toneFrom: "#EEF5FF",
-    toneTo: "#C7E0FF",
-  },
-  {
-    categorySlug: "quloqchinlar",
-    categoryName: "Quloqchinlar",
-    kind: "audio",
-    badge: "Audio",
-    heroLabel: "Audio",
-    delivery: "Mavjud filialdan olib ketish yoki delivery orqali yetkazamiz",
-    toneFrom: "#ECFAFF",
-    toneTo: "#B7ECFF",
-  },
-  {
-    categorySlug: "iphone",
-    categoryName: "iPhone",
-    kind: "phone",
-    badge: "Apple",
-    heroLabel: "iPhone",
-    delivery: "Qoldiq bor filialdan tezkor pick-up yoki courier mavjud",
-    toneFrom: "#F0F6FF",
-    toneTo: "#C6DCF9",
-  },
-  {
     categorySlug: "smartfonlar",
     categoryName: "Smartfonlar",
     kind: "phone",
@@ -209,8 +159,90 @@ const categoryConfigs: SeOneCategoryConfig[] = [
   },
 ];
 
+const smartphoneCategoryConfig = categoryConfigs[0];
+const smartphonePrefixPattern =
+  /^(?:РЎРјР°СЂС‚С„РѕРЅ|РўРµР»РµС„РѕРЅ|Smartfon|Смартфон|Телефон)\s+/i;
+const nonPhoneKeywords = [
+  "watch",
+  "smartwatch",
+  "aqlli soat",
+  "soat",
+  "bracelet",
+  "airpods",
+  "quloqchin",
+  "naushnik",
+  "headphone",
+  "earbud",
+  "klaviatura",
+  "keyboard",
+  "kalonka",
+  "kolonka",
+  "speaker",
+  "СЃРјР°СЂС‚ С‡Р°СЃ",
+  "С‡Р°СЃ",
+  "РЅР°СѓС€",
+  "РєР»Р°РІРёР°С‚",
+  "РєРѕР»РѕРЅРє",
+];
+
 function normalizeSpace(value: string) {
   return value.replace(/\s+/g, " ").trim();
+}
+
+function stripPhonePrefix(value: string) {
+  let cleaned = normalizeSpace(value.replace(/^\d+\s*-\s*/, ""));
+
+  while (smartphonePrefixPattern.test(cleaned)) {
+    cleaned = normalizeSpace(cleaned.replace(smartphonePrefixPattern, ""));
+  }
+
+  return cleaned;
+}
+
+function normalizeSmartphoneTitle(value: string) {
+  return stripPhonePrefix(value);
+}
+
+function isSmartphoneTitle(value: string) {
+  const haystack = normalizeKey(normalizeSmartphoneTitle(value));
+
+  if (!haystack) {
+    return false;
+  }
+
+  if (nonPhoneKeywords.some((keyword) => haystack.includes(normalizeKey(keyword)))) {
+    return false;
+  }
+
+  return (
+    haystack.includes("smartfon") ||
+    haystack.includes("смартфон") ||
+    haystack.includes("telefon") ||
+    haystack.includes("телефон") ||
+    haystack.includes("phone") ||
+    haystack.includes("android") ||
+    phoneBrandHints.some((hint) => haystack.includes(hint))
+  );
+}
+
+function buildSmartphoneMetadata(rawTitle: string) {
+  const title = normalizeSmartphoneTitle(rawTitle);
+  const productType = isSmartphoneTitle(title) ? inferProductTypeFromTitle(title) || "Smartfon" : "";
+  const brand = extractBrandFromTitle(title);
+  const model = extractModelFromTitle(title, brand, productType);
+
+  return {
+    title,
+    brand,
+    model,
+    productType,
+  };
+}
+
+function classifySmartphoneCategory(offer: Pick<SeOneOffer, "productType" | "brand" | "model" | "title">) {
+  return isSmartphoneTitle(`${offer.productType} ${offer.brand} ${offer.model} ${offer.title}`)
+    ? smartphoneCategoryConfig
+    : null;
 }
 
 function stripHtmlTags(value: string) {
@@ -403,6 +435,8 @@ function classifyCategory(offer: Pick<SeOneOffer, "productType" | "brand" | "mod
   return null;
 }
 
+void classifyCategory;
+
 function extractMemory(title: string) {
   const match = title.match(/(\d+\s*\/\s*\d+\s*(?:gb|tb))/i);
   return match ? match[1].replace(/\s+/g, "") : "";
@@ -461,7 +495,7 @@ function createSpecs(offer: SeOneOffer) {
 }
 
 function createProductPayload(offer: SeOneOffer, sortOrder: number): SyncPreparedProduct | null {
-  const category = classifyCategory(offer);
+  const category = classifySmartphoneCategory(offer);
 
   if (!category) {
     return null;
@@ -469,7 +503,7 @@ function createProductPayload(offer: SeOneOffer, sortOrder: number): SyncPrepare
 
   const memory = extractMemory(offer.title);
   const color = extractColor(offer.title);
-  const cleanTitle = normalizeSpace(offer.title);
+  const cleanTitle = normalizeSmartphoneTitle(offer.title);
   const slug = slugify(cleanTitle);
 
   return {
@@ -522,9 +556,10 @@ function chooseBestOffers(offers: SeOneOffer[]) {
       continue;
     }
 
-    const bucket = grouped.get(offer.externalId) ?? [];
+    const groupingKey = slugify(normalizeSmartphoneTitle(offer.title)) || offer.externalId;
+    const bucket = grouped.get(groupingKey) ?? [];
     bucket.push(offer);
-    grouped.set(offer.externalId, bucket);
+    grouped.set(groupingKey, bucket);
   }
 
   return [...grouped.values()]
@@ -566,10 +601,14 @@ function parseOffersFromTable(tableHtml: string) {
     }
 
     const record = buildOfferRecord(headers, cells);
-    const productType = pickField(record, typeKeywords);
-    const brand = pickField(record, brandKeywords);
-    const model = pickField(record, modelKeywords);
-    const title = pickField(record, titleKeywords) || normalizeSpace(`${brand} ${model}`);
+    const rawBrand = pickField(record, brandKeywords);
+    const rawModel = pickField(record, modelKeywords);
+    const rawTitle = pickField(record, titleKeywords) || normalizeSpace(`${rawBrand} ${rawModel}`);
+    const metadata = buildSmartphoneMetadata(rawTitle);
+    const productType = metadata.productType;
+    const brand = metadata.brand || rawBrand;
+    const model = metadata.model || rawModel;
+    const title = metadata.title;
     const branchName = pickField(record, branchKeywords);
     const stock = parseInteger(pickField(record, stockKeywords));
     const salePrice = parseInteger(pickField(record, salePriceKeywords));
@@ -579,6 +618,10 @@ function parseOffersFromTable(tableHtml: string) {
     const installment24 = roundToNearestThousand(parseInteger(pickField(record, installment24Keywords)));
 
     if (!title || !branchName || stock <= 0 || cashPrice <= 0) {
+      continue;
+    }
+
+    if (!classifySmartphoneCategory({ productType, brand, model, title })) {
       continue;
     }
 
@@ -804,7 +847,7 @@ function parseModelOptionsFromHtml(html: string) {
   const options = [...selectMatch[1].matchAll(/<option\b[^>]*value=["']?([^"'>\s]+)["']?[^>]*>([\s\S]*?)<\/option>/gi)]
     .map((match) => ({
       value: match[1].trim(),
-      title: normalizeSpace(toPlainText(match[2]).replace(/^\d+\s*-\s*/, "")),
+      title: normalizeSmartphoneTitle(toPlainText(match[2])),
     }))
     .filter(
       (item) =>
@@ -914,10 +957,16 @@ function parseOffersFromDetailHtml(detailHtml: string, modelOption: SeOneModelOp
   }
 
   const headerTitleMatch = detailHtml.match(/<h3\b[^>]*>([\s\S]*?)<\/h3>/i);
-  const title = normalizeSpace(toPlainText(headerTitleMatch?.[1] ?? modelOption.title));
-  const productType = inferProductTypeFromTitle(title);
-  const brand = extractBrandFromTitle(title);
-  const model = extractModelFromTitle(title, brand, productType);
+  const metadata = buildSmartphoneMetadata(toPlainText(headerTitleMatch?.[1] ?? modelOption.title));
+  const title = metadata.title;
+  const productType = metadata.productType;
+  const brand = metadata.brand;
+  const model = metadata.model;
+
+  if (!classifySmartphoneCategory({ productType, brand, model, title })) {
+    return [] as SeOneOffer[];
+  }
+
   const rows = extractRows(tableHtml);
   const parsed: SeOneOffer[] = [];
   let headers: string[] = [];
@@ -1041,17 +1090,10 @@ async function collectLiveOffers() {
   }
 
   const relevantModels = modelOptions.filter((option) => {
-    const productType = inferProductTypeFromTitle(option.title);
-    const brand = extractBrandFromTitle(option.title);
-    const model = extractModelFromTitle(option.title, brand, productType);
+    const metadata = buildSmartphoneMetadata(option.title);
 
     return Boolean(
-      classifyCategory({
-        productType,
-        brand,
-        model,
-        title: option.title,
-      }),
+      classifySmartphoneCategory(metadata),
     );
   });
 
@@ -1168,6 +1210,16 @@ export async function syncSeOneCatalog(options?: { replaceCatalog?: boolean }) {
     let removedProducts = 0;
 
     await prisma.$transaction(async (tx) => {
+      if (options?.replaceCatalog !== false) {
+        const deleted = await tx.product.deleteMany({
+          where: {
+            sourceType: "MANUAL",
+          },
+        });
+
+        removedProducts = deleted.count;
+      }
+
       for (const product of prepared) {
         const category = await ensureCategoryRecord(tx, product.categorySlug, product.categoryName);
         const brand = await ensureBrandRecord(tx, product.brand);
@@ -1286,16 +1338,6 @@ export async function syncSeOneCatalog(options?: { replaceCatalog?: boolean }) {
           },
         },
       });
-
-      if (options?.replaceCatalog !== false) {
-        const deleted = await tx.product.deleteMany({
-          where: {
-            sourceType: "MANUAL",
-          },
-        });
-
-        removedProducts = deleted.count;
-      }
     });
 
     const summary: SeOneSyncSummary = {
