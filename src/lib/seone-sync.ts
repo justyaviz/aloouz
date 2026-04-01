@@ -9,6 +9,12 @@ import { slugify } from "@/lib/storefront";
 const SE_ONE_PROVIDER = "SE_ONE";
 const SE_ONE_PROVIDER_LABEL = "SE-ONE filial narxlari";
 const DEFAULT_SOURCE_URL = "https://my.se-one.uz/filial_finans/sotuvnarx2.php";
+const DEFAULT_LOGIN_URL = "https://my.se-one.uz/logout.php";
+const DEFAULT_LOGIN_ACTION_URL = "https://my.se-one.uz/login.php?key_one_loogin=succcess";
+const DEFAULT_DETAIL_URL = "https://my.se-one.uz/filial_finans/load_sotuvnarx2.php";
+const DEFAULT_USER_AGENT =
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36";
+const DEFAULT_CONCURRENCY = 8;
 
 type SyncErrorCode = "CONFIG" | "AUTH" | "PARSE" | "EMPTY" | "NETWORK";
 
@@ -37,6 +43,16 @@ type SeOneCategoryConfig = {
   delivery: string;
   toneFrom: string;
   toneTo: string;
+};
+
+type SeOneSession = {
+  cookieHeader: string;
+  sourceHtml: string;
+};
+
+type SeOneModelOption = {
+  value: string;
+  title: string;
 };
 
 type SyncPreparedProduct = {
@@ -127,6 +143,8 @@ const typeKeywords = ["tovar turi", "товар тури", "тип товара"
 const brandKeywords = ["brand", "бренд", "tovar brendi"];
 const modelKeywords = ["model", "модель", "tovar modeli", "товар модели", "товар модели"];
 const titleKeywords = ["товар", "mahsulot", "name", "nomi"];
+
+const loginMarkers = ["Autentifikatsiya", "login_r", "parol_r", "key_one_loogin=succcess"];
 
 const categoryConfigs: SeOneCategoryConfig[] = [
   {
@@ -608,43 +626,449 @@ function extractOffersFromHtml(html: string) {
   return offers;
 }
 
-async function loadSeOneHtml() {
-  const samplePath = process.env.SEONE_SAMPLE_HTML_PATH?.trim();
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
 
-  if (samplePath) {
-    return readFile(samplePath, "utf8");
+function extractPhpSessionId(setCookieHeader: string | null) {
+  if (!setCookieHeader) {
+    return "";
   }
 
-  const cookieHeader = process.env.SEONE_COOKIE_HEADER?.trim();
+  return /PHPSESSID=([^;,]+)/i.exec(setCookieHeader)?.[1]?.trim() ?? "";
+}
 
-  if (!cookieHeader) {
-    throw new SeOneSyncError(
-      "CONFIG",
-      "SEONE_COOKIE_HEADER env o'rnatilmagan. Ishlaydigan session cookie kerak.",
-    );
-  }
+function hasLoginGate(html: string) {
+  const normalized = normalizeKey(html);
+  return loginMarkers.some((marker) => normalized.includes(normalizeKey(marker)));
+}
 
-  const response = await fetch(process.env.SEONE_SOURCE_URL?.trim() || DEFAULT_SOURCE_URL, {
-    headers: {
-      cookie: cookieHeader,
-      "user-agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
-    },
+function getFetchHeaders(cookieHeader?: string) {
+  return {
+    "user-agent": DEFAULT_USER_AGENT,
+    ...(cookieHeader ? { cookie: cookieHeader } : {}),
+  };
+}
+
+async function fetchSeOneText(
+  url: string,
+  init?: RequestInit & { expectAuth?: boolean },
+) {
+  const response = await fetch(url, {
+    ...init,
     cache: "no-store",
+    signal: AbortSignal.timeout(30_000),
   }).catch((error) => {
     throw new SeOneSyncError("NETWORK", `SE-ONE sahifasiga ulanishda xato: ${String(error)}`);
   });
 
-  const html = await response.text();
+  const text = await response.text();
 
-  if (html.includes("/logout.php")) {
+  if (!response.ok) {
     throw new SeOneSyncError(
-      "AUTH",
-      "SE-ONE sessiyasi yaroqsiz. Sayt logout sahifasiga qaytaryapti.",
+      "NETWORK",
+      `SE-ONE ${response.status} javob qaytardi: ${response.statusText || "network error"}`,
     );
   }
 
-  return html;
+  if (init?.expectAuth && hasLoginGate(text)) {
+    throw new SeOneSyncError("AUTH", "SE-ONE login ma'lumotlari yoki sessiyasi ishlamadi.");
+  }
+
+  return {
+    response,
+    text,
+  };
+}
+
+async function fetchSourceHtmlWithCookie(cookieHeader: string) {
+  const { text } = await fetchSeOneText(process.env.SEONE_SOURCE_URL?.trim() || DEFAULT_SOURCE_URL, {
+    headers: getFetchHeaders(cookieHeader),
+    expectAuth: true,
+  });
+
+  return text;
+}
+
+async function loginWithCredentials(): Promise<SeOneSession> {
+  const username = process.env.SEONE_LOGIN?.trim();
+  const password = process.env.SEONE_PASSWORD?.trim();
+
+  if (!username || !password) {
+    throw new SeOneSyncError(
+      "CONFIG",
+      "SE-ONE login/parol yoki session cookie sozlanmagan.",
+    );
+  }
+
+  const bootstrap = await fetchSeOneText(DEFAULT_LOGIN_URL, {
+    headers: getFetchHeaders(),
+  });
+
+  const initialSessionId = extractPhpSessionId(bootstrap.response.headers.get("set-cookie"));
+  const initialCookieHeader = initialSessionId ? `PHPSESSID=${initialSessionId}` : "";
+
+  const body = new URLSearchParams({
+    login_r: username,
+    parol_r: password,
+  });
+
+  const loginResponse = await fetch(DEFAULT_LOGIN_ACTION_URL, {
+    method: "POST",
+    redirect: "manual",
+    headers: {
+      ...getFetchHeaders(initialCookieHeader),
+      "content-type": "application/x-www-form-urlencoded",
+      origin: "https://my.se-one.uz",
+      referer: DEFAULT_LOGIN_URL,
+    },
+    body,
+    cache: "no-store",
+    signal: AbortSignal.timeout(30_000),
+  }).catch((error) => {
+    throw new SeOneSyncError("NETWORK", `SE-ONE login so'rovida xato: ${String(error)}`);
+  });
+
+  if (loginResponse.status >= 400) {
+    throw new SeOneSyncError(
+      "AUTH",
+      `SE-ONE login ${loginResponse.status} javob qaytardi.`,
+    );
+  }
+
+  const loginText = await loginResponse.text();
+
+  if (hasLoginGate(loginText)) {
+    throw new SeOneSyncError("AUTH", "SE-ONE login yoki parol noto'g'ri.");
+  }
+
+  const updatedSessionId =
+    extractPhpSessionId(loginResponse.headers.get("set-cookie")) || initialSessionId;
+
+  if (!updatedSessionId) {
+    throw new SeOneSyncError("AUTH", "SE-ONE sessiya cookie olinmadi.");
+  }
+
+  const cookieHeader = `PHPSESSID=${updatedSessionId}`;
+  const sourceHtml = await fetchSourceHtmlWithCookie(cookieHeader);
+
+  return {
+    cookieHeader,
+    sourceHtml,
+  };
+}
+
+async function loadSeOneSession(): Promise<SeOneSession> {
+  const samplePath = process.env.SEONE_SAMPLE_HTML_PATH?.trim();
+
+  if (samplePath) {
+    return {
+      cookieHeader: "",
+      sourceHtml: await readFile(samplePath, "utf8"),
+    };
+  }
+
+  const cookieHeader = process.env.SEONE_COOKIE_HEADER?.trim();
+  const hasCredentials = Boolean(process.env.SEONE_LOGIN?.trim() && process.env.SEONE_PASSWORD?.trim());
+
+  if (cookieHeader) {
+    try {
+      return {
+        cookieHeader,
+        sourceHtml: await fetchSourceHtmlWithCookie(cookieHeader),
+      };
+    } catch (error) {
+      if (!(error instanceof SeOneSyncError) || error.code !== "AUTH" || !hasCredentials) {
+        throw error;
+      }
+    }
+  }
+
+  if (hasCredentials) {
+    return loginWithCredentials();
+  }
+
+  throw new SeOneSyncError(
+    "CONFIG",
+    "SE-ONE sync uchun ishlaydigan cookie yoki login/parol env kiritilishi kerak.",
+  );
+}
+
+function parseModelOptionsFromHtml(html: string) {
+  const selectMatch = html.match(/<select[^>]+id=["']model["'][^>]*>([\s\S]*?)<\/select>/i);
+
+  if (!selectMatch) {
+    return [];
+  }
+
+  const options = [...selectMatch[1].matchAll(/<option\b[^>]*value=["']?([^"'>\s]+)["']?[^>]*>([\s\S]*?)<\/option>/gi)]
+    .map((match) => ({
+      value: match[1].trim(),
+      title: normalizeSpace(toPlainText(match[2]).replace(/^\d+\s*-\s*/, "")),
+    }))
+    .filter(
+      (item) =>
+        item.value &&
+        item.title &&
+        !normalizeKey(item.title).includes("modelni tanlang"),
+    );
+
+  const seen = new Set<string>();
+  return options.filter((item) => {
+    if (seen.has(item.value)) {
+      return false;
+    }
+
+    seen.add(item.value);
+    return true;
+  });
+}
+
+function inferProductTypeFromTitle(title: string) {
+  const haystack = normalizeKey(title);
+
+  if (haystack.includes("watch") || haystack.includes("bracelet") || haystack.includes("soat")) {
+    return "Watch";
+  }
+
+  if (
+    haystack.includes("airpods") ||
+    haystack.includes("quloqchin") ||
+    haystack.includes("naushnik") ||
+    haystack.includes("headphone") ||
+    haystack.includes("науш")
+  ) {
+    return "Quloqchin";
+  }
+
+  if (haystack.includes("klaviatura") || haystack.includes("keyboard") || haystack.includes("клавиат")) {
+    return "Klaviatura";
+  }
+
+  if (
+    haystack.includes("kalonka") ||
+    haystack.includes("kolonka") ||
+    haystack.includes("speaker") ||
+    haystack.includes("колонк")
+  ) {
+    return "Kalonka";
+  }
+
+  if (haystack.includes("iphone")) {
+    return "iPhone";
+  }
+
+  if (
+    haystack.includes("smartfon") ||
+    haystack.includes("смартфон") ||
+    haystack.includes("telefon") ||
+    haystack.includes("телефон") ||
+    haystack.includes("phone") ||
+    phoneBrandHints.some((hint) => haystack.includes(hint))
+  ) {
+    return "Smartfon";
+  }
+
+  return "";
+}
+
+function extractBrandFromTitle(title: string) {
+  let cleaned = normalizeSpace(title.replace(/^\d+\s*-\s*/, ""));
+
+  cleaned = cleaned.replace(
+    /^(Смартфон|Телефон|Watch|Наушник|Quloqchin|Klaviatura|Keyboard|Kalonka|Kolonka|Speaker)\s+/i,
+    "",
+  );
+
+  return normalizeSpace(cleaned.split(/\s+/)[0] ?? "");
+}
+
+function extractModelFromTitle(title: string, brand: string, productType: string) {
+  let cleaned = normalizeSpace(title.replace(/^\d+\s*-\s*/, ""));
+
+  if (productType) {
+    cleaned = cleaned.replace(new RegExp(`^${escapeRegExp(productType)}\\s+`, "i"), "");
+  }
+
+  cleaned = cleaned.replace(
+    /^(Смартфон|Телефон|Watch|Наушник|Quloqchin|Klaviatura|Keyboard|Kalonka|Kolonka|Speaker)\s+/i,
+    "",
+  );
+
+  if (brand) {
+    cleaned = cleaned.replace(new RegExp(`^${escapeRegExp(brand)}\\s+`, "i"), "");
+  }
+
+  return normalizeSpace(cleaned);
+}
+
+function parseOffersFromDetailHtml(detailHtml: string, modelOption: SeOneModelOption) {
+  if (hasLoginGate(detailHtml)) {
+    throw new SeOneSyncError("AUTH", "SE-ONE detail sahifasi login oynasiga qaytdi.");
+  }
+
+  const tableHtml = detectBestTable(detailHtml);
+
+  if (!tableHtml) {
+    return [] as SeOneOffer[];
+  }
+
+  const headerTitleMatch = detailHtml.match(/<h3\b[^>]*>([\s\S]*?)<\/h3>/i);
+  const title = normalizeSpace(toPlainText(headerTitleMatch?.[1] ?? modelOption.title));
+  const productType = inferProductTypeFromTitle(title);
+  const brand = extractBrandFromTitle(title);
+  const model = extractModelFromTitle(title, brand, productType);
+  const rows = extractRows(tableHtml);
+  const parsed: SeOneOffer[] = [];
+  let headers: string[] = [];
+
+  for (const row of rows) {
+    const cells = extractCells(row);
+
+    if (cells.length < 4) {
+      continue;
+    }
+
+    if (!headers.length || scoreHeader(cells) >= 6) {
+      headers = cells;
+      continue;
+    }
+
+    if (headers.length !== cells.length) {
+      continue;
+    }
+
+    const record = buildOfferRecord(headers, cells);
+    const branchName = pickField(record, branchKeywords);
+    const stock = parseInteger(pickField(record, stockKeywords));
+    const salePrice = parseInteger(pickField(record, salePriceKeywords));
+    const cashPrice = parseInteger(pickField(record, cashPriceKeywords));
+    const installment6 = roundToNearestThousand(parseInteger(pickField(record, installment6Keywords)));
+    const installment12 = roundToNearestThousand(parseInteger(pickField(record, installment12Keywords)));
+    const installment24 = roundToNearestThousand(parseInteger(pickField(record, installment24Keywords)));
+
+    if (!branchName || stock <= 0 || cashPrice <= 0) {
+      continue;
+    }
+
+    parsed.push({
+      externalId: `seone-model-${modelOption.value}`,
+      productType,
+      brand,
+      model,
+      title,
+      branchName,
+      stock,
+      salePrice: salePrice || cashPrice,
+      cashPrice,
+      installment6: installment6 ?? undefined,
+      installment12: installment12 ?? undefined,
+      installment24: installment24 ?? undefined,
+      raw: {
+        modelId: modelOption.value,
+        title,
+        ...record,
+      },
+    });
+  }
+
+  return parsed;
+}
+
+async function fetchModelDetailHtml(cookieHeader: string, modelId: string) {
+  const { text } = await fetchSeOneText(DEFAULT_DETAIL_URL, {
+    method: "POST",
+    headers: {
+      ...getFetchHeaders(cookieHeader),
+      "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+      "x-requested-with": "XMLHttpRequest",
+      origin: "https://my.se-one.uz",
+      referer: process.env.SEONE_SOURCE_URL?.trim() || DEFAULT_SOURCE_URL,
+    },
+    body: new URLSearchParams({
+      model: modelId,
+      key: "st2",
+    }),
+  });
+
+  return text;
+}
+
+function parseConcurrency(value?: string) {
+  const parsed = Number.parseInt(value ?? "", 10);
+
+  if (!Number.isFinite(parsed)) {
+    return DEFAULT_CONCURRENCY;
+  }
+
+  return Math.max(1, Math.min(parsed, 16));
+}
+
+async function mapWithConcurrency<T, R>(
+  items: T[],
+  concurrency: number,
+  mapper: (item: T, index: number) => Promise<R>,
+) {
+  const results = new Array<R>(items.length);
+  let nextIndex = 0;
+
+  async function worker() {
+    while (true) {
+      const currentIndex = nextIndex;
+      nextIndex += 1;
+
+      if (currentIndex >= items.length) {
+        return;
+      }
+
+      results[currentIndex] = await mapper(items[currentIndex], currentIndex);
+    }
+  }
+
+  await Promise.all(
+    Array.from({ length: Math.min(concurrency, items.length) }, () => worker()),
+  );
+
+  return results;
+}
+
+async function collectLiveOffers() {
+  const session = await loadSeOneSession();
+  const modelOptions = parseModelOptionsFromHtml(session.sourceHtml);
+
+  if (modelOptions.length === 0 || !session.cookieHeader) {
+    return extractOffersFromHtml(session.sourceHtml);
+  }
+
+  const relevantModels = modelOptions.filter((option) => {
+    const productType = inferProductTypeFromTitle(option.title);
+    const brand = extractBrandFromTitle(option.title);
+    const model = extractModelFromTitle(option.title, brand, productType);
+
+    return Boolean(
+      classifyCategory({
+        productType,
+        brand,
+        model,
+        title: option.title,
+      }),
+    );
+  });
+
+  if (relevantModels.length === 0) {
+    throw new SeOneSyncError(
+      "EMPTY",
+      "SE-ONE model ro'yxatidan kerakli kategoriyadagi mahsulotlar topilmadi.",
+    );
+  }
+
+  const concurrency = parseConcurrency(process.env.SEONE_CONCURRENCY?.trim());
+  const resultSets = await mapWithConcurrency(relevantModels, concurrency, async (modelOption) => {
+    const detailHtml = await fetchModelDetailHtml(session.cookieHeader, modelOption.value);
+    return parseOffersFromDetailHtml(detailHtml, modelOption);
+  });
+
+  return resultSets.flat();
 }
 
 async function markSyncRunning() {
@@ -727,8 +1151,7 @@ export async function syncSeOneCatalog(options?: { replaceCatalog?: boolean }) {
   await markSyncRunning();
 
   try {
-    const html = await loadSeOneHtml();
-    const offers = extractOffersFromHtml(html);
+    const offers = await collectLiveOffers();
     const bestOffers = chooseBestOffers(offers);
     const prepared = bestOffers
       .map((offer, index) => createProductPayload(offer, index))
@@ -877,10 +1300,10 @@ export async function syncSeOneCatalog(options?: { replaceCatalog?: boolean }) {
 
     const summary: SeOneSyncSummary = {
       importedProducts: prepared.length,
-      skippedProducts: Math.max(0, offers.length - prepared.length),
+      skippedProducts: Math.max(0, bestOffers.length - prepared.length),
       removedProducts,
       offersScanned: offers.length,
-      note: "Faol qoldiqi bor eng arzon filial tanlanib, 6/12/24 oy summalari 1000 so'mga yaxlitlandi.",
+      note: "Qoldiqi bor eng arzon filial tanlanib, naqd narx asosiy qiymat, sotuv narx ustiga chizilgan narx, 6/12/24 oy summalari esa 1000 so'mga yaxlitlandi.",
     };
 
     await markSyncFinished("success", summary);

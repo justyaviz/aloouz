@@ -131,14 +131,14 @@ function feedbackMessage(status?: string, error?: string, auth?: string) {
   if (error === "seone-auth") {
     return {
       tone: "error" as const,
-      text: "SE-ONE sessiyasi ishlamayapti. Session cookie yangilanishi kerak.",
+      text: "SE-ONE sessiyasi yoki login ma'lumotlari ishlamayapti. Cookie yoki login/parolni tekshiring.",
     };
   }
 
   if (error === "seone-config") {
     return {
       tone: "error" as const,
-      text: "SE-ONE sync env hali to'liq sozlanmagan. Cookie header kiritilishi kerak.",
+      text: "SE-ONE sync env hali to'liq sozlanmagan. Cookie header yoki login/parol kiritilishi kerak.",
     };
   }
 
