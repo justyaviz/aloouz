@@ -67,12 +67,29 @@ Agar `DATABASE_URL` yo'q bo'lsa, panel fallback ma'lumotni ko'rsatadi, lekin saq
 Deploy qadamlari:
 
 1. Railway'da yangi project oching.
-2. `Deploy from GitHub repo` ni tanlang yoki CLI orqali `railway up` qiling.
-3. Web service uchun env'larni kiriting: `DATABASE_URL`, `ADMIN_USERNAME`, `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`.
-4. Alohida PostgreSQL service yarating va uning `DATABASE_URL` qiymatini web service'ga ulang.
-5. `npm run db:push` ni Railway shell yoki local CLI orqali bir marta ishga tushiring.
-6. Deploy tugagach service ichida `Settings -> Networking -> Public Networking` bo'limiga o'ting.
-7. `Generate Domain` bosib vaqtinchalik Railway domain oling.
+2. Repo ichida `Dockerfile` va `railway.json` bor, shu sabab deploy bir xil va barqaror container bilan chiqadi.
+3. `Deploy from GitHub repo` ni tanlang yoki CLI orqali `railway up --service aloouz-web` qiling.
+4. Web service uchun env'larni kiriting: `DATABASE_URL`, `ADMIN_USERNAME`, `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`.
+5. `NEXT_PUBLIC_SITE_URL` ni production domeningizga teng qo'ying.
+6. Alohida PostgreSQL service yarating va uning `DATABASE_URL` qiymatini web service'ga ulang.
+7. `npm run db:push` ni Railway shell yoki local CLI orqali bir marta ishga tushiring.
+8. Deploy tugagach service ichida `Settings -> Networking -> Public Networking` bo'limiga o'ting.
+9. `Generate Domain` bosib vaqtinchalik Railway domain oling.
+
+Asosiy buyruqlar:
+
+```bash
+npm run build
+npm run start
+railway up --service aloouz-web
+```
+
+Railway manifest ichida quyidagilar yoqilgan:
+
+- `builder`: `DOCKERFILE`
+- `healthcheckPath`: `/api/health`
+- `sleepApplication`: `false`
+- `overlapSeconds`: `30`
 
 ## Custom domain ulash
 
