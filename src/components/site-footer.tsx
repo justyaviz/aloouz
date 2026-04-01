@@ -37,7 +37,7 @@ const serviceLinks = [
 
 const customerLinks = [
   { href: "/cart", label: "Savatcha" },
-  { href: "/login", label: "Kirish" },
+  { href: "/profile", label: "Profil" },
   { href: "/catalog", label: "Katalog" },
   { href: "/#contact", label: "Biz bilan bog'lanish" },
 ];

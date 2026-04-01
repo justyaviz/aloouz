@@ -11,6 +11,7 @@ const CUSTOMER_SESSION_TTL = 60 * 60 * 24 * 30;
 export type AuthViewer = {
   id: string;
   firstName: string;
+  lastName?: string;
   phone: string;
   displayPhone: string;
 };
@@ -66,7 +67,15 @@ export function parseCustomerPhone(phone: string) {
   };
 }
 
-export async function createCustomerSession(phone: string) {
+function cleanName(value: string | null | undefined) {
+  const normalized = value?.trim();
+  return normalized ? normalized : undefined;
+}
+
+export async function createCustomerSession(
+  phone: string,
+  profile?: { firstName?: string; lastName?: string },
+) {
   if (!hasDatabaseUrl()) {
     throw new Error("Database ulanmagan.");
   }
@@ -77,11 +86,18 @@ export async function createCustomerSession(phone: string) {
     throw new Error("Telefon raqamini to'liq kiriting.");
   }
 
+  const nextFirstName = cleanName(profile?.firstName) ?? "Aloo mijoz";
+  const nextLastName = cleanName(profile?.lastName);
+
   const customer = await prisma.customer.upsert({
     where: { phone: parsed.normalized },
-    update: {},
+    update: {
+      firstName: nextFirstName,
+      lastName: nextLastName ?? null,
+    },
     create: {
-      firstName: "Aloo mijoz",
+      firstName: nextFirstName,
+      lastName: nextLastName ?? null,
       phone: parsed.normalized,
     },
     select: {
@@ -130,6 +146,7 @@ export async function getAuthViewer(): Promise<AuthViewer | null> {
         select: {
           id: true,
           firstName: true,
+          lastName: true,
           phone: true,
         },
       },
@@ -151,6 +168,7 @@ export async function getAuthViewer(): Promise<AuthViewer | null> {
   return {
     id: session.customer.id,
     firstName: session.customer.firstName,
+    lastName: session.customer.lastName ?? undefined,
     phone: session.customer.phone,
     displayPhone: formatDisplayPhone(session.customer.phone),
   };

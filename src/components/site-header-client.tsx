@@ -88,7 +88,7 @@ const catalogGroups = [
       { href: "/#about", label: "Biz haqimizda" },
       { href: "/#stores", label: "Filiallar" },
       { href: "/#contact", label: "Bog'lanish" },
-      { href: "/login", label: "Kabinet" },
+      { href: "/profile", label: "Kabinet" },
     ],
   },
 ];
@@ -536,7 +536,7 @@ export function SiteHeaderClient({ viewer }: { viewer: AuthViewer | null }) {
               ))}
 
               {viewer ? (
-                <Shortcut href="/login" label="Kabinet" icon={UserIcon} />
+                <Shortcut href="/profile" label="Kabinet" icon={UserIcon} />
               ) : (
                 <Shortcut label="Kirish" icon={UserIcon} onClick={() => setLoginOpen(true)} />
               )}

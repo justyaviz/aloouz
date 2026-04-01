@@ -305,6 +305,14 @@ export function ShareIcon({ className }: IconProps) {
   );
 }
 
+export function TelegramIcon({ className }: IconProps) {
+  return (
+    <Svg className={className} viewBox="0 0 24 24">
+      <path d="m20 4-2.2 14.3a1.2 1.2 0 0 1-1.8.8l-4.1-2.6-2.1 2a1 1 0 0 1-1.7-.7v-3.1L17.5 6.6 7.1 13.2 3.8 12a1.1 1.1 0 0 1 0-2.1L18.4 4a1.2 1.2 0 0 1 1.6 1.2Z" />
+    </Svg>
+  );
+}
+
 export function TvIcon({ className }: IconProps) {
   return (
     <Svg className={className}>

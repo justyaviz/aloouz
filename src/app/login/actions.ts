@@ -2,9 +2,22 @@
 
 import { redirect } from "next/navigation";
 
-import { createCustomerSession, logoutCustomer, parseCustomerPhone } from "@/lib/customer-auth";
+import { logoutCustomer, parseCustomerPhone } from "@/lib/customer-auth";
+import {
+  startTelegramLoginChallenge,
+  verifyTelegramLoginChallenge,
+} from "@/lib/telegram-login";
 
-export type LoginFormState = {
+export type TelegramLoginRequestState = {
+  error?: string;
+  info?: string;
+  challengeId?: string;
+  displayPhone?: string;
+  botUrl?: string;
+  codeSent?: boolean;
+};
+
+export type TelegramLoginVerifyState = {
   error?: string;
 };
 
@@ -14,16 +27,16 @@ function asString(value: FormDataEntryValue | null) {
 
 function getSafeRedirectPath(value: string) {
   if (!value || !value.startsWith("/")) {
-    return "/login";
+    return "/profile";
   }
 
   return value;
 }
 
-export async function loginCustomerAction(
-  _previousState: LoginFormState,
+export async function requestTelegramLoginAction(
+  _previousState: TelegramLoginRequestState,
   formData: FormData,
-): Promise<LoginFormState> {
+): Promise<TelegramLoginRequestState> {
   const phone = asString(formData.get("phone"));
   const accepted = formData.get("accepted") === "on";
   const redirectTo = getSafeRedirectPath(asString(formData.get("redirectTo")));
@@ -37,17 +50,49 @@ export async function loginCustomerAction(
   }
 
   try {
-    await createCustomerSession(phone);
+    const challenge = await startTelegramLoginChallenge({ phone, redirectTo });
+
+    return {
+      challengeId: challenge.challengeId,
+      displayPhone: challenge.displayPhone,
+      botUrl: challenge.botUrl,
+      codeSent: challenge.codeSent,
+      info: challenge.codeSent
+        ? "Kod Telegram botga yuborildi. Uni pastdagi maydonga kiriting."
+        : "Botni ochib, telefoningizni tasdiqlang. Kod Telegram ichida beriladi.",
+    };
   } catch (error) {
     return {
       error:
         error instanceof Error
           ? error.message
-          : "Kirish paytida noma'lum xato yuz berdi.",
+          : "Kod yuborish paytida noma'lum xato yuz berdi.",
     };
   }
+}
 
-  redirect(redirectTo);
+export async function verifyTelegramLoginAction(
+  _previousState: TelegramLoginVerifyState,
+  formData: FormData,
+): Promise<TelegramLoginVerifyState> {
+  const challengeId = asString(formData.get("challengeId"));
+  const code = asString(formData.get("code"));
+
+  if (!challengeId) {
+    return { error: "Avval Telegram orqali kod oling." };
+  }
+
+  try {
+    const result = await verifyTelegramLoginChallenge({ challengeId, code });
+    redirect(result.redirectTo);
+  } catch (error) {
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : "Kodni tasdiqlash paytida noma'lum xato yuz berdi.",
+    };
+  }
 }
 
 export async function logoutCustomerAction(formData: FormData) {

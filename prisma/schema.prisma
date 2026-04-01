@@ -153,6 +153,7 @@ model Customer {
   email     String?  @unique
   orders    Order[]
   sessions  CustomerSession[]
+  telegramIdentity TelegramIdentity?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -168,6 +169,43 @@ model CustomerSession {
 
   @@index([customerId])
   @@index([expiresAt])
+}
+
+model TelegramIdentity {
+  id             String    @id @default(cuid())
+  phone          String    @unique
+  telegramUserId String    @unique
+  telegramChatId String    @unique
+  username       String?
+  firstName      String?
+  lastName       String?
+  customerId     String?   @unique
+  customer       Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model TelegramLoginChallenge {
+  id                String   @id @default(cuid())
+  phone             String
+  redirectTo        String
+  startToken        String   @unique
+  codeHash          String?
+  codeSentAt        DateTime?
+  codeExpiresAt     DateTime?
+  verifiedAt        DateTime?
+  consumedAt        DateTime?
+  telegramUserId    String?
+  telegramChatId    String?
+  telegramUsername  String?
+  telegramFirstName String?
+  telegramLastName  String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([phone, createdAt])
+  @@index([telegramUserId, createdAt])
+  @@index([consumedAt, codeExpiresAt])
 }
 
 model Order {

@@ -18,7 +18,7 @@ const navItems = [
   { href: "/catalog", label: "Qidiruv", icon: SearchIcon, match: "/catalog" },
   { href: "/favorites", label: "Sevimli", icon: HeartIcon, match: "/favorites", countKey: "favorites" as const },
   { href: "/cart", label: "Savat", icon: CartIcon, match: "/cart", countKey: "cart" as const },
-  { href: "/login", label: "Kirish", icon: UserIcon, match: "/login" },
+  { href: "/profile", label: "Profil", icon: UserIcon, match: "/profile" },
 ];
 
 export function MobileBottomNav() {
