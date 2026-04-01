@@ -24,19 +24,19 @@ export function ProductCard({ product }: ProductCardProps) {
   ].filter((item): item is { months: number; amount: number } => item !== null);
 
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-[24px] border border-line bg-white p-3 shadow-[0_16px_34px_rgba(13,31,55,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_50px_rgba(13,31,55,0.12)]">
+    <article className="flex h-full flex-col overflow-hidden rounded-[22px] border border-line bg-white p-2.5 shadow-[0_16px_34px_rgba(13,31,55,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_50px_rgba(13,31,55,0.12)] sm:rounded-[24px] sm:p-3">
       <div className="mb-2.5 flex items-start justify-between gap-3">
         <div className="flex flex-wrap gap-2">
-          <span className="rounded-full bg-[#eef6ff] px-3 py-1 text-[11px] font-semibold text-accent">
+          <span className="rounded-full bg-[#eef6ff] px-2.5 py-1 text-[10px] font-semibold text-accent sm:px-3 sm:text-[11px]">
             {product.badge}
           </span>
           {discount ? (
-            <span className="rounded-full bg-[#fff1ea] px-3 py-1 text-[11px] font-semibold text-support">
+            <span className="rounded-full bg-[#fff1ea] px-2.5 py-1 text-[10px] font-semibold text-support sm:px-3 sm:text-[11px]">
               -{discount}%
             </span>
           ) : null}
         </div>
-        <span className="rounded-full bg-[#f4f7fb] px-2.5 py-1 text-[11px] font-semibold text-muted">
+        <span className="rounded-full bg-[#f4f7fb] px-2.5 py-1 text-[10px] font-semibold text-muted sm:text-[11px]">
           {product.rating} / {product.reviews}
         </span>
       </div>
@@ -52,14 +52,14 @@ export function ProductCard({ product }: ProductCardProps) {
       />
 
       <div className="flex flex-1 flex-col pt-3">
-        <div className="flex items-center justify-between gap-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+        <div className="flex items-center justify-between gap-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted sm:text-[11px] sm:tracking-[0.18em]">
           <span>{product.brand}</span>
-          <span>{product.branchStock ?? product.stock} dona mavjud</span>
+          <span className="hidden sm:inline">{product.branchStock ?? product.stock} dona mavjud</span>
         </div>
 
         <Link
           href={`/product/${product.slug}`}
-          className="line-clamp-2 mt-2.5 min-h-[2.8rem] font-display text-[0.98rem] font-semibold leading-6 tracking-tight text-foreground"
+          className="line-clamp-2 mt-2.5 min-h-[2.65rem] font-display text-[0.94rem] font-semibold leading-6 tracking-tight text-foreground sm:min-h-[2.8rem] sm:text-[0.98rem]"
         >
           {product.name}
         </Link>
@@ -69,7 +69,7 @@ export function ProductCard({ product }: ProductCardProps) {
         </p>
 
         <div className="mt-2.5 flex flex-wrap items-center gap-2">
-          <span className="rounded-full border border-accent/20 bg-[#f6faff] px-3 py-2 text-[11px] font-semibold text-accent">
+          <span className="rounded-full border border-accent/20 bg-[#f6faff] px-3 py-1.5 text-[10px] font-semibold text-accent sm:py-2 sm:text-[11px]">
             12 oy: {formatMonthly(product.installment12 ?? product.monthlyPrice)}
           </span>
           <div className="flex flex-wrap gap-2">
@@ -79,7 +79,7 @@ export function ProductCard({ product }: ProductCardProps) {
               .map((option) => (
                 <span
                   key={option.months}
-                  className="rounded-full bg-[#f4f7fb] px-3 py-2 text-[11px] font-semibold text-muted"
+                  className="rounded-full bg-[#f4f7fb] px-3 py-1.5 text-[10px] font-semibold text-muted sm:py-2 sm:text-[11px]"
                 >
                   {option.months} oy
                 </span>
@@ -92,14 +92,14 @@ export function ProductCard({ product }: ProductCardProps) {
             {product.oldPrice ? (
               <p className="text-sm text-muted line-through">{formatSum(product.oldPrice)}</p>
             ) : null}
-            <p className="mt-1 text-[1.1rem] font-semibold text-foreground">
+            <p className="mt-1 text-[1.05rem] font-semibold text-foreground sm:text-[1.1rem]">
               {formatSum(product.price)}
             </p>
             <p className="mt-1 text-[12px] text-muted">
               {product.stockLabel || product.branchName || `${product.stock} dona mavjud`}
             </p>
           </div>
-          <span className="rounded-full bg-[#eff8ef] px-3 py-2 text-[11px] font-semibold text-[#2d7a46]">
+          <span className="rounded-full bg-[#eff8ef] px-3 py-1.5 text-[10px] font-semibold text-[#2d7a46] sm:py-2 sm:text-[11px]">
             IMEI + original
           </span>
         </div>

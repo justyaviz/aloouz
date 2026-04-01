@@ -16,7 +16,7 @@ export default async function FavoritesPage() {
   return (
     <>
       <SiteHeader />
-      <main className="shell py-6 pb-16">
+      <main className="shell py-4 pb-20 sm:py-6">
         <FavoritesView products={products} />
       </main>
       <SiteFooter />

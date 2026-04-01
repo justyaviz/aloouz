@@ -62,7 +62,7 @@ export function HeroCarousel({ slides }: { slides: HeroCarouselSlide[] }) {
   };
 
   return (
-    <div className="reveal-up relative overflow-hidden rounded-[28px] border border-white/12 bg-[linear-gradient(125deg,#0b3a72_0%,#1487e3_50%,#0b2c59_100%)] p-3.5 text-white shadow-[0_22px_54px_rgba(10,44,96,0.18)] sm:p-4">
+    <div className="reveal-up relative overflow-hidden rounded-[26px] border border-white/12 bg-[linear-gradient(125deg,#0b3a72_0%,#1487e3_50%,#0b2c59_100%)] p-3 text-white shadow-[0_22px_54px_rgba(10,44,96,0.18)] sm:rounded-[28px] sm:p-4">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.24),transparent_30%)]" />
       <div
         className="absolute -right-10 top-6 h-36 w-36 opacity-[0.1]"
@@ -104,7 +104,7 @@ export function HeroCarousel({ slides }: { slides: HeroCarouselSlide[] }) {
         </>
       ) : null}
 
-      <div className="relative min-h-[13.75rem] sm:min-h-[14.5rem] lg:min-h-[14.75rem]">
+      <div className="relative min-h-[10.8rem] sm:min-h-[14.5rem] lg:min-h-[14.75rem]">
         {slides.map((slide, index) => (
           <div
             key={slide.id}
@@ -145,13 +145,13 @@ export function HeroCarousel({ slides }: { slides: HeroCarouselSlide[] }) {
                   </Link>
                   <Link
                     href={slide.secondaryHref}
-                    className="inline-flex items-center justify-center rounded-[16px] border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/16"
+                    className="hidden items-center justify-center rounded-[16px] border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/16 sm:inline-flex"
                   >
                     {slide.secondaryLabel}
                   </Link>
                 </div>
 
-                <div className="mt-3.5 grid gap-2 sm:grid-cols-3">
+                <div className="mt-3.5 hidden gap-2 sm:grid sm:grid-cols-3">
                   <div className="rounded-[18px] border border-white/16 bg-white/10 px-4 py-3">
                     <p className="text-[11px] uppercase tracking-[0.2em] text-white/68">
                       Narx

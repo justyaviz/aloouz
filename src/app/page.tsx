@@ -211,33 +211,34 @@ export default async function Home() {
       <SiteHeader />
 
       <main className="page-enter pb-16">
-        <section className="shell pt-5">
-          <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_286px] xl:items-start">
+        <section className="shell pt-4 sm:pt-5">
+          <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_286px] xl:items-start">
             <HeroCarousel slides={heroSlides} />
 
-            <aside className="reveal-up reveal-up-delay-1 rounded-[30px] border border-line bg-white p-4 shadow-[0_16px_38px_rgba(13,31,55,0.08)] sm:p-5">
-              <div className="flex items-start justify-between gap-4">
+            <aside className="reveal-up reveal-up-delay-1 rounded-[26px] border border-line bg-white p-4 shadow-[0_16px_38px_rgba(13,31,55,0.08)] sm:rounded-[30px] sm:p-5">
+              <div className="flex items-end justify-between gap-4">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
+                  <p className="text-sm font-semibold text-foreground sm:text-xs sm:uppercase sm:tracking-[0.24em] sm:text-accent">
                     Kun mahsulotlari
                   </p>
-                  <h2 className="mt-2 font-display text-[1.55rem] font-semibold tracking-tight text-foreground">
+                  <h2 className="mt-1 font-display text-[1.2rem] font-semibold tracking-tight text-foreground sm:mt-2 sm:text-[1.55rem]">
                     Kun taklifi
                   </h2>
                 </div>
+                <CountdownTimer compact className="shrink-0 sm:hidden" />
               </div>
 
-              <CountdownTimer className="mt-3" />
+              <CountdownTimer className="mt-3 hidden sm:block" />
 
               <div
-                className="mt-3 rounded-[22px] border border-line p-3.5"
+                className="mt-3 rounded-[20px] border border-line p-3 sm:rounded-[22px] sm:p-3.5"
                 style={{
                   background:
                     "linear-gradient(180deg, rgba(244,249,255,1) 0%, rgba(255,255,255,1) 100%)",
                 }}
               >
                 <div
-                  className="h-28 rounded-[18px]"
+                  className="h-24 rounded-[16px] sm:h-28 sm:rounded-[18px]"
                   style={{
                     backgroundImage: "url('/brand/aloo-mark-light.png')",
                     backgroundPosition: "right -10px bottom -10px",
@@ -277,12 +278,12 @@ export default async function Home() {
 
               <Link
                 href={`/product/${productOfDay.slug}`}
-                className="line-clamp-2 mt-3.5 block text-base font-semibold leading-7 text-foreground"
+                className="line-clamp-2 mt-3.5 block text-[15px] font-semibold leading-6 text-foreground sm:text-base sm:leading-7"
               >
                 {productOfDay.name}
               </Link>
 
-              <div className="mt-3 inline-flex rounded-[12px] border border-accent px-3 py-2 text-sm font-semibold text-accent">
+              <div className="mt-3 inline-flex rounded-[12px] border border-accent px-3 py-1.5 text-sm font-semibold text-accent">
                 {formatMonthly(productOfDay.installment12 ?? productOfDay.monthlyPrice)}
               </div>
 
@@ -309,7 +310,7 @@ export default async function Home() {
           </div>
         </section>
 
-        <section id="delivery" className="shell reveal-up reveal-up-delay-1 pt-6">
+        <section id="delivery" className="shell reveal-up reveal-up-delay-1 hidden pt-6 md:block">
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {serviceCards.map((item, index) => {
               const Icon = item.icon;
@@ -351,12 +352,12 @@ export default async function Home() {
             ctaHref="/catalog"
           />
 
-          <div className="no-scrollbar mt-5 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 sm:grid sm:overflow-visible xl:grid-cols-4">
+          <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
             {categories.slice(0, 8).map((category, index) => (
               <Link
                 key={category.slug}
                 href={`/catalog?category=${category.slug}`}
-                className="relative flex min-h-[110px] min-w-[250px] snap-start items-center justify-between gap-4 overflow-hidden rounded-[24px] border border-line bg-[#f7f9fc] px-5 py-5 transition hover:-translate-y-1 hover:bg-white hover:shadow-[0_14px_35px_rgba(13,31,55,0.08)] sm:min-w-0"
+                className="relative flex min-h-[92px] items-center justify-between gap-3 overflow-hidden rounded-[22px] border border-line bg-[#f7f9fc] px-4 py-4 transition hover:-translate-y-1 hover:bg-white hover:shadow-[0_14px_35px_rgba(13,31,55,0.08)] sm:min-h-[110px] sm:gap-4 sm:rounded-[24px] sm:px-5 sm:py-5"
               >
                 <div
                   className="absolute -right-6 -top-3 h-20 w-20 opacity-[0.08]"
@@ -368,15 +369,15 @@ export default async function Home() {
                   }}
                 />
                 <div className="min-w-0">
-                  <p className="text-lg font-semibold leading-7 text-foreground">
+                  <p className="text-base font-semibold leading-6 text-foreground sm:text-lg sm:leading-7">
                     {category.name}
                   </p>
-                  <p className="mt-1 text-sm text-muted">
+                  <p className="mt-1 text-[12px] text-muted sm:text-sm">
                     {categoryCaptions[index] ?? category.description}
                   </p>
                 </div>
                 <div
-                  className="h-16 w-20 shrink-0 rounded-[18px]"
+                  className="h-12 w-14 shrink-0 rounded-[16px] sm:h-16 sm:w-20 sm:rounded-[18px]"
                   style={{
                     background: `linear-gradient(135deg, ${category.toneFrom}, ${category.toneTo})`,
                   }}

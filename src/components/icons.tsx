@@ -282,3 +282,115 @@ export function SparklesIcon({ className }: IconProps) {
     </Svg>
   );
 }
+
+export function ScanIcon({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <path d="M8 4H6.5A2.5 2.5 0 0 0 4 6.5V8" />
+      <path d="M16 4h1.5A2.5 2.5 0 0 1 20 6.5V8" />
+      <path d="M8 20H6.5A2.5 2.5 0 0 1 4 17.5V16" />
+      <path d="M16 20h1.5a2.5 2.5 0 0 0 2.5-2.5V16" />
+      <circle cx="12" cy="12" r="3.3" />
+    </Svg>
+  );
+}
+
+export function ShareIcon({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <path d="M12 16V6" />
+      <path d="m8 9 4-4 4 4" />
+      <path d="M6.5 13.5v3A1.5 1.5 0 0 0 8 18h8a1.5 1.5 0 0 0 1.5-1.5v-3" />
+    </Svg>
+  );
+}
+
+export function TvIcon({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <rect x="4" y="5" width="16" height="11" rx="2.2" />
+      <path d="M9 19h6" />
+      <path d="M12 16v3" />
+    </Svg>
+  );
+}
+
+export function LaptopIcon({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <rect x="6" y="5" width="12" height="9" rx="1.8" />
+      <path d="M3.5 17h17" />
+      <path d="M5 17l1.3 2h11.4L19 17" />
+    </Svg>
+  );
+}
+
+export function WasherIcon({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <rect x="5" y="3.5" width="14" height="17" rx="2.2" />
+      <circle cx="12" cy="12.5" r="4" />
+      <path d="M8 7h1" />
+      <path d="M11 7h5" />
+    </Svg>
+  );
+}
+
+export function FridgeIcon({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <rect x="7" y="3.5" width="10" height="17" rx="2.2" />
+      <path d="M7 11.5h10" />
+      <path d="M9.5 8.5v1.5" />
+      <path d="M9.5 14.5V16" />
+    </Svg>
+  );
+}
+
+export function TrophyIcon({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <path d="M8 4h8v3.5A4 4 0 0 1 12 11.5 4 4 0 0 1 8 7.5V4Z" />
+      <path d="M8 5H5.5A1.5 1.5 0 0 0 4 6.5 3.5 3.5 0 0 0 7.5 10" />
+      <path d="M16 5h2.5A1.5 1.5 0 0 1 20 6.5 3.5 3.5 0 0 1 16.5 10" />
+      <path d="M12 11.5v3.5" />
+      <path d="M9 20h6" />
+      <path d="M10 15h4l1 5H9l1-5Z" />
+    </Svg>
+  );
+}
+
+export function TargetIcon({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <circle cx="12" cy="12" r="7.5" />
+      <circle cx="12" cy="12" r="3.5" />
+      <path d="m16 8-4 4" />
+      <path d="m16.5 7.5 1.5-1.5" />
+    </Svg>
+  );
+}
+
+export function CarIcon({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <path d="M5 15.5 6.5 10a2 2 0 0 1 1.9-1.5h7.2a2 2 0 0 1 1.9 1.5l1.5 5.5" />
+      <path d="M4.5 15.5h15" />
+      <circle cx="7.5" cy="16.5" r="1.5" />
+      <circle cx="16.5" cy="16.5" r="1.5" />
+      <path d="M6 10.5h12" />
+    </Svg>
+  );
+}
+
+export function PackageOffIcon({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <path d="m12 3 7 3.8v10.4L12 21l-7-3.8V6.8L12 3Z" />
+      <path d="m5 6.8 7 4 7-4" />
+      <path d="M12 10.8V21" />
+      <path d="m16.5 8.5 4 4" />
+      <path d="m20.5 8.5-4 4" />
+    </Svg>
+  );
+}

@@ -16,7 +16,7 @@ export default async function ComparePage() {
   return (
     <>
       <SiteHeader />
-      <main className="shell py-6 pb-16">
+      <main className="shell py-4 pb-20 sm:py-6">
         <CompareView products={products} />
       </main>
       <SiteFooter />

@@ -22,9 +22,10 @@ function getTimeLeft() {
 
 type CountdownTimerProps = {
   className?: string;
+  compact?: boolean;
 };
 
-export function CountdownTimer({ className }: CountdownTimerProps) {
+export function CountdownTimer({ className, compact = false }: CountdownTimerProps) {
   const [timeLeft, setTimeLeft] = useState(getTimeLeft);
 
   useEffect(() => {
@@ -39,10 +40,12 @@ export function CountdownTimer({ className }: CountdownTimerProps) {
 
   return (
     <div className={className}>
-      <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-muted">
-        Kun yakunigacha
-      </p>
-      <div className="flex gap-1.5">
+      {!compact ? (
+        <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-muted">
+          Kun yakunigacha
+        </p>
+      ) : null}
+      <div className={compact ? "flex gap-1" : "flex gap-1.5"}>
         {[
           { label: "soat", value: timeLeft.hours },
           { label: "daq", value: timeLeft.minutes },
@@ -50,12 +53,20 @@ export function CountdownTimer({ className }: CountdownTimerProps) {
         ].map((item) => (
           <div
             key={item.label}
-            className="min-w-[54px] rounded-[14px] border border-[#dce7f2] bg-[#f4f8fb] px-3 py-2 text-center"
+            className={`text-center ${
+              compact
+                ? "min-w-[38px] rounded-[10px] border border-[#e0e7f0] bg-[#f4f6f8] px-2 py-1.5"
+                : "min-w-[54px] rounded-[14px] border border-[#dce7f2] bg-[#f4f8fb] px-3 py-2"
+            }`}
           >
-            <p className="text-lg font-semibold tracking-[0.08em] text-foreground">{item.value}</p>
-            <p className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.18em] text-muted">
-              {item.label}
+            <p className={`${compact ? "text-base" : "text-lg"} font-semibold tracking-[0.08em] text-foreground`}>
+              {item.value}
             </p>
+            {!compact ? (
+              <p className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.18em] text-muted">
+                {item.label}
+              </p>
+            ) : null}
           </div>
         ))}
       </div>

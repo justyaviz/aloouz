@@ -1,6 +1,17 @@
 /* eslint-disable react/no-unescaped-entities */
 import Link from "next/link";
 
+import {
+  CarIcon,
+  FridgeIcon,
+  HomeIcon,
+  LaptopIcon,
+  PhoneIcon,
+  TargetIcon,
+  TrophyIcon,
+  TvIcon,
+  WasherIcon,
+} from "@/components/icons";
 import { ProductCard } from "@/components/product-card";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -41,6 +52,54 @@ export const metadata = {
   description: "aloo smartfonlar va gadjetlar katalogi",
 };
 
+const mobileCatalogSections = [
+  {
+    href: "/catalog",
+    label: "Televizorlar, Hi-Fi va video",
+    icon: TvIcon,
+  },
+  {
+    href: "/catalog?category=smartfonlar",
+    label: "Smartfonlar, telefonlar, planshetlar va gadjetlar",
+    icon: PhoneIcon,
+  },
+  {
+    href: "/catalog",
+    label: "Noutbuklar, monobloklar, o'yin pristavkalari",
+    icon: LaptopIcon,
+  },
+  {
+    href: "/catalog",
+    label: "Uy uchun texnikalar",
+    icon: WasherIcon,
+  },
+  {
+    href: "/catalog",
+    label: "Oshxona jihozlari",
+    icon: FridgeIcon,
+  },
+  {
+    href: "/catalog",
+    label: "Sport, sevimli mashg'ulotlar",
+    icon: TrophyIcon,
+  },
+  {
+    href: "/catalog",
+    label: "Hovli, bog', tomorqa",
+    icon: HomeIcon,
+  },
+  {
+    href: "/catalog",
+    label: "Bolalar uchun tovarlar",
+    icon: TargetIcon,
+  },
+  {
+    href: "/catalog",
+    label: "Avto va Moto",
+    icon: CarIcon,
+  },
+];
+
 export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   const { brands, categories, products } = await getStorefrontSnapshot();
   const filters = await searchParams;
@@ -49,6 +108,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   const activeQuery = filters.query?.trim();
 
   const selectedCategory = categories.find((category) => category.slug === activeCategory);
+  const showMobileExplorer = !activeCategory && !activeBrand && !activeQuery;
 
   const filteredProducts = products.filter((product) => {
     const categoryMatch = activeCategory ? product.categorySlug === activeCategory : true;
@@ -77,7 +137,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
           <span className="text-foreground">Katalog</span>
         </nav>
 
-        <section className="rounded-[30px] border border-line bg-white p-5 shadow-[0_18px_45px_rgba(13,31,55,0.08)] sm:p-8">
+        <section className="hidden rounded-[30px] border border-line bg-white p-5 shadow-[0_18px_45px_rgba(13,31,55,0.08)] sm:p-8 xl:block">
           <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px] xl:items-start">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
@@ -209,39 +269,66 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
 
           <div className="space-y-4">
             <div className="xl:hidden">
-              <div className="rounded-[24px] border border-line bg-white p-4 shadow-[0_12px_30px_rgba(13,31,55,0.06)]">
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted">
-                  Mobil filterlar
-                </p>
-                <div className="no-scrollbar mt-4 flex gap-2 overflow-x-auto pb-1">
-                  <Link
-                  href={buildCatalogHref(activeCategory, undefined, activeQuery)}
-                    className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition ${
-                      !activeBrand
-                        ? "bg-accent text-white"
-                        : "border border-line bg-white text-foreground"
-                    }`}
-                  >
-                    Barcha brendlar
-                  </Link>
-                  {brands.map((brand) => (
+              {showMobileExplorer ? (
+                <div className="space-y-3">
+                  {mobileCatalogSections.map((section) => {
+                    const Icon = section.icon;
+
+                    return (
+                      <Link
+                        key={section.label}
+                        href={section.href}
+                        className="flex items-start gap-3 rounded-[22px] border border-[#e6ebf1] bg-white px-4 py-4 shadow-[0_8px_18px_rgba(13,31,55,0.04)]"
+                      >
+                        <span className="mt-0.5 inline-flex h-10 w-10 items-center justify-center rounded-[14px] bg-[#fff4ef] text-support">
+                          <Icon className="h-4 w-4" />
+                        </span>
+                        <span className="text-sm font-semibold leading-6 text-foreground">
+                          {section.label}
+                        </span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="rounded-[24px] border border-line bg-white p-4 shadow-[0_12px_30px_rgba(13,31,55,0.06)]">
+                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted">
+                    Mobil filterlar
+                  </p>
+                  <div className="no-scrollbar mt-4 flex gap-2 overflow-x-auto pb-1">
                     <Link
-                      key={brand}
-                      href={buildCatalogHref(activeCategory, brand, activeQuery)}
+                      href={buildCatalogHref(activeCategory, undefined, activeQuery)}
                       className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition ${
-                        activeBrand === brand
+                        !activeBrand
                           ? "bg-accent text-white"
                           : "border border-line bg-white text-foreground"
                       }`}
                     >
-                      {brand}
+                      Barcha brendlar
                     </Link>
-                  ))}
+                    {brands.map((brand) => (
+                      <Link
+                        key={brand}
+                        href={buildCatalogHref(activeCategory, brand, activeQuery)}
+                        className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition ${
+                          activeBrand === brand
+                            ? "bg-accent text-white"
+                            : "border border-line bg-white text-foreground"
+                        }`}
+                      >
+                        {brand}
+                      </Link>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
-            <div className="flex flex-col gap-4 rounded-[26px] border border-line bg-white p-5 shadow-[0_12px_30px_rgba(13,31,55,0.06)] lg:flex-row lg:items-center lg:justify-between">
+            <div
+              className={`rounded-[26px] border border-line bg-white p-5 shadow-[0_12px_30px_rgba(13,31,55,0.06)] ${
+                showMobileExplorer ? "hidden xl:flex" : "flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between"
+              }`}
+            >
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted">
                   Natijalar
@@ -288,13 +375,13 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
               </div>
             </div>
 
-            {filteredProducts.length > 0 ? (
+            {filteredProducts.length > 0 && !showMobileExplorer ? (
               <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-3">
                 {filteredProducts.map((product) => (
                   <ProductCard key={product.slug} product={product} />
                 ))}
               </div>
-            ) : (
+            ) : !showMobileExplorer ? (
               <div className="rounded-[30px] border border-line bg-white p-10 text-center shadow-[0_12px_30px_rgba(13,31,55,0.06)]">
                 <p className="font-display text-3xl font-semibold text-foreground">
                   Bu filter bo'yicha mahsulot topilmadi
@@ -310,7 +397,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
                   Barcha mahsulotlarni ko'rish
                 </Link>
               </div>
-            )}
+            ) : null}
           </div>
         </section>
       </main>

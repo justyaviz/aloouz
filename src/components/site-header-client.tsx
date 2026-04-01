@@ -7,19 +7,27 @@ import { useEffect, useState } from "react";
 import type { AuthViewer } from "@/lib/customer-auth";
 
 import {
+  CarIcon,
   CartIcon,
   ChevronDownIcon,
   ClipboardIcon,
-  ClockIcon,
   CloseIcon,
   CompareIcon,
-  GridIcon,
+  FridgeIcon,
   HeartIcon,
+  HomeIcon,
+  LaptopIcon,
   LocationIcon,
   MenuIcon,
   PhoneIcon,
+  ScanIcon,
   SearchIcon,
+  ShareIcon,
+  TargetIcon,
+  TrophyIcon,
+  TvIcon,
   UserIcon,
+  WasherIcon,
 } from "@/components/icons";
 import { LoginCard } from "@/components/login-card";
 import { useStorefrontState } from "@/components/storefront-state-provider";
@@ -93,35 +101,50 @@ const catalogGroups = [
 
 const catalogSections = [
   {
+    href: "/catalog",
+    label: "Televizorlar, Hi-Fi va video",
+    icon: TvIcon,
+  },
+  {
     href: "/catalog?category=smartfonlar",
     label: "Smartfonlar, telefonlar, planshetlar va gadjetlar",
     icon: PhoneIcon,
     active: true,
   },
   {
-    href: "/catalog?category=iphone",
-    label: "Apple va premium ekotizim",
-    icon: GridIcon,
+    href: "/catalog",
+    label: "Noutbuklar, monobloklar, o'yin pristavkalari",
+    icon: LaptopIcon,
   },
   {
-    href: "/catalog?category=android",
-    label: "Android hit modellari",
-    icon: CompareIcon,
+    href: "/catalog",
+    label: "Uy uchun texnikalar",
+    icon: WasherIcon,
   },
   {
-    href: "/catalog?category=aqlli-soatlar",
-    label: "Aqlli soatlar va fitnes",
-    icon: ClockIcon,
+    href: "/catalog",
+    label: "Oshxona jihozlari",
+    icon: FridgeIcon,
   },
   {
-    href: "/catalog?category=quloqchinlar",
-    label: "Audio va quloqchinlar",
-    icon: HeartIcon,
+    href: "/catalog",
+    label: "Sport, sevimli mashg'ulotlar",
+    icon: TrophyIcon,
   },
   {
-    href: "/catalog?category=planshetlar",
-    label: "Planshetlar va ish uchun qurilmalar",
-    icon: CartIcon,
+    href: "/catalog",
+    label: "Hovli, bog', tomorqa",
+    icon: HomeIcon,
+  },
+  {
+    href: "/catalog",
+    label: "Bolalar uchun tovarlar",
+    icon: TargetIcon,
+  },
+  {
+    href: "/catalog",
+    label: "Avto va Moto",
+    icon: CarIcon,
   },
 ];
 
@@ -265,33 +288,54 @@ function DesktopCatalogMenu({ onClose }: { onClose: () => void }) {
   );
 }
 
-function MobileCatalogDrawer({ onClose }: { onClose: () => void }) {
+function MobileCatalogDrawer({
+  onClose,
+  onShare,
+}: {
+  onClose: () => void;
+  onShare: () => void;
+}) {
   return (
-    <div className="fixed inset-0 z-[60] bg-[rgba(7,17,31,0.5)] backdrop-blur-sm lg:hidden">
-      <div className="absolute inset-x-0 top-0 rounded-b-[32px] bg-white px-4 pb-6 pt-[calc(env(safe-area-inset-top)+1rem)] shadow-[0_24px_70px_rgba(13,31,55,0.18)]">
-        <div className="flex items-center justify-between gap-3">
-          <SiteLogo href="/" width={124} showTagline className="flex flex-col gap-1" />
+    <div className="fixed inset-0 z-[60] overflow-y-auto bg-white lg:hidden">
+      <div className="mx-auto max-w-md px-4 pb-[calc(env(safe-area-inset-bottom)+6rem)] pt-[calc(env(safe-area-inset-top)+0.75rem)]">
+        <div className="flex h-12 items-center rounded-[20px] bg-[#eef1f5] px-3 text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.65)]">
+          <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#e1e6ec] text-[#7b8795]">
+            <ScanIcon className="h-4 w-4" />
+          </span>
+          <Link href="/" onClick={onClose} className="flex-1 text-center text-base font-medium">
+            aloo.uz
+          </Link>
           <button
             type="button"
-            onClick={onClose}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-[16px] border border-line bg-white text-foreground"
-            aria-label="Katalogni yopish"
+            onClick={onShare}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#e1e6ec] text-[#7b8795]"
+            aria-label="Sahifani ulashish"
           >
-            <CloseIcon className="h-4 w-4" />
+            <ShareIcon className="h-4 w-4" />
           </button>
         </div>
 
-        <div className="mt-4 flex h-12 items-center rounded-[18px] border border-line bg-[#f8fbfd] px-4">
-          <SearchIcon className="h-4 w-4 text-muted" />
-          <input
-            readOnly
-            value=""
-            placeholder="Samsung s26 ultra"
-            className="min-w-0 flex-1 bg-transparent px-3 text-sm text-foreground outline-none placeholder:text-muted"
-          />
+        <div className="mt-4 flex items-center gap-3">
+          <button
+            type="button"
+            onClick={onClose}
+            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[16px] text-foreground"
+            aria-label="Menyuni yopish"
+          >
+            <MenuIcon className="h-6 w-6" />
+          </button>
+          <div className="flex h-12 min-w-0 flex-1 items-center rounded-[18px] bg-[#f5f6f8] px-4">
+            <SearchIcon className="h-4 w-4 text-muted" />
+            <input
+              readOnly
+              value=""
+              placeholder="Samsung s26 ultra"
+              className="min-w-0 flex-1 bg-transparent px-3 text-sm text-foreground outline-none placeholder:text-muted"
+            />
+          </div>
         </div>
 
-        <div className="mt-5 space-y-2">
+        <div className="mt-5 space-y-3">
           {catalogSections.map((section) => {
             const Icon = section.icon;
 
@@ -300,7 +344,7 @@ function MobileCatalogDrawer({ onClose }: { onClose: () => void }) {
                 key={section.label}
                 href={section.href}
                 onClick={onClose}
-                className="flex items-start gap-3 rounded-[22px] border border-line bg-white px-4 py-4"
+                className="flex items-start gap-3 rounded-[22px] border border-[#e6ebf1] bg-white px-4 py-4 shadow-[0_8px_18px_rgba(13,31,55,0.04)]"
               >
                 <span className="mt-0.5 inline-flex h-10 w-10 items-center justify-center rounded-[14px] bg-[#fff4ef] text-support">
                   <Icon className="h-4 w-4" />
@@ -350,6 +394,22 @@ export function SiteHeaderClient({ viewer }: { viewer: AuthViewer | null }) {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [loginOpen]);
+
+  const handleShareSite = async () => {
+    if (typeof navigator === "undefined" || !navigator.share) {
+      return;
+    }
+
+    try {
+      await navigator.share({
+        title: "aloo",
+        text: "aloo smartfonlar bozori",
+        url: window.location.origin,
+      });
+    } catch {
+      // Dialog cancelled.
+    }
+  };
 
   return (
     <>
@@ -401,72 +461,44 @@ export function SiteHeaderClient({ viewer }: { viewer: AuthViewer | null }) {
         </div>
 
         <div className="shell py-3 lg:hidden">
-          <div className="flex items-center justify-between gap-3">
-            <SiteLogo href="/" priority showTagline width={132} className="flex flex-col gap-1" />
-            {viewer ? (
-              <Link
-                href="/login"
-                className="inline-flex h-11 items-center justify-center rounded-[16px] border border-line bg-white px-4 text-sm font-semibold text-foreground shadow-[0_10px_24px_rgba(10,41,86,0.08)]"
-              >
-                Kabinet
-              </Link>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setLoginOpen(true)}
-                className="inline-flex h-11 items-center justify-center rounded-[16px] border border-line bg-white px-4 text-sm font-semibold text-foreground shadow-[0_10px_24px_rgba(10,41,86,0.08)]"
-              >
-                Kirish
-              </button>
-            )}
+          <div className="flex h-12 items-center rounded-[20px] bg-[#eef1f5] px-3 text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]">
+            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#e1e6ec] text-[#7b8795]">
+              <ScanIcon className="h-4 w-4" />
+            </span>
+            <Link href="/" className="flex-1 text-center text-base font-medium">
+              aloo.uz
+            </Link>
+            <button
+              type="button"
+              onClick={handleShareSite}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#e1e6ec] text-[#7b8795]"
+              aria-label="Sahifani ulashish"
+            >
+              <ShareIcon className="h-4 w-4" />
+            </button>
           </div>
 
-          <form action="/catalog" className="mt-3 flex items-center gap-2">
+          <form action="/catalog" className="mt-4 flex items-center gap-3">
             <button
               type="button"
               onClick={() => setCatalogMenuOpen(true)}
-              className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-[18px] border border-line bg-white text-foreground shadow-[0_10px_24px_rgba(10,41,86,0.08)]"
+              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[16px] text-foreground"
               aria-label="Katalog menyusi"
             >
-              <MenuIcon className="h-5 w-5" />
+              <MenuIcon className="h-6 w-6" />
             </button>
 
-            <div className="flex h-12 min-w-0 flex-1 items-center rounded-[18px] border border-line bg-[#f8fbfd] px-3">
+            <div className="flex h-12 min-w-0 flex-1 items-center rounded-[18px] bg-[#f5f6f8] px-3">
               <SearchIcon className="h-4 w-4 shrink-0 text-muted" />
               <input
                 aria-label="Mahsulot qidirish"
                 name="query"
                 className="min-w-0 flex-1 bg-transparent px-2 text-sm text-foreground outline-none placeholder:text-muted"
-                placeholder="Smartfon, model yoki brend"
+                placeholder="Samsung s26 ultra"
                 type="search"
               />
             </div>
-
-            <button
-              type="submit"
-              className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-[18px] bg-support text-white shadow-[0_14px_28px_rgba(254,102,0,0.24)]"
-              aria-label="Qidirish"
-            >
-              <SearchIcon className="h-4 w-4" />
-            </button>
           </form>
-
-          <div className="mt-3 flex gap-2 overflow-x-auto no-scrollbar pb-1">
-            {chips.map((chip) => (
-              <Link
-                key={chip.label}
-                href={chip.href}
-                className={cn(
-                  "inline-flex h-9 shrink-0 items-center rounded-full px-4 text-[13px] font-medium transition",
-                  chip.active
-                    ? "bg-catalog text-white"
-                    : "border border-line bg-white text-foreground",
-                )}
-              >
-                {chip.label}
-              </Link>
-            ))}
-          </div>
         </div>
 
         <div className="hidden lg:block">
@@ -545,11 +577,16 @@ export function SiteHeaderClient({ viewer }: { viewer: AuthViewer | null }) {
         {catalogMenuOpen ? <DesktopCatalogMenu onClose={() => setCatalogMenuOpen(false)} /> : null}
       </header>
 
-      {catalogMenuOpen ? <MobileCatalogDrawer onClose={() => setCatalogMenuOpen(false)} /> : null}
+      {catalogMenuOpen ? (
+        <MobileCatalogDrawer
+          onClose={() => setCatalogMenuOpen(false)}
+          onShare={handleShareSite}
+        />
+      ) : null}
 
       {!viewer && loginOpen ? (
         <div
-          className="fixed inset-0 z-[70] flex items-center justify-center bg-[rgba(6,18,33,0.55)] px-4 py-6 backdrop-blur-sm"
+          className="fixed inset-0 z-[70] flex items-start justify-center bg-[rgba(6,18,33,0.55)] px-4 py-[calc(env(safe-area-inset-top)+4.25rem)] backdrop-blur-sm md:items-center md:py-6"
           onClick={() => setLoginOpen(false)}
         >
           <div onClick={(event) => event.stopPropagation()}>
