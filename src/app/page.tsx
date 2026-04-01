@@ -55,8 +55,8 @@ const serviceCards = [
     anchor: "/catalog",
   },
   {
-    title: "Media va maslahat",
-    description: "Mediablog, tavsiya va tanlov qo'llanmalarini landing ichiga qo'shdik.",
+    title: "Kontent va maslahat",
+    description: "alooBlog, tavsiya va tanlov qo'llanmalarini landing ichiga qo'shdik.",
     icon: NewspaperIcon,
     anchor: "/blog",
   },
@@ -212,37 +212,37 @@ export default async function Home() {
 
       <main className="page-enter pb-16">
         <section className="shell pt-5">
-          <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_312px] xl:items-start">
+          <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_286px] xl:items-start">
             <HeroCarousel slides={heroSlides} />
 
-            <aside className="reveal-up reveal-up-delay-1 rounded-[32px] border border-line bg-white p-5 shadow-[0_18px_45px_rgba(13,31,55,0.08)] sm:p-6">
+            <aside className="reveal-up reveal-up-delay-1 rounded-[30px] border border-line bg-white p-4 shadow-[0_16px_38px_rgba(13,31,55,0.08)] sm:p-5">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
                     Kun mahsulotlari
                   </p>
-                  <h2 className="mt-2 font-display text-[2rem] font-semibold tracking-tight text-foreground">
+                  <h2 className="mt-2 font-display text-[1.55rem] font-semibold tracking-tight text-foreground">
                     Kun taklifi
                   </h2>
                 </div>
               </div>
 
-              <CountdownTimer className="mt-4" />
+              <CountdownTimer className="mt-3" />
 
               <div
-                className="mt-4 rounded-[24px] border border-line p-4"
+                className="mt-3 rounded-[22px] border border-line p-3.5"
                 style={{
                   background:
                     "linear-gradient(180deg, rgba(244,249,255,1) 0%, rgba(255,255,255,1) 100%)",
                 }}
               >
                 <div
-                  className="h-32 rounded-[20px]"
+                  className="h-28 rounded-[18px]"
                   style={{
                     backgroundImage: "url('/brand/aloo-mark-light.png')",
                     backgroundPosition: "right -10px bottom -10px",
                     backgroundRepeat: "no-repeat",
-                    backgroundSize: "84px",
+                    backgroundSize: "74px",
                   }}
                 >
                   <ProductVisual
@@ -277,12 +277,12 @@ export default async function Home() {
 
               <Link
                 href={`/product/${productOfDay.slug}`}
-                className="line-clamp-2 mt-4 block text-[1.04rem] font-semibold leading-7 text-foreground"
+                className="line-clamp-2 mt-3.5 block text-base font-semibold leading-7 text-foreground"
               >
                 {productOfDay.name}
               </Link>
 
-              <div className="mt-4 inline-flex rounded-[12px] border border-accent px-3 py-2 text-sm font-semibold text-accent">
+              <div className="mt-3 inline-flex rounded-[12px] border border-accent px-3 py-2 text-sm font-semibold text-accent">
                 {formatMonthly(productOfDay.installment12 ?? productOfDay.monthlyPrice)}
               </div>
 
@@ -294,7 +294,7 @@ export default async function Home() {
 
               <div className="mt-1 flex items-end justify-between gap-4">
                 <div>
-                  <p className="text-[1.9rem] font-semibold tracking-tight text-foreground">
+                  <p className="text-[1.55rem] font-semibold tracking-tight text-foreground">
                     {formatSum(productOfDay.price)}
                   </p>
                   <p className="mt-1 text-[12px] text-muted">
@@ -346,7 +346,7 @@ export default async function Home() {
           <SectionHeading
             eyebrow="Ommabop kategoriyalar"
             title="Bir klikda kerakli bo'limga o'ting"
-            description="MediaPark uslubidagi retail ritmni saqlab, kategoriyalarni ixcham va oson skan qilinadigan kartalarga ajratdik."
+            description="Retail-marketplace ritmini saqlab, kategoriyalarni ixcham va oson skan qilinadigan kartalarga ajratdik."
             ctaLabel="Barcha katalog"
             ctaHref="/catalog"
           />
@@ -409,7 +409,7 @@ export default async function Home() {
 
         <section id="editorial" className="shell reveal-up reveal-up-delay-2 pt-9">
           <SectionHeading
-            eyebrow="Mediablog"
+            eyebrow="alooBlog"
             title="Yangilik, maslahat va sotuv g'oyalarini bir joyga yig'dik"
             description="Faqat mahsulot emas, balki tanlash bo'yicha foydali kontent ham ko'rinib turadi. Bu landingni ommaga taqdim etishda ancha boy ko'rsatadi."
             ctaLabel="Barcha maqolalar"
@@ -417,7 +417,7 @@ export default async function Home() {
           />
 
           <div className="grid gap-4 xl:grid-cols-[1.08fr_0.92fr]">
-            <article className="relative overflow-hidden rounded-[32px] border border-line bg-[linear-gradient(145deg,#0a336c_0%,#1690f5_58%,#ecf7ff_100%)] p-6 text-white shadow-[0_20px_50px_rgba(10,44,96,0.16)] sm:p-8">
+            <article className="relative overflow-hidden rounded-[32px] border border-line bg-[linear-gradient(145deg,#11305b_0%,#177ddc_56%,#dfefff_100%)] p-6 text-white shadow-[0_18px_42px_rgba(10,44,96,0.14)] sm:p-8">
               <div
                 className="absolute -right-10 bottom-0 h-44 w-44 opacity-[0.14]"
                 style={{
@@ -461,7 +461,7 @@ export default async function Home() {
                   href="/blog"
                   className="mt-8 inline-flex items-center gap-2 rounded-[18px] bg-white px-5 py-3 text-sm font-semibold text-accent transition hover:bg-[#eef6ff]"
                 >
-                  Mediablogga o'tish
+                  alooBlogga o'tish
                   <ArrowRightIcon className="h-4 w-4" />
                 </Link>
               </div>
@@ -501,7 +501,7 @@ export default async function Home() {
 
         <section id="installment" className="shell reveal-up reveal-up-delay-3 pt-9">
           <div className="grid gap-4 xl:grid-cols-[0.88fr_1.12fr]">
-            <article className="relative overflow-hidden rounded-[32px] bg-[linear-gradient(180deg,#0a1524_0%,#143d78_100%)] p-6 text-white shadow-[0_20px_50px_rgba(10,21,36,0.22)] sm:p-8">
+            <article className="relative overflow-hidden rounded-[32px] bg-[linear-gradient(180deg,#10203a_0%,#153763_100%)] p-6 text-white shadow-[0_18px_40px_rgba(10,21,36,0.18)] sm:p-8">
               <div
                 className="absolute right-0 top-0 h-40 w-40 opacity-[0.12]"
                 style={{
@@ -665,7 +665,7 @@ export default async function Home() {
                 aloo ommaga taqdim etishga tayyor retail storefrontga aylanmoqda
               </h2>
               <p className="mt-4 text-base leading-8 text-muted">
-                Hozir sayt bosh qismi MediaPark uslubidagi ritmga yaqinlashtirildi: ixcham hero,
+                Hozir sayt bosh qismi retail-marketplace ritmiga yaqinlashtirildi: ixcham hero,
                 ishlaydigan qidiruv, kirish modali, savat va taqqoslash oqimlari, editorial blok va
                 premium footer bir zanjirga yig'ildi.
               </p>

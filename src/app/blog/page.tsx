@@ -8,8 +8,8 @@ import { getStorefrontSnapshot } from "@/lib/storefront";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Mediablog",
-  description: "aloo mediablog, yangiliklar va smartfon tanlash bo'yicha foydali maqolalar",
+  title: "alooBlog",
+  description: "alooBlog, yangiliklar va smartfon tanlash bo'yicha foydali maqolalar",
 };
 
 const blogTopics = [
@@ -39,7 +39,7 @@ export default async function BlogPage() {
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
-                  Mediablog
+                  alooBlog
                 </p>
                 <h1 className="mt-3 font-display text-4xl font-semibold tracking-tight text-foreground">
                   Yangiliklar, tavsiyalar va editorial kontent
@@ -61,7 +61,7 @@ export default async function BlogPage() {
             <div
               className="relative overflow-hidden rounded-[30px] p-6 text-white shadow-[0_18px_50px_rgba(10,44,96,0.16)] sm:p-8"
               style={{
-                background: `linear-gradient(120deg, ${promo?.backgroundFrom ?? "#8a4b00"} 0%, ${promo?.backgroundTo ?? "#111827"} 100%)`,
+                background: `linear-gradient(120deg, ${promo?.backgroundFrom ?? "#11305b"} 0%, ${promo?.backgroundTo ?? "#177ddc"} 100%)`,
               }}
             >
               <div
@@ -74,7 +74,7 @@ export default async function BlogPage() {
                 }}
               />
               <p className="relative text-xs font-semibold uppercase tracking-[0.24em] text-white/70">
-                {promo?.eyebrow ?? "Mediablog"}
+                alooBlog
               </p>
               <h2 className="relative mt-4 max-w-3xl font-display text-4xl font-semibold tracking-tight text-white sm:text-[2.9rem]">
                 {promo?.title ?? "Innovatsiyalar va smartfon bozori haqida yangiliklar"}

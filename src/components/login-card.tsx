@@ -1,14 +1,18 @@
 "use client";
 
-import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useActionState, useMemo, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useFormStatus } from "react-dom";
 
-import { AppleIcon, CloseIcon } from "@/components/icons";
+import { loginCustomerAction } from "@/app/login/actions";
+import { CloseIcon, LockShieldIcon } from "@/components/icons";
 
 type LoginCardProps = {
   onClose?: () => void;
   className?: string;
 };
+
+const initialLoginFormState: { error?: string } = {};
 
 function cn(...values: Array<string | false | null | undefined>) {
   return values.filter(Boolean).join(" ");
@@ -30,45 +34,28 @@ function formatPhone(value: string) {
   return parts.join(" ");
 }
 
+function SubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="inline-flex h-14 w-full items-center justify-center rounded-[20px] bg-support px-6 text-base font-semibold text-white transition hover:bg-[#e45d07] disabled:cursor-wait disabled:opacity-70"
+    >
+      {pending ? "Kirish..." : "Kirish"}
+    </button>
+  );
+}
+
 export function LoginCard({ onClose, className }: LoginCardProps) {
+  const pathname = usePathname();
   const [accepted, setAccepted] = useState(true);
   const [phone, setPhone] = useState("");
-  const [code, setCode] = useState("");
-  const [step, setStep] = useState<"form" | "code" | "done">("form");
-  const [message, setMessage] = useState<string | null>(null);
+  const [state, formAction] = useActionState(loginCustomerAction, initialLoginFormState);
 
-  const formattedPhone = useMemo(() => `+998 ${formatPhone(phone)}`.trim(), [phone]);
-
-  function submitPhone() {
-    if (!accepted) {
-      setMessage("Davom etish uchun ommaviy ofertaga rozilik kerak.");
-      return;
-    }
-
-    if (onlyDigits(phone).length < 9) {
-      setMessage("Telefon raqamini to'liq kiriting.");
-      return;
-    }
-
-    setMessage("Demo rejimda tasdiqlash kodi yuborildi.");
-    setStep("code");
-  }
-
-  function submitCode() {
-    if (code.trim().length < 4) {
-      setMessage("Kamida 4 xonali kod kiriting.");
-      return;
-    }
-
-    setMessage("Demo kabinet muvaffaqiyatli ochildi.");
-    setStep("done");
-  }
-
-  function showProviderNotice(provider: string) {
-    setMessage(
-      `${provider} orqali kirish backend ulangach yoqiladi. Hozir telefon orqali demo oqim tayyor.`,
-    );
-  }
+  const formattedPhone = useMemo(() => formatPhone(phone), [phone]);
+  const redirectTo = pathname === "/login" ? "/login" : pathname;
 
   return (
     <div
@@ -90,167 +77,67 @@ export function LoginCard({ onClose, className }: LoginCardProps) {
 
       <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">Kirish</p>
       <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-        Kirish yoki ro&apos;yxatdan o&apos;tish
+        Telefon orqali kabinetga kirish
       </h2>
+      <p className="mt-3 text-sm leading-7 text-muted">
+        Raqamingiz orqali himoyalangan session ochiladi va buyurtmalar, sevimlilar hamda shaxsiy
+        kabinetga kirish yoqiladi.
+      </p>
 
-      {step === "form" ? (
-        <>
-          <div className="mt-7 space-y-5">
-            <label className="block">
-              <span className="mb-2 block text-sm font-semibold text-foreground">Telefon</span>
-              <div className="flex h-14 items-center rounded-[20px] border border-[#cfdceb] bg-white px-4 shadow-[0_10px_24px_rgba(13,31,55,0.04)]">
-                <span className="text-base font-semibold text-foreground">+998</span>
-                <input
-                  value={formatPhone(phone)}
-                  onChange={(event) => setPhone(onlyDigits(event.target.value))}
-                  type="tel"
-                  inputMode="numeric"
-                  placeholder="90 123 45 67"
-                  className="min-w-0 flex-1 bg-transparent px-3 text-base text-foreground outline-none placeholder:text-muted"
-                />
-              </div>
-            </label>
+      <form action={formAction} className="mt-7 space-y-5">
+        <input type="hidden" name="redirectTo" value={redirectTo} />
 
-            <label className="flex items-start gap-3 rounded-[20px] border border-line bg-[#fbfdff] px-4 py-4">
-              <input
-                type="checkbox"
-                checked={accepted}
-                onChange={(event) => setAccepted(event.target.checked)}
-                className="mt-1 h-4 w-4 rounded border-line"
-              />
-              <span className="text-sm leading-7 text-muted">
-                Shartlar bilan tanishganligimni va ularga roziligimni tasdiqlayman.
-                <span className="font-semibold text-accent"> Ommaviy oferta</span>
-              </span>
-            </label>
-
-            <button
-              type="button"
-              onClick={submitPhone}
-              className="inline-flex h-14 w-full items-center justify-center rounded-[20px] bg-support px-6 text-base font-semibold text-white transition hover:bg-[#e45d07]"
-            >
-              Kodni yuborish
-            </button>
-          </div>
-
-          <div className="mt-7 flex items-center gap-4 text-sm text-muted">
-            <div className="h-px flex-1 bg-line" />
-            yoki
-            <div className="h-px flex-1 bg-line" />
-          </div>
-
-          <div className="mt-5 grid gap-3">
-            <button
-              type="button"
-              onClick={() => showProviderNotice("Google")}
-              className="inline-flex h-14 items-center justify-center gap-3 rounded-[20px] border border-line bg-[#f8fbfd] px-6 text-base font-semibold text-foreground transition hover:border-accent/30 hover:text-accent"
-            >
-              <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white text-sm font-bold text-[#ea4335] shadow-sm">
-                G
-              </span>
-              Google orqali kirish
-            </button>
-            <button
-              type="button"
-              onClick={() => showProviderNotice("Apple")}
-              className="inline-flex h-14 items-center justify-center gap-3 rounded-[20px] border border-line bg-[#f8fbfd] px-6 text-base font-semibold text-foreground transition hover:border-accent/30 hover:text-accent"
-            >
-              <AppleIcon className="h-6 w-6" />
-              Apple orqali kirish
-            </button>
-          </div>
-        </>
-      ) : null}
-
-      {step === "code" ? (
-        <div className="mt-7 space-y-5">
-          <div className="rounded-[22px] bg-[#f6faff] p-5">
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-accent">
-              Kod yuborildi
-            </p>
-            <p className="mt-3 text-sm leading-7 text-muted">
-              {formattedPhone} raqamiga demo tasdiqlash kodi yuborildi. Istalgan 4 xonali kodni
-              kiritsangiz davom etadi.
-            </p>
-          </div>
-
-          <label className="block">
-            <span className="mb-2 block text-sm font-semibold text-foreground">
-              Tasdiqlash kodi
-            </span>
+        <label className="block">
+          <span className="mb-2 block text-sm font-semibold text-foreground">Telefon</span>
+          <div className="flex h-14 items-center rounded-[20px] border border-[#cfdceb] bg-white px-4 shadow-[0_10px_24px_rgba(13,31,55,0.04)]">
+            <span className="text-base font-semibold text-foreground">+998</span>
             <input
-              value={code}
-              onChange={(event) => setCode(event.target.value.replace(/\D/g, "").slice(0, 6))}
-              type="text"
+              value={formattedPhone}
+              onChange={(event) => setPhone(onlyDigits(event.target.value))}
+              type="tel"
+              name="phone"
               inputMode="numeric"
-              placeholder="0000"
-              className="h-14 w-full rounded-[20px] border border-[#cfdceb] bg-white px-4 text-base tracking-[0.35em] text-foreground outline-none placeholder:text-muted"
+              placeholder="90 123 45 67"
+              className="min-w-0 flex-1 bg-transparent px-3 text-base text-foreground outline-none placeholder:text-muted"
             />
-          </label>
+          </div>
+        </label>
 
-          <div className="grid gap-3 sm:grid-cols-2">
-            <button
-              type="button"
-              onClick={submitCode}
-              className="inline-flex h-14 items-center justify-center rounded-[20px] bg-support px-6 text-base font-semibold text-white transition hover:bg-[#e45d07]"
-            >
-              Tasdiqlash
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setCode("");
-                setStep("form");
-                setMessage(null);
-              }}
-              className="inline-flex h-14 items-center justify-center rounded-[20px] border border-line bg-white px-6 text-base font-semibold text-foreground transition hover:border-accent/30 hover:text-accent"
-            >
-              Boshqa raqam
-            </button>
+        <label className="flex items-start gap-3 rounded-[20px] border border-line bg-[#fbfdff] px-4 py-4">
+          <input
+            type="checkbox"
+            name="accepted"
+            checked={accepted}
+            onChange={(event) => setAccepted(event.target.checked)}
+            className="mt-1 h-4 w-4 rounded border-line"
+          />
+          <span className="text-sm leading-7 text-muted">
+            Shartlar bilan tanishganligimni va ularga roziligimni tasdiqlayman.
+            <span className="font-semibold text-accent"> Ommaviy oferta</span>
+          </span>
+        </label>
+
+        <SubmitButton />
+      </form>
+
+      <div className="mt-6 rounded-[22px] border border-[#dfeaf4] bg-[linear-gradient(180deg,#f7fbff_0%,#ffffff_100%)] p-4">
+        <div className="flex items-start gap-3">
+          <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[16px] bg-[#eef6ff] text-accent">
+            <LockShieldIcon className="h-5 w-5" />
+          </span>
+          <div>
+            <p className="text-sm font-semibold text-foreground">Xavfsiz backend session</p>
+            <p className="mt-1 text-sm leading-6 text-muted">
+              Kirish holati server cookie orqali saqlanadi. Chiqish qilganingizda session darhol
+              bekor bo&apos;ladi.
+            </p>
           </div>
         </div>
-      ) : null}
+      </div>
 
-      {step === "done" ? (
-        <div className="mt-7 space-y-5">
-          <div className="rounded-[22px] bg-[linear-gradient(180deg,#eef8ff_0%,#ffffff_100%)] p-5">
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-accent">
-              Tayyor
-            </p>
-            <p className="mt-3 text-lg font-semibold text-foreground">
-              {formattedPhone} uchun demo kabinet ochildi.
-            </p>
-            <p className="mt-2 text-sm leading-7 text-muted">
-              Keyingi bosqichda bu joyga real SMS verifikatsiya va foydalanuvchi profili ulanadi.
-            </p>
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-2">
-            <Link
-              href="/catalog"
-              className="inline-flex h-14 items-center justify-center rounded-[20px] bg-support px-6 text-base font-semibold text-white transition hover:bg-[#e45d07]"
-            >
-              Katalogga o&apos;tish
-            </Link>
-            <button
-              type="button"
-              onClick={() => {
-                setPhone("");
-                setCode("");
-                setStep("form");
-                setMessage(null);
-              }}
-              className="inline-flex h-14 items-center justify-center rounded-[20px] border border-line bg-white px-6 text-base font-semibold text-foreground transition hover:border-accent/30 hover:text-accent"
-            >
-              Qayta kirish
-            </button>
-          </div>
-        </div>
-      ) : null}
-
-      {message ? (
-        <p className="mt-5 rounded-[18px] bg-[#f6faff] px-4 py-3 text-sm leading-6 text-muted">
-          {message}
+      {state.error ? (
+        <p className="mt-5 rounded-[18px] bg-[#fff2ec] px-4 py-3 text-sm leading-6 text-support">
+          {state.error}
         </p>
       ) : null}
     </div>

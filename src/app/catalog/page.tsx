@@ -88,8 +88,8 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
               </h1>
               <p className="mt-4 max-w-3xl text-sm leading-7 text-muted">
                 aloo katalogi endi retail marketplace ritmida ishlaydi: chap tomonda filtrlar,
-                o'ng tomonda esa natijalar, sort chip'lari va mahsulot grid'i. Bu MediaPark
-                uslubiga yaqinroq ichki oqim beradi.
+                o'ng tomonda esa natijalar, sort chip'lari va mahsulot grid'i. Bu ommaga ko'rsatish
+                uchun ancha toza retail oqim beradi.
               </p>
 
               <div className="no-scrollbar mt-6 flex gap-3 overflow-x-auto pb-1">

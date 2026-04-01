@@ -62,7 +62,7 @@ export function HeroCarousel({ slides }: { slides: HeroCarouselSlide[] }) {
   };
 
   return (
-    <div className="reveal-up relative overflow-hidden rounded-[30px] border border-white/12 bg-[linear-gradient(125deg,#063d86_0%,#1690F5_48%,#082A58_100%)] p-4 text-white shadow-[0_24px_60px_rgba(10,44,96,0.22)] sm:p-5">
+    <div className="reveal-up relative overflow-hidden rounded-[28px] border border-white/12 bg-[linear-gradient(125deg,#0b3a72_0%,#1487e3_50%,#0b2c59_100%)] p-3.5 text-white shadow-[0_22px_54px_rgba(10,44,96,0.18)] sm:p-4">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.24),transparent_30%)]" />
       <div
         className="absolute -right-10 top-6 h-36 w-36 opacity-[0.1]"
@@ -104,7 +104,7 @@ export function HeroCarousel({ slides }: { slides: HeroCarouselSlide[] }) {
         </>
       ) : null}
 
-      <div className="relative min-h-[15rem] sm:min-h-[16.5rem] lg:min-h-[16rem]">
+      <div className="relative min-h-[13.75rem] sm:min-h-[14.5rem] lg:min-h-[14.75rem]">
         {slides.map((slide, index) => (
           <div
             key={slide.id}
@@ -126,17 +126,17 @@ export function HeroCarousel({ slides }: { slides: HeroCarouselSlide[] }) {
                   ) : null}
                 </div>
 
-                <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.26em] text-white/70">
+                <p className="mt-2.5 text-[11px] font-semibold uppercase tracking-[0.24em] text-white/70">
                   {slide.eyebrow}
                 </p>
-                <h1 className="mt-2 max-w-xl font-display text-[1.8rem] font-semibold leading-[1.03] tracking-tight sm:text-[2.1rem] lg:text-[2.45rem]">
+                <h1 className="mt-2 max-w-xl font-display text-[1.55rem] font-semibold leading-[1.04] tracking-tight sm:text-[1.9rem] lg:text-[2.15rem]">
                   {slide.title}
                 </h1>
-                <p className="mt-2.5 max-w-md text-sm leading-6 text-white/84">
+                <p className="mt-2 max-w-md text-[13px] leading-6 text-white/84 sm:text-sm">
                   {slide.description}
                 </p>
 
-                <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+                <div className="mt-3.5 flex flex-col gap-3 sm:flex-row">
                   <Link
                     href={slide.primaryHref}
                     className="inline-flex items-center justify-center gap-2 rounded-[16px] bg-white px-5 py-3 text-sm font-semibold text-accent transition hover:bg-[#eef6ff]"
@@ -151,12 +151,12 @@ export function HeroCarousel({ slides }: { slides: HeroCarouselSlide[] }) {
                   </Link>
                 </div>
 
-                <div className="mt-4 grid gap-2.5 sm:grid-cols-3">
+                <div className="mt-3.5 grid gap-2 sm:grid-cols-3">
                   <div className="rounded-[18px] border border-white/16 bg-white/10 px-4 py-3">
                     <p className="text-[11px] uppercase tracking-[0.2em] text-white/68">
                       Narx
                     </p>
-                    <p className="mt-1.5 text-base font-semibold text-white">
+                    <p className="mt-1.5 text-sm font-semibold text-white sm:text-base">
                       {slide.price ? formatSum(slide.price) : slide.accentLabel ?? "Aksiya"}
                     </p>
                   </div>
@@ -164,7 +164,7 @@ export function HeroCarousel({ slides }: { slides: HeroCarouselSlide[] }) {
                     <p className="text-[11px] uppercase tracking-[0.2em] text-white/68">
                       12 oy
                     </p>
-                    <p className="mt-1.5 text-base font-semibold text-white">
+                    <p className="mt-1.5 text-sm font-semibold text-white sm:text-base">
                       {slide.monthlyPrice ? formatMonthly(slide.monthlyPrice) : "Qulay to'lov"}
                     </p>
                   </div>
@@ -172,7 +172,7 @@ export function HeroCarousel({ slides }: { slides: HeroCarouselSlide[] }) {
                     <p className="text-[11px] uppercase tracking-[0.2em] text-white/68">
                       Yetkazish
                     </p>
-                    <p className="mt-1.5 text-base font-semibold text-white">90 min</p>
+                    <p className="mt-1.5 text-sm font-semibold text-white sm:text-base">90 min</p>
                   </div>
                 </div>
               </div>

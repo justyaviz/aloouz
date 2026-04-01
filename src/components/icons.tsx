@@ -164,6 +164,16 @@ export function ClockIcon({ className }: IconProps) {
   );
 }
 
+export function LockShieldIcon({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <path d="M12 3 6.5 5.4v5.7c0 4 2.3 6.8 5.5 8.4 3.2-1.6 5.5-4.4 5.5-8.4V5.4L12 3Z" />
+      <rect x="9.3" y="10.3" width="5.4" height="4.7" rx="1.1" />
+      <path d="M10.2 10.3V9a1.8 1.8 0 0 1 3.6 0v1.3" />
+    </Svg>
+  );
+}
+
 export function HomeIcon({ className }: IconProps) {
   return (
     <Svg className={className}>

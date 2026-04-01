@@ -10,7 +10,7 @@ const paymentMethods = ["Uzcard", "Humo", "Click", "Payme", "Visa", "Mastercard"
 
 const infoLinks = [
   { href: "/#about", label: "Biz haqimizda" },
-  { href: "/blog", label: "Mediablog" },
+  { href: "/blog", label: "alooBlog" },
   { href: "/#stores", label: "Bizning do'konlarimiz" },
   { href: "/#delivery", label: "Yetkazib berish" },
 ];
@@ -33,7 +33,7 @@ export function SiteFooter() {
   return (
     <footer
       id="contact"
-      className="mt-auto border-t border-[#0f2c53] bg-[linear-gradient(180deg,#0d1f38_0%,#172435_100%)] pb-[calc(env(safe-area-inset-bottom)+5.5rem)] text-white md:pb-0"
+      className="mt-auto border-t border-[#153864] bg-[linear-gradient(180deg,#11243d_0%,#1b2f4d_100%)] pb-[calc(env(safe-area-inset-bottom)+5.5rem)] text-white md:pb-0"
     >
       <div className="shell py-8 md:hidden">
         <div className="rounded-[28px] border border-white/10 bg-white/6 p-5 backdrop-blur-sm">
@@ -47,7 +47,8 @@ export function SiteFooter() {
           />
 
           <p className="mt-4 text-sm leading-7 text-white/72">
-            public storefront uchun tayyorlangan premium mobil retail tajribasi.
+            public storefront uchun tayyorlangan premium mobil retail tajribasi va alooBlog
+            kontenti.
           </p>
 
           <div className="mt-5 grid grid-cols-2 gap-2">
@@ -90,8 +91,8 @@ export function SiteFooter() {
           />
 
           <p className="mt-4 max-w-sm text-sm leading-7 text-white/72">
-            aloo - smartfonlar bozori. Landing, katalog va xizmat oqimlari ommaga ko'rsatishga
-            tayyor professional retail ko'rinishiga keltirildi.
+            aloo - smartfonlar bozori. Landing, katalog, alooBlog va xizmat oqimlari ommaga
+            ko'rsatishga tayyor professional retail ko'rinishiga keltirildi.
           </p>
 
           <div className="mt-6 space-y-3 text-sm text-white/82">
@@ -118,7 +119,7 @@ export function SiteFooter() {
             {paymentMethods.map((item) => (
               <div
                 key={item}
-                className="rounded-[18px] border border-white/10 bg-[#243246] px-4 py-4 text-center text-sm font-semibold text-white"
+                className="rounded-[18px] border border-white/10 bg-[#243a56] px-4 py-4 text-center text-sm font-semibold text-white"
               >
                 {item}
               </div>
