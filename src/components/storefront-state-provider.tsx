@@ -20,6 +20,8 @@ type StorefrontSnapshot = {
   recent: string[];
 };
 
+type SerializedSnapshot = string;
+
 type StorefrontStateContextValue = StorefrontSnapshot & {
   hydrated: boolean;
   toggleFavorite: (slug: string) => void;
@@ -87,6 +89,30 @@ function getSnapshot(): StorefrontSnapshot {
   };
 }
 
+function serializeSnapshot(snapshot: StorefrontSnapshot, hydrated: boolean): SerializedSnapshot {
+  return JSON.stringify({
+    ...snapshot,
+    hydrated,
+  });
+}
+
+function parseSnapshot(value: SerializedSnapshot): StorefrontStateContextValue {
+  const parsed = JSON.parse(value) as StorefrontSnapshot & {
+    hydrated?: boolean;
+  };
+
+  return {
+    favorites: sanitizeList(parsed.favorites),
+    compare: sanitizeList(parsed.compare, MAX_COMPARE_ITEMS),
+    recent: sanitizeList(parsed.recent, MAX_RECENT_ITEMS),
+    hydrated: Boolean(parsed.hydrated),
+    toggleFavorite: () => {},
+    toggleCompare: () => {},
+    rememberProduct: () => {},
+    clearCompare: () => {},
+  };
+}
+
 function subscribe(listener: () => void) {
   if (typeof window === "undefined") {
     return () => {};
@@ -101,6 +127,14 @@ function subscribe(listener: () => void) {
     window.removeEventListener("storage", handleChange);
     window.removeEventListener(CHANGE_EVENT, handleChange);
   };
+}
+
+function getClientSnapshot() {
+  return serializeSnapshot(getSnapshot(), true);
+}
+
+function getServerSnapshot() {
+  return serializeSnapshot(EMPTY_SNAPSHOT, false);
 }
 
 function updateList(
@@ -137,16 +171,14 @@ export function StorefrontStateProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const snapshot = useSyncExternalStore(subscribe, getSnapshot, () => EMPTY_SNAPSHOT);
-  const hydrated = useSyncExternalStore(
-    () => () => {},
-    () => true,
-    () => false,
-  );
+  const serializedSnapshot = useSyncExternalStore(subscribe, getClientSnapshot, getServerSnapshot);
+  const snapshot = parseSnapshot(serializedSnapshot);
 
   const value: StorefrontStateContextValue = {
-    ...snapshot,
-    hydrated,
+    favorites: snapshot.favorites,
+    compare: snapshot.compare,
+    recent: snapshot.recent,
+    hydrated: snapshot.hydrated,
     toggleFavorite: (slug) => {
       startTransition(() => {
         updateList(FAVORITES_KEY, undefined, (previous) => toggleItem(previous, slug));

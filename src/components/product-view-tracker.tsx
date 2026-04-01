@@ -1,18 +1,15 @@
 "use client";
 
-import { useEffect, useEffectEvent } from "react";
+import { useEffect } from "react";
 
 import { useStorefrontState } from "@/components/storefront-state-provider";
 
 export function ProductViewTracker({ productSlug }: { productSlug: string }) {
   const { rememberProduct } = useStorefrontState();
-  const handleRememberProduct = useEffectEvent(() => {
-    rememberProduct(productSlug);
-  });
 
   useEffect(() => {
-    handleRememberProduct();
-  }, [productSlug]);
+    rememberProduct(productSlug);
+  }, [productSlug, rememberProduct]);
 
   return null;
 }
