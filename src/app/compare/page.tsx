@@ -3,6 +3,8 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { getStorefrontSnapshot } from "@/lib/storefront";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Taqqoslash",
   description: "Tanlangan mahsulotlarni yonma-yon taqqoslash sahifasi",

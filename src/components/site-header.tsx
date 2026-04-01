@@ -43,7 +43,8 @@ const chips = [
   { href: "/catalog?category=smartfonlar", label: "Smartfonlar" },
   { href: "/catalog?category=quloqchinlar", label: "Quloqchinlar" },
   { href: "/catalog?category=aqlli-soatlar", label: "Aqlli soatlar" },
-  { href: "/catalog?category=planshetlar", label: "Planshetlar" },
+  { href: "/catalog?category=klaviaturalar", label: "Klaviaturalar" },
+  { href: "/catalog?category=kalonkalar", label: "Kalonkalar" },
 ];
 
 function Shortcut({

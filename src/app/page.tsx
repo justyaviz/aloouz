@@ -11,6 +11,8 @@ import { SiteHeader } from "@/components/site-header";
 import { formatMonthly, formatSum } from "@/lib/format";
 import { getStorefrontSnapshot } from "@/lib/storefront";
 
+export const dynamic = "force-dynamic";
+
 const categoryCaptions = [
   "iPhone va Android",
   "Apple ekotizimi",
@@ -18,8 +20,8 @@ const categoryCaptions = [
   "Fitness va ulanish",
   "AirPods va JBL",
   "Ish va o'qish uchun",
-  "Fast charge aksessuarlari",
-  "Har kunlik texno gadjetlar",
+  "Simsiz va mexanik",
+  "Bluetooth audio",
 ];
 
 function parseHexColor(value: string) {
@@ -146,7 +148,10 @@ export default async function Home() {
 
                   <div className="mt-6 grid gap-3 sm:grid-cols-3">
                     {[
-                      { label: "Bo'lib to'lash", value: formatMonthly(heroProduct.monthlyPrice) },
+                      {
+                        label: "Bo'lib to'lash",
+                        value: formatMonthly(heroProduct.installment12 ?? heroProduct.monthlyPrice),
+                      },
                       { label: "Yangi narx", value: formatSum(heroProduct.price) },
                       { label: "Yetkazish", value: "90 min" },
                     ].map((item) => (
@@ -235,7 +240,7 @@ export default async function Home() {
               </Link>
 
               <div className="mt-4 inline-flex rounded-[12px] border border-accent px-3 py-2 text-sm font-semibold text-accent">
-                {formatMonthly(productOfDay.monthlyPrice)}
+                {formatMonthly(productOfDay.installment12 ?? productOfDay.monthlyPrice)}
               </div>
 
               {productOfDay.oldPrice ? (

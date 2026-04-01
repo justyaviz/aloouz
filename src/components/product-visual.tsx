@@ -88,6 +88,27 @@ export function ProductVisual({
             <div className="h-32 w-32 rounded-full border border-white/60 bg-slate-950/90 shadow-2xl" />
           </div>
         ) : null}
+
+        {!imageUrl && kind === "keyboard" ? (
+          <div className="relative w-full max-w-md rounded-[1.8rem] border border-white/60 bg-slate-950/90 p-4 shadow-2xl">
+            <div className="grid grid-cols-8 gap-2">
+              {Array.from({ length: 24 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="h-7 rounded-[0.8rem] bg-gradient-to-b from-white/85 to-white/15"
+                />
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        {!imageUrl && kind === "speaker" ? (
+          <div className="relative flex h-full max-h-80 w-full max-w-md items-center justify-center">
+            <div className="flex h-44 w-32 items-center justify-center rounded-[2rem] border border-white/60 bg-slate-950/90 shadow-2xl">
+              <div className="h-24 w-24 rounded-full border border-white/30 bg-gradient-to-b from-white/90 to-white/15" />
+            </div>
+          </div>
+        ) : null}
       </div>
 
       <div

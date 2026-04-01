@@ -11,9 +11,11 @@ import {
   type Product,
   type PromoDeal,
   type ProductKind,
+  type SyncProviderState,
 } from "@/data/store";
 
 type ProductSpec = Product["specs"][number];
+type SyncSummary = NonNullable<SyncProviderState["lastSummary"]>;
 
 export type StorefrontSnapshot = {
   products: Product[];
@@ -25,6 +27,7 @@ export type StorefrontSnapshot = {
 
 export type AdminDashboardData = StorefrontSnapshot & {
   databaseEnabled: boolean;
+  syncState: SyncProviderState | null;
 };
 
 function formatUzDate(date: Date) {
@@ -32,6 +35,18 @@ function formatUzDate(date: Date) {
     day: "numeric",
     month: "long",
     year: "numeric",
+  })
+    .format(date)
+    .replace(/\u00A0/g, " ");
+}
+
+function formatUzDateTime(date: Date) {
+  return new Intl.DateTimeFormat("uz-UZ", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   })
     .format(date)
     .replace(/\u00A0/g, " ");
@@ -76,6 +91,9 @@ function normalizeProduct(product: Product): Product {
     sku: product.sku ?? `ALOO-${product.slug.toUpperCase().replace(/-/g, "_")}`,
     description: product.description ?? product.shortDescription,
     imageUrl: product.imageUrl ?? undefined,
+    installment12: product.installment12 ?? product.monthlyPrice,
+    monthlyPrice: product.monthlyPrice ?? product.installment12 ?? product.price,
+    sourceType: product.sourceType ?? "manual",
     isActive: product.isActive ?? true,
     isFeatured: product.isFeatured ?? false,
     isNewArrival: product.isNewArrival ?? false,
@@ -232,7 +250,13 @@ async function seedDatabaseIfEmpty() {
           price: product.price,
           compareAtPrice: product.oldPrice,
           monthlyPrice: product.monthlyPrice,
+          installment6: product.installment6,
+          installment12: product.installment12 ?? product.monthlyPrice,
+          installment24: product.installment24,
           stock: product.stock,
+          branchName: product.branchName,
+          branchStock: product.branchStock,
+          stockLabel: product.stockLabel,
           badge: product.badge,
           rating: product.rating,
           reviews: product.reviews,
@@ -244,6 +268,9 @@ async function seedDatabaseIfEmpty() {
           toneFrom: product.toneFrom,
           toneTo: product.toneTo,
           imageUrl: product.imageUrl,
+          sourceType: product.sourceType === "se_one_sync" ? "SE_ONE_SYNC" : "MANUAL",
+          sourceExternalId: product.sourceExternalId,
+          sourceUpdatedAt: product.sourceUpdatedAt ? new Date(product.sourceUpdatedAt) : null,
           isActive: product.isActive,
           isFeatured: product.isFeatured,
           isNewArrival: product.isNewArrival,
@@ -312,7 +339,13 @@ function mapProductRecord(
     price: number;
     compareAtPrice: number | null;
     monthlyPrice: number;
+    installment6: number | null;
+    installment12: number | null;
+    installment24: number | null;
     stock: number;
+    branchName: string | null;
+    branchStock: number | null;
+    stockLabel: string | null;
     badge: string;
     rating: number;
     reviews: number;
@@ -325,6 +358,9 @@ function mapProductRecord(
     toneTo: string;
     imageAssetId: string | null;
     imageUrl: string | null;
+    sourceType: "MANUAL" | "SE_ONE_SYNC";
+    sourceExternalId: string | null;
+    sourceUpdatedAt: Date | null;
     isActive: boolean;
     isFeatured: boolean;
     isNewArrival: boolean;
@@ -345,10 +381,16 @@ function mapProductRecord(
     price: product.price,
     oldPrice: product.compareAtPrice ?? undefined,
     monthlyPrice: product.monthlyPrice,
+    installment6: product.installment6 ?? undefined,
+    installment12: product.installment12 ?? product.monthlyPrice,
+    installment24: product.installment24 ?? undefined,
     badge: product.badge,
     rating: product.rating,
     reviews: product.reviews,
     stock: product.stock,
+    branchName: product.branchName ?? undefined,
+    branchStock: product.branchStock ?? undefined,
+    stockLabel: product.stockLabel ?? undefined,
     kind: product.kind as ProductKind,
     shortDescription: product.shortDescription,
     description: product.description ?? undefined,
@@ -360,6 +402,9 @@ function mapProductRecord(
     toneFrom: product.toneFrom,
     toneTo: product.toneTo,
     imageUrl: resolveProductImageUrl(product.imageAssetId, product.imageUrl),
+    sourceType: product.sourceType === "SE_ONE_SYNC" ? "se_one_sync" : "manual",
+    sourceExternalId: product.sourceExternalId ?? undefined,
+    sourceUpdatedAt: product.sourceUpdatedAt?.toISOString(),
     isActive: product.isActive,
     isFeatured: product.isFeatured,
     isNewArrival: product.isNewArrival,
@@ -414,6 +459,63 @@ function mapPromoRecord(deal: {
     backgroundTo: deal.backgroundTo,
     isActive: deal.isActive,
     sortOrder: deal.sortOrder,
+  };
+}
+
+function mapSyncProviderState(
+  state:
+    | {
+        provider: string;
+        label: string;
+        status: string;
+        lastStartedAt: Date | null;
+        lastFinishedAt: Date | null;
+        lastSucceededAt: Date | null;
+        lastError: string | null;
+        lastSummary: unknown;
+      }
+    | null,
+): SyncProviderState | null {
+  if (!state) {
+    return null;
+  }
+
+  const summaryRecord =
+    state.lastSummary && typeof state.lastSummary === "object"
+      ? (state.lastSummary as Record<string, unknown>)
+      : null;
+
+  const summary: SyncSummary | undefined = summaryRecord
+    ? {
+        importedProducts:
+          typeof summaryRecord.importedProducts === "number"
+            ? summaryRecord.importedProducts
+            : undefined,
+        skippedProducts:
+          typeof summaryRecord.skippedProducts === "number"
+            ? summaryRecord.skippedProducts
+            : undefined,
+        removedProducts:
+          typeof summaryRecord.removedProducts === "number"
+            ? summaryRecord.removedProducts
+            : undefined,
+        offersScanned:
+          typeof summaryRecord.offersScanned === "number"
+            ? summaryRecord.offersScanned
+            : undefined,
+        note: typeof summaryRecord.note === "string" ? summaryRecord.note : undefined,
+      }
+    : undefined;
+
+  return {
+    provider: state.provider,
+    label: state.label,
+    status: state.status,
+    lastStartedAt: state.lastStartedAt ? formatUzDateTime(state.lastStartedAt) : undefined,
+    lastFinishedAt: state.lastFinishedAt ? formatUzDateTime(state.lastFinishedAt) : undefined,
+    lastSucceededAt: state.lastSucceededAt ? formatUzDateTime(state.lastSucceededAt) : undefined,
+    lastError: state.lastError ?? undefined,
+    lastSummary: summary,
   };
 }
 
@@ -475,6 +577,7 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
   if (!hasDatabaseUrl()) {
     return {
       databaseEnabled: false,
+      syncState: null,
       ...buildFallbackSnapshot(),
     };
   }
@@ -482,7 +585,7 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
   try {
     await seedDatabaseIfEmpty();
 
-    const [dbProducts, dbArticles, dbPromoDeals] = await Promise.all([
+    const [dbProducts, dbArticles, dbPromoDeals, syncStateRecord] = await Promise.all([
       prisma.product.findMany({
         include: {
           brand: true,
@@ -495,6 +598,9 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
       }),
       prisma.promoDeal.findMany({
         orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+      }),
+      prisma.syncProviderState.findUnique({
+        where: { provider: "SE_ONE" },
       }),
     ]);
 
@@ -509,6 +615,7 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
 
     return {
       databaseEnabled: true,
+      syncState: mapSyncProviderState(syncStateRecord),
       products,
       categories,
       brands: brands.length > 0 ? brands : fallbackBrands,
@@ -520,6 +627,7 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
 
     return {
       databaseEnabled: false,
+      syncState: null,
       ...buildFallbackSnapshot(),
     };
   }

@@ -13,6 +13,8 @@ import { SiteHeader } from "@/components/site-header";
 import { formatMonthly, formatSum } from "@/lib/format";
 import { getStorefrontProduct, getStorefrontSnapshot } from "@/lib/storefront";
 
+export const dynamic = "force-dynamic";
+
 type ProductPageProps = {
   params: Promise<{
     slug: string;
@@ -49,6 +51,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const relatedProducts = snapshot.products
     .filter((item) => item.categorySlug === product.categorySlug && item.slug !== product.slug)
     .slice(0, 3);
+  const installmentOptions = [
+    product.installment6 ? { months: 6, amount: product.installment6 } : null,
+    { months: 12, amount: product.installment12 ?? product.monthlyPrice },
+    product.installment24 ? { months: 24, amount: product.installment24 } : null,
+  ].filter((item): item is { months: number; amount: number } => item !== null);
 
   return (
     <>
@@ -132,8 +139,19 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 <p className="text-xs uppercase tracking-[0.24em] text-white/70">
                   Bo'lib to'lash
                 </p>
-                <p className="mt-2 text-3xl font-semibold">{formatMonthly(product.monthlyPrice)}</p>
-                <p className="mt-2 text-sm text-white/75">12 oyga qadar qulay taqsimot</p>
+                <p className="mt-2 text-3xl font-semibold">
+                  {formatMonthly(product.installment12 ?? product.monthlyPrice)}
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {installmentOptions.map((option) => (
+                    <span
+                      key={option.months}
+                      className="rounded-full bg-white/14 px-3 py-1.5 text-xs font-semibold text-white"
+                    >
+                      {option.months} oy: {formatMonthly(option.amount)}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -157,7 +175,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   Ombor holati
                 </p>
                 <p className="mt-2 text-lg font-semibold text-foreground">
-                  Omborda {product.stock} dona mavjud
+                  {product.stockLabel || `Omborda ${product.stock} dona mavjud`}
                 </p>
                 <p className="mt-2 text-sm leading-6 text-muted">{product.delivery}</p>
               </div>
@@ -167,8 +185,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   Pickup va filial
                 </p>
                 <p className="mt-2 text-sm leading-6 text-muted">
-                  Filiallar moduli ulanadigan joy tayyor. Mahsulotni do'kondan olib ketish va
-                  joyida konsultatsiya olish oqimi shu blok bilan ishlaydi.
+                  {product.branchName
+                    ? `${product.branchName} filialida ${product.branchStock ?? product.stock} dona mavjud.`
+                    : "Filial bo'yicha ma'lumot kiritilmagan."}
                 </p>
               </div>
             </div>
@@ -200,7 +219,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
             <div className="mt-6 space-y-3">
               {[
-                "Retail detail ichida narx, oylik to'lov va ombor holati alohida ko'rsatiladi.",
+                "Retail detail ichida narx, 6/12/24 oy to'lov va ombor holati alohida ko'rsatiladi.",
                 "Aksiya va trust label'lari yuqorida bir qarashda ko'rinadi.",
                 "Sevimlilar va taqqoslash funksiyasi shu sahifadan ham bir klikda boshqariladi.",
               ].map((item) => (
@@ -289,7 +308,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <div className="pointer-events-auto mx-auto flex max-w-xl items-center justify-between rounded-[24px] border border-white/12 bg-[rgba(255,255,255,0.94)] px-4 py-3 shadow-[0_16px_40px_rgba(10,24,44,0.18)] backdrop-blur-xl">
           <div className="min-w-0">
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
-              {formatMonthly(product.monthlyPrice)}
+              {formatMonthly(product.installment12 ?? product.monthlyPrice)}
             </p>
             <p className="truncate text-base font-semibold text-foreground">{formatSum(product.price)}</p>
           </div>

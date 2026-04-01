@@ -9,6 +9,7 @@ import {
   isAcceptedProductImageType,
 } from "@/lib/product-images";
 import { prisma } from "@/lib/prisma";
+import { SeOneSyncError, syncSeOneCatalog } from "@/lib/seone-sync";
 import { getCategoryOptions, getCategoryPalette, hasDatabaseUrl, slugify } from "@/lib/storefront";
 
 function asString(value: FormDataEntryValue | null) {
@@ -32,6 +33,10 @@ function asFloat(value: FormDataEntryValue | null, fallback = 0) {
 
 function asBool(value: FormDataEntryValue | null) {
   return value === "on";
+}
+
+function roundToNearestThousand(value: number) {
+  return Math.round(value / 1000) * 1000;
 }
 
 function parseLines(value: FormDataEntryValue | null) {
@@ -204,7 +209,17 @@ export async function saveProductAction(formData: FormData) {
 
   const palette = getCategoryPalette(categorySlug);
   const price = asInt(formData.get("price"));
-  const monthlyPrice = asInt(formData.get("monthlyPrice"), Math.round(price / 12));
+  const monthlyPriceInput = asInt(formData.get("monthlyPrice"), Math.round(price / 12));
+  const installment6 = asOptionalString(formData.get("installment6"))
+    ? roundToNearestThousand(asInt(formData.get("installment6")))
+    : null;
+  const installment12 = asOptionalString(formData.get("installment12"))
+    ? roundToNearestThousand(asInt(formData.get("installment12")))
+    : monthlyPriceInput;
+  const installment24 = asOptionalString(formData.get("installment24"))
+    ? roundToNearestThousand(asInt(formData.get("installment24")))
+    : null;
+  const monthlyPrice = installment12 || monthlyPriceInput;
   const existingProduct = id
     ? await prisma.product.findUnique({
         where: { id },
@@ -236,7 +251,15 @@ export async function saveProductAction(formData: FormData) {
       ? asInt(formData.get("oldPrice"))
       : null,
     monthlyPrice,
+    installment6,
+    installment12,
+    installment24,
     stock: asInt(formData.get("stock")),
+    branchName: asOptionalString(formData.get("branchName")) ?? null,
+    branchStock: asOptionalString(formData.get("branchStock"))
+      ? asInt(formData.get("branchStock"))
+      : null,
+    stockLabel: asOptionalString(formData.get("stockLabel")) ?? null,
     badge: asString(formData.get("badge")) || "Yangi",
     rating: asFloat(formData.get("rating"), 5),
     reviews: asInt(formData.get("reviews")),
@@ -347,6 +370,38 @@ export async function deleteProductAction(formData: FormData) {
 
   revalidateStorefront(undefined, slug);
   redirect("/admin?tab=products&status=product-deleted");
+}
+
+export async function syncSeOneProductsAction(formData: FormData) {
+  await requireAdmin();
+  ensureDatabase();
+
+  const replaceCatalog = asBool(formData.get("replaceCatalog"));
+
+  try {
+    await syncSeOneCatalog({ replaceCatalog });
+    revalidateStorefront();
+    redirect("/admin?tab=products&status=seone-synced");
+  } catch (error) {
+    const syncError =
+      error instanceof SeOneSyncError
+        ? error
+        : new SeOneSyncError(
+            "NETWORK",
+            error instanceof Error ? error.message : "SE-ONE sync paytida noma'lum xato yuz berdi.",
+          );
+
+    const errorKey =
+      syncError.code === "AUTH"
+        ? "seone-auth"
+        : syncError.code === "CONFIG"
+          ? "seone-config"
+          : syncError.code === "EMPTY"
+            ? "seone-empty"
+            : "seone-parse";
+
+    redirect(`/admin?tab=products&error=${errorKey}`);
+  }
 }
 
 export async function saveArticleAction(formData: FormData) {

@@ -15,6 +15,11 @@ enum OrderStatus {
   CANCELLED
 }
 
+enum ProductSourceType {
+  MANUAL
+  SE_ONE_SYNC
+}
+
 model Category {
   id          String    @id @default(cuid())
   name        String
@@ -45,7 +50,13 @@ model Product {
   price            Int
   compareAtPrice   Int?
   monthlyPrice     Int
+  installment6     Int?
+  installment12    Int?
+  installment24    Int?
   stock            Int            @default(0)
+  branchName       String?
+  branchStock      Int?
+  stockLabel       String?
   badge            String         @default("Yangi")
   rating           Float          @default(5)
   reviews          Int            @default(0)
@@ -58,6 +69,10 @@ model Product {
   toneTo           String         @default("#A8D6FF")
   imageUrl         String?
   imageAssetId     String?        @unique
+  sourceType       ProductSourceType @default(MANUAL)
+  sourceExternalId String?        @unique
+  sourceUpdatedAt  DateTime?
+  sourcePayload    Json?
   isActive         Boolean        @default(true)
   isFeatured       Boolean        @default(false)
   isNewArrival     Boolean        @default(false)
@@ -75,9 +90,23 @@ model Product {
 
   @@index([categoryId])
   @@index([brandId])
+  @@index([sourceType, isActive])
   @@index([isFeatured, isActive])
   @@index([isNewArrival, isActive])
   @@index([isDayDeal, isActive])
+}
+
+model SyncProviderState {
+  provider        String   @id
+  label           String
+  status          String   @default("idle")
+  lastStartedAt   DateTime?
+  lastFinishedAt  DateTime?
+  lastSucceededAt DateTime?
+  lastError       String?
+  lastSummary     Json?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model MediaAsset {

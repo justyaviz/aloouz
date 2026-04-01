@@ -2,7 +2,11 @@ export type ProductKind =
   | "phone"
   | "tablet"
   | "watch"
-  | "audio";
+  | "audio"
+  | "keyboard"
+  | "speaker";
+
+export type ProductSourceType = "manual" | "se_one_sync";
 
 export type Category = {
   slug: string;
@@ -24,10 +28,16 @@ export type Product = {
   price: number;
   oldPrice?: number;
   monthlyPrice: number;
+  installment6?: number;
+  installment12?: number;
+  installment24?: number;
   badge: string;
   rating: number;
   reviews: number;
   stock: number;
+  branchName?: string;
+  branchStock?: number;
+  stockLabel?: string;
   kind: ProductKind;
   shortDescription: string;
   description?: string;
@@ -39,11 +49,31 @@ export type Product = {
   toneFrom: string;
   toneTo: string;
   imageUrl?: string;
+  sourceType?: ProductSourceType;
+  sourceExternalId?: string;
+  sourceUpdatedAt?: string;
   isActive?: boolean;
   isFeatured?: boolean;
   isNewArrival?: boolean;
   isDayDeal?: boolean;
   sortOrder?: number;
+};
+
+export type SyncProviderState = {
+  provider: string;
+  label: string;
+  status: string;
+  lastStartedAt?: string;
+  lastFinishedAt?: string;
+  lastSucceededAt?: string;
+  lastError?: string;
+  lastSummary?: {
+    importedProducts?: number;
+    skippedProducts?: number;
+    removedProducts?: number;
+    offersScanned?: number;
+    note?: string;
+  };
 };
 
 export type Article = {
@@ -119,6 +149,22 @@ export const categories: Category[] = [
     itemCount: 39,
     toneFrom: "#EEF3FF",
     toneTo: "#D3DEFF",
+  },
+  {
+    slug: "klaviaturalar",
+    name: "Klaviaturalar",
+    description: "Mexanik va simsiz keyboard aksessuarlari",
+    itemCount: 18,
+    toneFrom: "#F4F6FF",
+    toneTo: "#D5DCF9",
+  },
+  {
+    slug: "kalonkalar",
+    name: "Kalonkalar",
+    description: "Bluetooth speaker va portativ audio qurilmalar",
+    itemCount: 22,
+    toneFrom: "#EEFDF7",
+    toneTo: "#BFEFD8",
   },
   {
     slug: "zaryadlash",

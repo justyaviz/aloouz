@@ -17,6 +17,11 @@ export function ProductCard({ product }: ProductCardProps) {
   const discount = product.oldPrice
     ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
     : null;
+  const installmentOptions = [
+    product.installment6 ? { months: 6, amount: product.installment6 } : null,
+    { months: 12, amount: product.installment12 ?? product.monthlyPrice },
+    product.installment24 ? { months: 24, amount: product.installment24 } : null,
+  ].filter((item): item is { months: number; amount: number } => item !== null);
 
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-[24px] border border-line bg-white p-3.5 shadow-[0_16px_34px_rgba(13,31,55,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_50px_rgba(13,31,55,0.12)]">
@@ -49,7 +54,7 @@ export function ProductCard({ product }: ProductCardProps) {
       <div className="flex flex-1 flex-col pt-4">
         <div className="flex items-center justify-between gap-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
           <span>{product.brand}</span>
-          <span>{product.stock} dona mavjud</span>
+          <span>{product.branchStock ?? product.stock} dona mavjud</span>
         </div>
 
         <Link
@@ -65,9 +70,16 @@ export function ProductCard({ product }: ProductCardProps) {
 
         <div className="mt-3 rounded-[18px] bg-[#f6faff] px-4 py-3">
           <p className="text-xs uppercase tracking-[0.18em] text-muted">Bo'lib to'lash</p>
-          <p className="mt-1 text-sm font-semibold text-foreground">
-            {formatMonthly(product.monthlyPrice)}
-          </p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {installmentOptions.map((option) => (
+              <span
+                key={option.months}
+                className="rounded-full bg-white px-3 py-1.5 text-[11px] font-semibold text-foreground"
+              >
+                {option.months} oy: {formatMonthly(option.amount)}
+              </span>
+            ))}
+          </div>
         </div>
 
         <div className="mt-3 flex items-end justify-between gap-4">
@@ -77,6 +89,9 @@ export function ProductCard({ product }: ProductCardProps) {
             ) : null}
             <p className="mt-1 text-xl font-semibold text-foreground">
               {formatSum(product.price)}
+            </p>
+            <p className="mt-1 text-[12px] text-muted">
+              {product.stockLabel || product.branchName || `${product.stock} dona mavjud`}
             </p>
           </div>
           <span className="rounded-full bg-[#eff8ef] px-3 py-2 text-[11px] font-semibold text-[#2d7a46]">

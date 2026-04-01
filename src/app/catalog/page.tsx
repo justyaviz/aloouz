@@ -6,6 +6,8 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { getStorefrontSnapshot } from "@/lib/storefront";
 
+export const dynamic = "force-dynamic";
+
 type CatalogPageProps = {
   searchParams: Promise<{
     category?: string;

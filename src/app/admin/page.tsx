@@ -16,6 +16,7 @@ import {
   saveArticleAction,
   saveProductAction,
   savePromoDealAction,
+  syncSeOneProductsAction,
 } from "@/app/admin/actions";
 import {
   DatabaseIcon,
@@ -52,6 +53,8 @@ const productKinds = [
   { value: "tablet", label: "Planshet" },
   { value: "watch", label: "Soat" },
   { value: "audio", label: "Audio" },
+  { value: "keyboard", label: "Klaviatura" },
+  { value: "speaker", label: "Kalonka" },
 ];
 
 const inputClassName =
@@ -125,6 +128,34 @@ function feedbackMessage(status?: string, error?: string, auth?: string) {
     };
   }
 
+  if (error === "seone-auth") {
+    return {
+      tone: "error" as const,
+      text: "SE-ONE sessiyasi ishlamayapti. Session cookie yangilanishi kerak.",
+    };
+  }
+
+  if (error === "seone-config") {
+    return {
+      tone: "error" as const,
+      text: "SE-ONE sync env hali to'liq sozlanmagan. Cookie header kiritilishi kerak.",
+    };
+  }
+
+  if (error === "seone-empty") {
+    return {
+      tone: "error" as const,
+      text: "SE-ONE sahifasi ochildi, lekin qoldiqi bor kerakli mahsulotlar topilmadi.",
+    };
+  }
+
+  if (error === "seone-parse") {
+    return {
+      tone: "error" as const,
+      text: "SE-ONE jadvali parse qilinmadi. HTML struktura yoki sessiya tekshirilishi kerak.",
+    };
+  }
+
   const successMap: Record<string, string> = {
     "product-saved": "Mahsulot muvaffaqiyatli saqlandi.",
     "product-deleted": "Mahsulot o'chirildi.",
@@ -132,6 +163,7 @@ function feedbackMessage(status?: string, error?: string, auth?: string) {
     "article-deleted": "Yangilik o'chirildi.",
     "promo-saved": "Promo blok saqlandi.",
     "promo-deleted": "Promo blok o'chirildi.",
+    "seone-synced": "SE-ONE mahsulotlari sync qilindi va katalog yangilandi.",
   };
 
   if (status && successMap[status]) {
@@ -146,6 +178,7 @@ function feedbackMessage(status?: string, error?: string, auth?: string) {
 
 function loginFeatureList() {
   return [
+    "SE-ONE bilan filial narxi va qoldiq sync markazi",
     "Mahsulotlar va media upload boshqaruvi",
     "Homepage yangilik va promo queue nazorati",
     "Live storefront bilan bir xil data oqimi",
@@ -158,6 +191,8 @@ function statusToneClass(tone: AdminTone) {
     ? "border-[#b9e6c7] bg-[#eefaf0] text-[#24643a]"
     : "border-[#ffd7c4] bg-[#fff4ee] text-[#b24616]";
 }
+
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Admin panel",
@@ -299,7 +334,13 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
     price: editingProduct?.price ?? 0,
     oldPrice: editingProduct?.oldPrice ?? "",
     monthlyPrice: editingProduct?.monthlyPrice ?? 0,
+    installment6: editingProduct?.installment6 ?? "",
+    installment12: editingProduct?.installment12 ?? editingProduct?.monthlyPrice ?? 0,
+    installment24: editingProduct?.installment24 ?? "",
     stock: editingProduct?.stock ?? 0,
+    branchName: editingProduct?.branchName ?? "",
+    branchStock: editingProduct?.branchStock ?? "",
+    stockLabel: editingProduct?.stockLabel ?? "",
     badge: editingProduct?.badge ?? "Yangi",
     rating: editingProduct?.rating ?? 5,
     reviews: editingProduct?.reviews ?? 0,
@@ -349,6 +390,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
   const dayDeals = dashboard.products.filter((item) => item.isDayDeal).length;
   const lowStockProducts = dashboard.products.filter((item) => item.stock <= 10);
   const uploadedImages = dashboard.products.filter((item) => item.imageUrl).length;
+  const syncedProducts = dashboard.products.filter((item) => item.sourceType === "se_one_sync").length;
   const publishedArticles = dashboard.articles.filter((item) => item.isPublished).length;
   const activePromos = dashboard.promoDeals.filter((item) => item.isActive).length;
 
@@ -567,7 +609,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                   {
                     label: "Mahsulotlar",
                     value: totalProducts.toString(),
-                    note: `${featuredProducts} ta hero, ${dayDeals} ta day deal`,
+                    note: `${syncedProducts} ta sync, ${dayDeals} ta day deal`,
                     icon: PackageIcon,
                   },
                   {
@@ -624,6 +666,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                 activePromos={activePromos}
                 dashboard={dashboard}
                 lowStockProducts={lowStockProducts}
+                syncedProducts={syncedProducts}
                 uploadedImages={uploadedImages}
               />
             ) : null}
@@ -638,6 +681,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                 lowStockProducts={lowStockProducts}
                 newArrivalProducts={newArrivalProducts}
                 productForm={productForm}
+                syncedProducts={syncedProducts}
               />
             ) : null}
 
@@ -667,11 +711,13 @@ function OverviewWorkspace({
   activePromos,
   dashboard,
   lowStockProducts,
+  syncedProducts,
   uploadedImages,
 }: {
   activePromos: number;
   dashboard: Awaited<ReturnType<typeof getAdminDashboardData>>;
   lowStockProducts: Awaited<ReturnType<typeof getAdminDashboardData>>["products"];
+  syncedProducts: number;
   uploadedImages: number;
 }) {
   const managementCards = [
@@ -750,6 +796,14 @@ function OverviewWorkspace({
                 label: "Uploaded visuals",
                 value: uploadedImages.toString(),
                 note: "Admin orqali rasm yuklangan productlar",
+              },
+              {
+                label: "SE-ONE sync",
+                value: syncedProducts.toString(),
+                note:
+                  dashboard.syncState?.lastSucceededAt
+                    ? `Oxirgi muvaffaqiyatli sync: ${dashboard.syncState.lastSucceededAt}`
+                    : "Hali live sync bajarilmagan",
               },
               {
                 label: "Published news",
@@ -847,6 +901,7 @@ function ProductsWorkspace({
   lowStockProducts,
   newArrivalProducts,
   productForm,
+  syncedProducts,
 }: {
   categoryOptions: ReturnType<typeof getCategoryOptions>;
   dashboard: Awaited<ReturnType<typeof getAdminDashboardData>>;
@@ -855,6 +910,7 @@ function ProductsWorkspace({
   featuredProducts: number;
   lowStockProducts: Awaited<ReturnType<typeof getAdminDashboardData>>["products"];
   newArrivalProducts: number;
+  syncedProducts: number;
   productForm: {
     id: string;
     previousSlug: string;
@@ -869,7 +925,13 @@ function ProductsWorkspace({
     price: number | string;
     oldPrice: number | string;
     monthlyPrice: number | string;
+    installment6: number | string;
+    installment12: number | string;
+    installment24: number | string;
     stock: number | string;
+    branchName: string;
+    branchStock: number | string;
+    stockLabel: string;
     badge: string;
     rating: number | string;
     reviews: number | string;
@@ -889,16 +951,104 @@ function ProductsWorkspace({
   };
 }) {
   const previewProduct = editingProduct ?? dashboard.products[0];
-  const previewKind = productForm.kind as "phone" | "tablet" | "watch" | "audio";
+  const previewKind = productForm.kind as
+    | "phone"
+    | "tablet"
+    | "watch"
+    | "audio"
+    | "keyboard"
+    | "speaker";
   const checklist = [
     { label: "Nomi va brend tayyor", done: Boolean(productForm.name && productForm.brand) },
     { label: "Narx va bo'lib to'lash kiritilgan", done: Boolean(productForm.price && productForm.monthlyPrice) },
-    { label: "Mahsulot rasmi biriktirilgan", done: Boolean(productForm.imageUrl) },
+    { label: "Filial va qoldiq kiritilgan", done: Boolean(productForm.branchName && productForm.stock) },
+    { label: "Mahsulot rasmi biriktirilgan", done: Boolean(productForm.imageUrl || editingProduct?.imageUrl) },
     { label: "Highlights va specs tayyor", done: Boolean(productForm.highlights && productForm.specs) },
   ];
 
   return (
     <>
+      <PanelCard className="p-6 sm:p-8">
+        <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
+          <div className="max-w-3xl">
+            <SectionHeader
+              eyebrow="SE-ONE sync"
+              title="Filial narxlari va qoldiqni katalogga ulash"
+              description="Faqat qoldiqi bor smartfon, aqlli soat, airpods/quloqchin, klaviatura va kalonkalar olinadi. Filiallar ichidan eng arzon mavjud variant tanlanadi, `sotuv narx` ustiga chiziladi, `naqd` narx asosiy ko'rsatiladi."
+            />
+
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              <MetricMini
+                label="Sync mahsulotlar"
+                value={syncedProducts.toString()}
+                note="Katalogda ishlayotgan live birliklar"
+              />
+              <MetricMini
+                label="Oxirgi holat"
+                value={dashboard.syncState?.status ?? "idle"}
+                note={dashboard.syncState?.lastFinishedAt ?? "Hali run bo'lmagan"}
+              />
+              <MetricMini
+                label="Import"
+                value={dashboard.syncState?.lastSummary?.importedProducts?.toString() ?? "0"}
+                note="Oxirgi syncdagi kirgan mahsulotlar"
+              />
+              <MetricMini
+                label="Offers"
+                value={dashboard.syncState?.lastSummary?.offersScanned?.toString() ?? "0"}
+                note="SE-ONE tomondan ko'rilgan qatorlar"
+              />
+            </div>
+
+            <div className="mt-5 space-y-2 text-sm text-muted">
+              <p>
+                Session env tayyor bo'lsa, sync demo mahsulotlarni o'chirib, katalogni SE-ONE
+                ma'lumotlari bilan almashtiradi.
+              </p>
+              <p>
+                6/12/24 oy summalari 1000 so'mga yaxlitlanadi: 989 375 dan 989 000 ga,
+                989 647 dan 990 000 ga.
+              </p>
+              {dashboard.syncState?.lastError ? (
+                <p className="font-medium text-support">{dashboard.syncState.lastError}</p>
+              ) : null}
+            </div>
+          </div>
+
+          <div className="w-full max-w-xl rounded-[26px] border border-line bg-[#f7fbff] p-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
+              Sync controls
+            </p>
+            <p className="mt-3 text-sm leading-7 text-muted">
+              Tugma katalogni to'liq live source bilan yangilaydi. Session ishlamasa, panel
+              xatoni shu yerning o'zida ko'rsatadi.
+            </p>
+
+            <form action={syncSeOneProductsAction} className="mt-5 space-y-4">
+              <label className="flex items-start gap-3 rounded-[20px] border border-line bg-white px-4 py-4">
+                <input className="mt-1 h-4 w-4" defaultChecked name="replaceCatalog" type="checkbox" />
+                <span>
+                  <span className="block text-sm font-semibold text-foreground">
+                    Eski demo katalogni almashtirish
+                  </span>
+                  <span className="mt-1 block text-sm leading-6 text-muted">
+                    Sync muvaffaqiyatli bo'lsa manual/demo productlar o'chirilib, faqat live
+                    katalog qoladi.
+                  </span>
+                </span>
+              </label>
+
+              <button
+                type="submit"
+                className="inline-flex h-12 items-center justify-center rounded-[18px] bg-catalog px-6 text-sm font-semibold text-white transition hover:bg-catalog-strong"
+              >
+                Hozir sync qilish
+              </button>
+            </form>
+          </div>
+        </div>
+      </PanelCard>
+
       <div className="grid gap-6 2xl:grid-cols-[minmax(0,1.08fr)_360px]">
         <PanelCard className="p-6 sm:p-8" id="products">
           <SectionHeader
@@ -966,8 +1116,14 @@ function ProductsWorkspace({
                 {[
                   { name: "price", label: "Narxi", value: productForm.price },
                   { name: "oldPrice", label: "Eski narx", value: productForm.oldPrice },
-                  { name: "monthlyPrice", label: "Oylik to'lov", value: productForm.monthlyPrice },
+                  { name: "monthlyPrice", label: "Asosiy oylik", value: productForm.monthlyPrice },
+                  { name: "installment6", label: "6 oy", value: productForm.installment6 },
+                  { name: "installment12", label: "12 oy", value: productForm.installment12 },
+                  { name: "installment24", label: "24 oy", value: productForm.installment24 },
                   { name: "stock", label: "Sklad", value: productForm.stock },
+                  { name: "branchName", label: "Filial", value: productForm.branchName },
+                  { name: "branchStock", label: "Filial qoldig'i", value: productForm.branchStock },
+                  { name: "stockLabel", label: "Stock label", value: productForm.stockLabel },
                   { name: "rating", label: "Reyting", value: productForm.rating },
                   { name: "reviews", label: "Sharhlar soni", value: productForm.reviews },
                   { name: "sortOrder", label: "Tartib", value: productForm.sortOrder },
@@ -1156,7 +1312,20 @@ function ProductsWorkspace({
                 {formatSum(Number(productForm.price || previewProduct?.price || 0))}
               </p>
               <p className="text-sm text-accent">
-                {formatMonthly(Number(productForm.monthlyPrice || previewProduct?.monthlyPrice || 0))}
+                {formatMonthly(
+                  Number(
+                    productForm.installment12 ||
+                      productForm.monthlyPrice ||
+                      previewProduct?.installment12 ||
+                      previewProduct?.monthlyPrice ||
+                      0,
+                  ),
+                )}
+              </p>
+              <p className="text-sm text-muted">
+                {productForm.stockLabel ||
+                  previewProduct?.stockLabel ||
+                  `${productForm.stock || previewProduct?.stock || 0} dona mavjud`}
               </p>
             </div>
           </PanelCard>
@@ -1194,6 +1363,7 @@ function ProductsWorkspace({
                 { label: "Yangilik shelf'i", value: newArrivalProducts },
                 { label: "Kunlik deal", value: dayDeals },
                 { label: "Low stock", value: lowStockProducts.length },
+                { label: "SE-ONE sync", value: syncedProducts },
               ].map((item) => (
                 <div key={item.label} className="rounded-[18px] bg-[#f7fbff] px-4 py-4">
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">
@@ -1241,6 +1411,9 @@ function ProductsWorkspace({
                 </>
               }
               badges={[
+                product.sourceType === "se_one_sync"
+                  ? { label: "SE-ONE", className: "bg-[#eefaf0] text-[#24643a]" }
+                  : { label: "Manual", className: "bg-[#f4f7fb] text-muted" },
                 product.isFeatured ? { label: "Hero", className: "bg-[#eef6ff] text-accent" } : null,
                 product.isNewArrival
                   ? { label: "Yangilik", className: "bg-[#eefaf0] text-[#24643a]" }
@@ -1265,12 +1438,16 @@ function ProductsWorkspace({
                   <div>
                     <p className="text-sm text-muted">Narx</p>
                     <p className="mt-1 font-semibold text-foreground">{formatSum(product.price)}</p>
-                    <p className="text-sm text-accent">{formatMonthly(product.monthlyPrice)}</p>
+                    <p className="text-sm text-accent">
+                      {formatMonthly(product.installment12 ?? product.monthlyPrice)}
+                    </p>
                   </div>
                   <div>
                     <p className="text-sm text-muted">Holat</p>
-                    <p className="mt-1 font-semibold text-foreground">{product.stock} dona</p>
-                    <p className="text-sm text-muted">{product.brand}</p>
+                    <p className="mt-1 font-semibold text-foreground">
+                      {product.stockLabel || `${product.stock} dona`}
+                    </p>
+                    <p className="text-sm text-muted">{product.branchName || product.brand}</p>
                   </div>
                 </>
               }
@@ -1911,15 +2088,18 @@ function CompactListItem({
 
 function MetricMini({
   label,
+  note,
   value,
 }: {
   label: string;
+  note?: string;
   value: string;
 }) {
   return (
     <div className="rounded-[18px] bg-[#f7fbff] px-4 py-4">
       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">{label}</p>
       <p className="mt-3 text-2xl font-semibold text-foreground">{value}</p>
+      {note ? <p className="mt-2 text-sm leading-6 text-muted">{note}</p> : null}
     </div>
   );
 }
