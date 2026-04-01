@@ -9,6 +9,7 @@ import Link from "next/link";
 
 import {
   deleteArticleAction,
+  syncAsaxiyProductsAction,
   deleteProductAction,
   deletePromoDealAction,
   loginAction,
@@ -156,6 +157,34 @@ function feedbackMessage(status?: string, error?: string, auth?: string) {
     };
   }
 
+  if (error === "asaxiy-config") {
+    return {
+      tone: "error" as const,
+      text: "Asaxiy sync uchun source URL yoki boshqa env sozlamalari to'liq emas.",
+    };
+  }
+
+  if (error === "asaxiy-empty") {
+    return {
+      tone: "error" as const,
+      text: "Asaxiy smartfon kategoriyasidan import qilinadigan mahsulot topilmadi.",
+    };
+  }
+
+  if (error === "asaxiy-network") {
+    return {
+      tone: "error" as const,
+      text: "Asaxiy sahifasiga ulanishda xato bo'ldi. Tarmoq yoki sahifa javobini tekshiring.",
+    };
+  }
+
+  if (error === "asaxiy-parse") {
+    return {
+      tone: "error" as const,
+      text: "Asaxiy listing HTML parse qilinmadi. Kategoriya strukturasini tekshirish kerak.",
+    };
+  }
+
   const successMap: Record<string, string> = {
     "product-saved": "Mahsulot muvaffaqiyatli saqlandi.",
     "product-deleted": "Mahsulot o'chirildi.",
@@ -164,6 +193,7 @@ function feedbackMessage(status?: string, error?: string, auth?: string) {
     "promo-saved": "Promo blok saqlandi.",
     "promo-deleted": "Promo blok o'chirildi.",
     "seone-synced": "SE-ONE mahsulotlari sync qilindi va katalog yangilandi.",
+    "asaxiy-synced": "Asaxiy smartfonlari rasmlari bilan sync qilindi va katalog yangilandi.",
   };
 
   if (status && successMap[status]) {
@@ -179,6 +209,7 @@ function feedbackMessage(status?: string, error?: string, auth?: string) {
 function loginFeatureList() {
   return [
     "SE-ONE bilan filial narxi va qoldiq sync markazi",
+    "Asaxiy smartfon katalogidan rasmli import oqimi",
     "Mahsulotlar va media upload boshqaruvi",
     "Homepage yangilik va promo queue nazorati",
     "Live storefront bilan bir xil data oqimi",
@@ -390,7 +421,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
   const dayDeals = dashboard.products.filter((item) => item.isDayDeal).length;
   const lowStockProducts = dashboard.products.filter((item) => item.stock <= 10);
   const uploadedImages = dashboard.products.filter((item) => item.imageUrl).length;
-  const syncedProducts = dashboard.products.filter((item) => item.sourceType === "se_one_sync").length;
+  const syncedProducts = dashboard.products.filter((item) => item.sourceType !== "manual").length;
   const publishedArticles = dashboard.articles.filter((item) => item.isPublished).length;
   const activePromos = dashboard.promoDeals.filter((item) => item.isActive).length;
 
@@ -797,14 +828,14 @@ function OverviewWorkspace({
                 value: uploadedImages.toString(),
                 note: "Admin orqali rasm yuklangan productlar",
               },
-              {
-                label: "SE-ONE sync",
-                value: syncedProducts.toString(),
-                note:
-                  dashboard.syncState?.lastSucceededAt
-                    ? `Oxirgi muvaffaqiyatli sync: ${dashboard.syncState.lastSucceededAt}`
-                    : "Hali live sync bajarilmagan",
-              },
+                {
+                  label: "Sync import",
+                  value: syncedProducts.toString(),
+                  note:
+                    dashboard.syncState?.lastSucceededAt
+                      ? `Oxirgi SE-ONE sync: ${dashboard.syncState.lastSucceededAt}`
+                      : "Hali live sync bajarilmagan",
+                },
               {
                 label: "Published news",
                 value: dashboard.articles.filter((item) => item.isPublished).length.toString(),
@@ -971,11 +1002,11 @@ function ProductsWorkspace({
       <PanelCard className="p-6 sm:p-8">
         <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
           <div className="max-w-3xl">
-            <SectionHeader
-              eyebrow="SE-ONE sync"
-              title="Filial narxlari va qoldiqni katalogga ulash"
-              description="Faqat qoldiqi bor smartfon, aqlli soat, airpods/quloqchin, klaviatura va kalonkalar olinadi. Filiallar ichidan eng arzon mavjud variant tanlanadi, `sotuv narx` ustiga chiziladi, `naqd` narx asosiy ko'rsatiladi."
-            />
+              <SectionHeader
+                eyebrow="Sync import"
+                title="Tashqi kataloglardan mahsulotlarni live ulash"
+                description="SE-ONE filial qoldig'i oqimi va Asaxiy smartfon listing'i alohida source sifatida ulanadi. Har ikkalasi ham katalogni yangilab, rasmlar va narxlar bilan storefrontga kiradi."
+              />
 
             <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
               <MetricMini
@@ -993,18 +1024,18 @@ function ProductsWorkspace({
                 value={dashboard.syncState?.lastSummary?.importedProducts?.toString() ?? "0"}
                 note="Oxirgi syncdagi kirgan mahsulotlar"
               />
-              <MetricMini
-                label="Offers"
-                value={dashboard.syncState?.lastSummary?.offersScanned?.toString() ?? "0"}
-                note="SE-ONE tomondan ko'rilgan qatorlar"
-              />
-            </div>
+                <MetricMini
+                  label="Offers"
+                  value={dashboard.syncState?.lastSummary?.offersScanned?.toString() ?? "0"}
+                  note="SE-ONE tomondan ko'rilgan qatorlar"
+                />
+              </div>
 
-            <div className="mt-5 space-y-2 text-sm text-muted">
-              <p>
-                Session env tayyor bo'lsa, sync demo mahsulotlarni o'chirib, katalogni SE-ONE
-                ma'lumotlari bilan almashtiradi.
-              </p>
+              <div className="mt-5 space-y-2 text-sm text-muted">
+                <p>
+                  Sync muvaffaqiyatli bo'lsa, katalog tanlangan manbadagi mahsulotlar bilan
+                  yangilanadi.
+                </p>
               <p>
                 6/12/24 oy summalari 1000 so'mga yaxlitlanadi: 989 375 dan 989 000 ga,
                 989 647 dan 990 000 ga.
@@ -1015,37 +1046,74 @@ function ProductsWorkspace({
             </div>
           </div>
 
-          <div className="w-full max-w-xl rounded-[26px] border border-line bg-[#f7fbff] p-5">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
-              Sync controls
-            </p>
-            <p className="mt-3 text-sm leading-7 text-muted">
-              Tugma katalogni to'liq live source bilan yangilaydi. Session ishlamasa, panel
-              xatoni shu yerning o'zida ko'rsatadi.
-            </p>
+            <div className="w-full max-w-xl rounded-[26px] border border-line bg-[#f7fbff] p-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
+                Sync controls
+              </p>
+              <p className="mt-3 text-sm leading-7 text-muted">
+                Har bir source alohida ishlaydi. Xatolik bo'lsa, panel shu yerning o'zida status
+                qaytaradi.
+              </p>
 
-            <form action={syncSeOneProductsAction} className="mt-5 space-y-4">
-              <label className="flex items-start gap-3 rounded-[20px] border border-line bg-white px-4 py-4">
-                <input className="mt-1 h-4 w-4" defaultChecked name="replaceCatalog" type="checkbox" />
-                <span>
-                  <span className="block text-sm font-semibold text-foreground">
-                    Eski demo katalogni almashtirish
-                  </span>
-                  <span className="mt-1 block text-sm leading-6 text-muted">
-                    Sync muvaffaqiyatli bo'lsa manual/demo productlar o'chirilib, faqat live
-                    katalog qoladi.
-                  </span>
-                </span>
-              </label>
+              <div className="mt-5 grid gap-4">
+                <form action={syncSeOneProductsAction} className="space-y-4 rounded-[22px] border border-line bg-white p-4">
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">SE-ONE filial sync</p>
+                    <p className="mt-1 text-sm leading-6 text-muted">
+                      Filial qoldig'i va mavjud eng arzon narx bilan katalogni yangilaydi.
+                    </p>
+                  </div>
 
-              <button
-                type="submit"
-                className="inline-flex h-12 items-center justify-center rounded-[18px] bg-catalog px-6 text-sm font-semibold text-white transition hover:bg-catalog-strong"
-              >
-                Hozir sync qilish
-              </button>
-            </form>
-          </div>
+                  <label className="flex items-start gap-3 rounded-[18px] border border-line bg-[#f8fbfd] px-4 py-4">
+                    <input className="mt-1 h-4 w-4" defaultChecked name="replaceCatalog" type="checkbox" />
+                    <span>
+                      <span className="block text-sm font-semibold text-foreground">
+                        Eski katalogni almashtirish
+                      </span>
+                      <span className="mt-1 block text-sm leading-6 text-muted">
+                        Sync muvaffaqiyatli bo'lsa manual/demo productlar o'chirilib, faqat live
+                        katalog qoladi.
+                      </span>
+                    </span>
+                  </label>
+
+                  <button
+                    type="submit"
+                    className="inline-flex h-12 items-center justify-center rounded-[18px] bg-catalog px-6 text-sm font-semibold text-white transition hover:bg-catalog-strong"
+                  >
+                    SE-ONE sync
+                  </button>
+                </form>
+
+                <form action={syncAsaxiyProductsAction} className="space-y-4 rounded-[22px] border border-line bg-white p-4">
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">Asaxiy smartfon sync</p>
+                    <p className="mt-1 text-sm leading-6 text-muted">
+                      Smartfon listing sahifalaridan mahsulot, narx va rasmlarni olib kiradi.
+                    </p>
+                  </div>
+
+                  <label className="flex items-start gap-3 rounded-[18px] border border-line bg-[#f8fbfd] px-4 py-4">
+                    <input className="mt-1 h-4 w-4" defaultChecked name="replaceCatalog" type="checkbox" />
+                    <span>
+                      <span className="block text-sm font-semibold text-foreground">
+                        Eski katalogni almashtirish
+                      </span>
+                      <span className="mt-1 block text-sm leading-6 text-muted">
+                        Asaxiy sync muvaffaqiyatli bo'lsa mahsulotlar Asaxiy source bilan yangilanadi.
+                      </span>
+                    </span>
+                  </label>
+
+                  <button
+                    type="submit"
+                    className="inline-flex h-12 items-center justify-center rounded-[18px] bg-accent px-6 text-sm font-semibold text-white transition hover:bg-accent-strong"
+                  >
+                    Asaxiy sync
+                  </button>
+                </form>
+              </div>
+            </div>
         </div>
       </PanelCard>
 
@@ -1363,7 +1431,7 @@ function ProductsWorkspace({
                 { label: "Yangilik shelf'i", value: newArrivalProducts },
                 { label: "Kunlik deal", value: dayDeals },
                 { label: "Low stock", value: lowStockProducts.length },
-                { label: "SE-ONE sync", value: syncedProducts },
+                  { label: "Sync import", value: syncedProducts },
               ].map((item) => (
                 <div key={item.label} className="rounded-[18px] bg-[#f7fbff] px-4 py-4">
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">
@@ -1410,10 +1478,12 @@ function ProductsWorkspace({
                   </form>
                 </>
               }
-              badges={[
-                product.sourceType === "se_one_sync"
-                  ? { label: "SE-ONE", className: "bg-[#eefaf0] text-[#24643a]" }
-                  : { label: "Manual", className: "bg-[#f4f7fb] text-muted" },
+                badges={[
+                  product.sourceType === "se_one_sync"
+                    ? { label: "SE-ONE", className: "bg-[#eefaf0] text-[#24643a]" }
+                    : product.sourceType === "asaxiy_sync"
+                      ? { label: "Asaxiy", className: "bg-[#fff4ee] text-support" }
+                      : { label: "Manual", className: "bg-[#f4f7fb] text-muted" },
                 product.isFeatured ? { label: "Hero", className: "bg-[#eef6ff] text-accent" } : null,
                 product.isNewArrival
                   ? { label: "Yangilik", className: "bg-[#eefaf0] text-[#24643a]" }

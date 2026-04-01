@@ -306,7 +306,7 @@ function mapProductRecord(
     toneTo: string;
     imageAssetId: string | null;
     imageUrl: string | null;
-    sourceType: "MANUAL" | "SE_ONE_SYNC";
+    sourceType: "MANUAL" | "SE_ONE_SYNC" | "ASAXIY_SYNC";
     sourceExternalId: string | null;
     sourceUpdatedAt: Date | null;
     isActive: boolean;
@@ -350,7 +350,12 @@ function mapProductRecord(
     toneFrom: product.toneFrom,
     toneTo: product.toneTo,
     imageUrl: resolveProductImageUrl(product.imageAssetId, product.imageUrl),
-    sourceType: product.sourceType === "SE_ONE_SYNC" ? "se_one_sync" : "manual",
+    sourceType:
+      product.sourceType === "SE_ONE_SYNC"
+        ? "se_one_sync"
+        : product.sourceType === "ASAXIY_SYNC"
+          ? "asaxiy_sync"
+          : "manual",
     sourceExternalId: product.sourceExternalId ?? undefined,
     sourceUpdatedAt: product.sourceUpdatedAt?.toISOString(),
     isActive: product.isActive,

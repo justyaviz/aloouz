@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { loginAdmin, logoutAdmin, requireAdmin } from "@/lib/admin-auth";
+import { AsaxiySyncError, syncAsaxiyCatalog } from "@/lib/asaxiy-sync";
 import {
   PRODUCT_IMAGE_MAX_SIZE,
   isAcceptedProductImageType,
@@ -399,6 +400,38 @@ export async function syncSeOneProductsAction(formData: FormData) {
           : syncError.code === "EMPTY"
             ? "seone-empty"
             : "seone-parse";
+
+    redirect(`/admin?tab=products&error=${errorKey}`);
+  }
+}
+
+export async function syncAsaxiyProductsAction(formData: FormData) {
+  await requireAdmin();
+  ensureDatabase();
+
+  const replaceCatalog = asBool(formData.get("replaceCatalog"));
+
+  try {
+    await syncAsaxiyCatalog({ replaceCatalog });
+    revalidateStorefront();
+    redirect("/admin?tab=products&status=asaxiy-synced");
+  } catch (error) {
+    const syncError =
+      error instanceof AsaxiySyncError
+        ? error
+        : new AsaxiySyncError(
+            "NETWORK",
+            error instanceof Error ? error.message : "Asaxiy sync paytida noma'lum xato yuz berdi.",
+          );
+
+    const errorKey =
+      syncError.code === "CONFIG"
+        ? "asaxiy-config"
+        : syncError.code === "EMPTY"
+          ? "asaxiy-empty"
+          : syncError.code === "NETWORK"
+            ? "asaxiy-network"
+            : "asaxiy-parse";
 
     redirect(`/admin?tab=products&error=${errorKey}`);
   }

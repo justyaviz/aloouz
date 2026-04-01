@@ -18,6 +18,7 @@ enum OrderStatus {
 enum ProductSourceType {
   MANUAL
   SE_ONE_SYNC
+  ASAXIY_SYNC
 }
 
 model Category {

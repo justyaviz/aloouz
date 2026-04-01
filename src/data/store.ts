@@ -6,7 +6,7 @@ export type ProductKind =
   | "keyboard"
   | "speaker";
 
-export type ProductSourceType = "manual" | "se_one_sync";
+export type ProductSourceType = "manual" | "se_one_sync" | "asaxiy_sync";
 
 export type Category = {
   slug: string;

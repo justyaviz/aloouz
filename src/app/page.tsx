@@ -480,7 +480,7 @@ export default async function Home() {
                   {[
                     "Eski narx va yangi narx bir xil formatda ko'rsatiladi",
                     "Katalog, detail va kun mahsuloti blokida bir xil ko'rinish saqlanadi",
-                    "SE-ONE sync narxi yangilansa storefront ham mos ravishda yangilanadi",
+                      "Live sync narxi yangilansa storefront ham mos ravishda yangilanadi",
                   ].map((item) => (
                     <div
                       key={item}
