@@ -26,9 +26,9 @@ export function ProductVisual({
   const visualSize = size ?? (compact ? "compact" : "default");
   const heightClass =
     visualSize === "hero"
-      ? "h-[13.1rem] rounded-[24px] sm:h-[14.6rem] lg:h-[15.9rem]"
+      ? "h-[13.6rem] rounded-[24px] sm:h-[15.1rem] lg:h-[16.4rem]"
       : visualSize === "deal"
-        ? "h-[9.5rem] rounded-[18px] sm:h-[10.2rem] xl:h-[8.9rem]"
+        ? "h-[9.9rem] rounded-[18px] sm:h-[10.7rem] xl:h-[9.3rem]"
         : visualSize === "compact"
           ? "h-[12.8rem] rounded-[22px] sm:h-[14.25rem]"
           : "h-[27rem] rounded-[36px]";
