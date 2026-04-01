@@ -1,13 +1,14 @@
 /* eslint-disable react/no-unescaped-entities */
 import Link from "next/link";
 
+import { AddToCartButton } from "@/components/add-to-cart-button";
 import { CountdownTimer } from "@/components/countdown-timer";
-import { ArrowLeftIcon, ArrowRightIcon, CartIcon } from "@/components/icons";
+import { HeroCarousel } from "@/components/hero-carousel";
 import { ProductCard } from "@/components/product-card";
-import { ProductVisual } from "@/components/product-visual";
 import { SectionHeading } from "@/components/section-heading";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { ProductVisual } from "@/components/product-visual";
 import { formatMonthly, formatSum } from "@/lib/format";
 import { getStorefrontSnapshot } from "@/lib/storefront";
 
@@ -69,10 +70,39 @@ export default async function Home() {
     .slice(0, 4);
 
   const visiblePromoDeals = promoDeals.slice(0, 3);
-  const heroDiscount =
-    heroProduct?.oldPrice && heroProduct.oldPrice > heroProduct.price
-      ? Math.round(((heroProduct.oldPrice - heroProduct.price) / heroProduct.oldPrice) * 100)
-      : 0;
+  const heroSlides = products.slice(0, 3).map((product, index) => {
+    const relatedPromo = visiblePromoDeals[index] ?? visiblePromoDeals[0];
+    const heroDiscount =
+      product.oldPrice && product.oldPrice > product.price
+        ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
+        : 0;
+
+    return {
+      id: product.slug,
+      eyebrow: relatedPromo?.eyebrow ?? "Texno hayotga ulanish!",
+      title:
+        index === 0 && heroDiscount > 0
+          ? `${product.name} uchun -${heroDiscount}% gacha`
+          : product.name,
+      description:
+        relatedPromo?.description ??
+        `${product.name} uchun qulay narx, muddatli to'lov va tezkor yetkazish bir joyda.`,
+      primaryHref: `/product/${product.slug}`,
+      primaryLabel: "Mahsulotni ko'rish",
+      secondaryHref: relatedPromo?.ctaHref ?? "/catalog?category=smartfonlar",
+      secondaryLabel: relatedPromo?.ctaLabel ?? "Barcha smartfonlar",
+      accentLabel: heroDiscount > 0 ? `-${heroDiscount}% aksiya` : product.badge,
+      price: product.price,
+      monthlyPrice: product.installment12 ?? product.monthlyPrice,
+      badge: index === 0 ? "smartfonlar bozori" : product.badge,
+      kind: product.kind,
+      heroLabel: product.heroLabel,
+      imageUrl: product.imageUrl,
+      imageAlt: product.name,
+      toneFrom: product.toneFrom,
+      toneTo: product.toneTo,
+    };
+  });
 
   if (!heroProduct || !productOfDay) {
     return (
@@ -100,98 +130,7 @@ export default async function Home() {
       <main className="pb-16">
         <section className="shell pt-6">
           <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_332px]">
-            <div className="reveal-up relative overflow-hidden rounded-[34px] bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.28),transparent_34%),linear-gradient(125deg,#064392_0%,#1690F5_52%,#082A58_100%)] p-6 text-white shadow-[0_24px_60px_rgba(10,44,96,0.24)] sm:p-8">
-              <div className="absolute left-4 top-1/2 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/92 text-foreground lg:flex">
-                <ArrowLeftIcon className="h-5 w-5" />
-              </div>
-              <div className="absolute right-4 top-1/2 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/92 text-foreground lg:flex">
-                <ArrowRightIcon className="h-5 w-5" />
-              </div>
-
-              <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-                <div className="relative z-10">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <span className="rounded-full bg-white/12 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em]">
-                      aloo
-                    </span>
-                    <span className="rounded-full bg-white/18 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-white">
-                      smartfonlar bozori
-                    </span>
-                  </div>
-
-                  <p className="mt-7 text-sm font-semibold uppercase tracking-[0.26em] text-white/70">
-                    Texno hayotga ulanish!
-                  </p>
-                  <h1 className="mt-4 font-display text-5xl font-semibold tracking-tight sm:text-6xl">
-                    -{heroDiscount}%
-                  </h1>
-                  <p className="mt-3 max-w-md text-lg font-medium leading-7 text-white/92 sm:text-[1.25rem] sm:leading-8">
-                    {heroProduct.name} uchun chegirma, muddatli to'lov va tezkor yetkazish bir
-                    joyda.
-                  </p>
-
-                  <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                    <Link
-                      href={`/product/${heroProduct.slug}`}
-                      className="inline-flex items-center justify-center gap-2 rounded-[18px] bg-white px-6 py-3.5 text-sm font-semibold text-accent transition hover:bg-[#eef6ff]"
-                    >
-                      <ArrowRightIcon className="h-4 w-4" />
-                      Mahsulotni ko'rish
-                    </Link>
-                    <Link
-                      href="/catalog?category=smartfonlar"
-                      className="inline-flex items-center justify-center rounded-[18px] border border-white/20 bg-white/10 px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-white/16"
-                    >
-                      Barcha smartfonlar
-                    </Link>
-                  </div>
-
-                  <div className="mt-6 grid gap-3 sm:grid-cols-3">
-                    {[
-                      {
-                        label: "Bo'lib to'lash",
-                        value: formatMonthly(heroProduct.installment12 ?? heroProduct.monthlyPrice),
-                      },
-                      { label: "Yangi narx", value: formatSum(heroProduct.price) },
-                      { label: "Yetkazish", value: "90 min" },
-                    ].map((item) => (
-                      <div
-                        key={item.label}
-                        className="rounded-[20px] border border-white/16 bg-white/10 px-4 py-3"
-                      >
-                        <p className="text-[11px] uppercase tracking-[0.2em] text-white/68">
-                          {item.label}
-                        </p>
-                        <p className="mt-2 text-base font-semibold text-white">{item.value}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="animate-float-soft relative z-10 lg:pl-4">
-                  <ProductVisual
-                    size="hero"
-                    kind={heroProduct.kind}
-                    label={heroProduct.heroLabel}
-                    toneFrom="rgba(255,255,255,0.22)"
-                    toneTo="rgba(255,255,255,0.05)"
-                    imageUrl={heroProduct.imageUrl}
-                    imageAlt={heroProduct.name}
-                  />
-                </div>
-              </div>
-
-              <div className="mt-6 flex justify-center gap-2">
-                {[1, 2, 3, 4, 5, 6].map((dot) => (
-                  <span
-                    key={dot}
-                    className={`h-2.5 w-2.5 rounded-full ${
-                      dot === 2 ? "bg-white" : "bg-white/35"
-                    }`}
-                  />
-                ))}
-              </div>
-            </div>
+            <HeroCarousel slides={heroSlides} />
 
             <aside className="reveal-up reveal-up-delay-1 rounded-[32px] border border-line bg-white p-5 shadow-[0_18px_45px_rgba(13,31,55,0.08)] sm:p-6">
               <div className="flex items-start justify-between gap-4">
@@ -202,16 +141,32 @@ export default async function Home() {
 
               <CountdownTimer className="mt-4" />
 
-              <div className="mt-4">
-                <ProductVisual
-                  size="compact"
-                  kind={productOfDay.kind}
-                  label={productOfDay.heroLabel}
-                  toneFrom={productOfDay.toneFrom}
-                  toneTo={productOfDay.toneTo}
-                  imageUrl={productOfDay.imageUrl}
-                  imageAlt={productOfDay.name}
-                />
+              <div
+                className="mt-4 rounded-[24px] border border-line p-4"
+                style={{
+                  background:
+                    "linear-gradient(180deg, rgba(244,249,255,1) 0%, rgba(255,255,255,1) 100%)",
+                }}
+              >
+                <div
+                  className="h-40 rounded-[22px]"
+                  style={{
+                    backgroundImage: "url('/brand/aloo-mark-light.png')",
+                    backgroundPosition: "right -12px bottom -10px",
+                    backgroundRepeat: "no-repeat",
+                    backgroundSize: "88px",
+                  }}
+                >
+                  <ProductVisual
+                    size="compact"
+                    kind={productOfDay.kind}
+                    label={productOfDay.heroLabel}
+                    toneFrom={productOfDay.toneFrom}
+                    toneTo={productOfDay.toneTo}
+                    imageUrl={productOfDay.imageUrl}
+                    imageAlt={productOfDay.name}
+                  />
+                </div>
               </div>
 
               <div className="mt-4 flex flex-wrap gap-2">
@@ -253,12 +208,7 @@ export default async function Home() {
                 <p className="text-3xl font-semibold tracking-tight text-foreground">
                   {formatSum(productOfDay.price)}
                 </p>
-                <Link
-                  href={`/product/${productOfDay.slug}#purchase`}
-                  className="inline-flex h-12 w-12 items-center justify-center rounded-[16px] bg-accent text-white transition hover:bg-accent-strong"
-                >
-                  <CartIcon className="h-5 w-5" />
-                </Link>
+                <AddToCartButton productSlug={productOfDay.slug} mode="icon" />
               </div>
             </aside>
           </div>
@@ -274,8 +224,17 @@ export default async function Home() {
               <Link
                 key={category.slug}
                 href={`/catalog?category=${category.slug}`}
-                className="flex min-h-[120px] min-w-[250px] snap-start items-center justify-between gap-4 rounded-[24px] border border-line bg-[#f7f9fc] px-5 py-5 transition hover:-translate-y-1 hover:bg-white hover:shadow-[0_14px_35px_rgba(13,31,55,0.08)] sm:min-w-0"
+                className="relative flex min-h-[120px] min-w-[250px] snap-start items-center justify-between gap-4 overflow-hidden rounded-[24px] border border-line bg-[#f7f9fc] px-5 py-5 transition hover:-translate-y-1 hover:bg-white hover:shadow-[0_14px_35px_rgba(13,31,55,0.08)] sm:min-w-0"
               >
+                <div
+                  className="absolute -right-6 -top-3 h-20 w-20 opacity-[0.08]"
+                  style={{
+                    backgroundImage: "url('/brand/aloo-mark-dark.png')",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                    backgroundSize: "contain",
+                  }}
+                />
                 <div className="min-w-0">
                   <p className="text-lg font-semibold leading-7 text-foreground">{category.name}</p>
                   <p className="mt-1 text-sm text-muted">

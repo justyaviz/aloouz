@@ -10,6 +10,7 @@ import {
 const FAVORITES_KEY = "aloo:favorites";
 const COMPARE_KEY = "aloo:compare";
 const RECENT_KEY = "aloo:recent";
+const CART_KEY = "aloo:cart";
 const CHANGE_EVENT = "aloo-storefront-change";
 const MAX_COMPARE_ITEMS = 4;
 const MAX_RECENT_ITEMS = 8;
@@ -18,6 +19,7 @@ type StorefrontSnapshot = {
   favorites: string[];
   compare: string[];
   recent: string[];
+  cart: string[];
 };
 
 type SerializedSnapshot = string;
@@ -27,6 +29,9 @@ type StorefrontStateContextValue = StorefrontSnapshot & {
   toggleFavorite: (slug: string) => void;
   toggleCompare: (slug: string) => void;
   rememberProduct: (slug: string) => void;
+  addToCart: (slug: string) => void;
+  removeFromCart: (slug: string) => void;
+  clearCart: () => void;
   clearCompare: () => void;
 };
 
@@ -34,6 +39,7 @@ const EMPTY_SNAPSHOT: StorefrontSnapshot = {
   favorites: [],
   compare: [],
   recent: [],
+  cart: [],
 };
 
 const StorefrontStateContext = createContext<StorefrontStateContextValue | null>(null);
@@ -86,6 +92,7 @@ function getSnapshot(): StorefrontSnapshot {
     favorites: readList(FAVORITES_KEY),
     compare: readList(COMPARE_KEY, MAX_COMPARE_ITEMS),
     recent: readList(RECENT_KEY, MAX_RECENT_ITEMS),
+    cart: readList(CART_KEY),
   };
 }
 
@@ -105,10 +112,14 @@ function parseSnapshot(value: SerializedSnapshot): StorefrontStateContextValue {
     favorites: sanitizeList(parsed.favorites),
     compare: sanitizeList(parsed.compare, MAX_COMPARE_ITEMS),
     recent: sanitizeList(parsed.recent, MAX_RECENT_ITEMS),
+    cart: sanitizeList(parsed.cart),
     hydrated: Boolean(parsed.hydrated),
     toggleFavorite: () => {},
     toggleCompare: () => {},
     rememberProduct: () => {},
+    addToCart: () => {},
+    removeFromCart: () => {},
+    clearCart: () => {},
     clearCompare: () => {},
   };
 }
@@ -178,6 +189,7 @@ export function StorefrontStateProvider({
     favorites: snapshot.favorites,
     compare: snapshot.compare,
     recent: snapshot.recent,
+    cart: snapshot.cart,
     hydrated: snapshot.hydrated,
     toggleFavorite: (slug) => {
       startTransition(() => {
@@ -196,6 +208,23 @@ export function StorefrontStateProvider({
         updateList(RECENT_KEY, MAX_RECENT_ITEMS, (previous) =>
           rememberItem(previous, slug, MAX_RECENT_ITEMS),
         );
+      });
+    },
+    addToCart: (slug) => {
+      startTransition(() => {
+        updateList(CART_KEY, undefined, (previous) =>
+          previous.includes(slug) ? previous : [slug, ...previous],
+        );
+      });
+    },
+    removeFromCart: (slug) => {
+      startTransition(() => {
+        updateList(CART_KEY, undefined, (previous) => previous.filter((item) => item !== slug));
+      });
+    },
+    clearCart: () => {
+      startTransition(() => {
+        updateList(CART_KEY, undefined, () => []);
       });
     },
     clearCompare: () => {

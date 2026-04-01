@@ -28,12 +28,17 @@ const topLinks = [
 const quickActions = [
   { href: "/order-status", label: "Status", icon: ClipboardIcon, countKey: null },
   { href: "/compare", label: "Taqqoslash", icon: CompareIcon, countKey: "compare" as const },
-  { href: "/catalog", label: "Savat", icon: CartIcon },
+  { href: "/cart", label: "Savat", icon: CartIcon, countKey: "cart" as const },
   { href: "/favorites", label: "Sevimli", icon: HeartIcon, countKey: "favorites" as const },
-  { href: "/admin", label: "Admin", icon: UserIcon },
+  { href: "/login", label: "Kirish", icon: UserIcon },
 ];
 
-const mobileShortcuts = quickActions.slice(0, 4);
+const mobileShortcuts = [
+  { href: "/order-status", label: "Status", icon: ClipboardIcon, countKey: null },
+  { href: "/favorites", label: "Sevimli", icon: HeartIcon, countKey: "favorites" as const },
+  { href: "/cart", label: "Savat", icon: CartIcon, countKey: "cart" as const },
+  { href: "/login", label: "Kirish", icon: UserIcon },
+];
 
 const chips = [
   { href: "/catalog", label: "Aksiya", active: true },
@@ -94,9 +99,10 @@ function MobileAction({
 }
 
 export function SiteHeader() {
-  const { compare, favorites, hydrated } = useStorefrontState();
+  const { cart, compare, favorites, hydrated } = useStorefrontState();
 
   const counts = {
+    cart: hydrated ? cart.length : 0,
     compare: hydrated ? compare.length : 0,
     favorites: hydrated ? favorites.length : 0,
   };
@@ -110,13 +116,13 @@ export function SiteHeader() {
 
             <div className="flex items-center gap-2">
               <MobileAction href="/catalog" icon={SearchIcon} />
-              <MobileAction href="/catalog" icon={CartIcon} />
-              <MobileAction href="/admin" icon={UserIcon} />
+              <MobileAction href="/cart" icon={CartIcon} />
+              <MobileAction href="/login" icon={UserIcon} />
             </div>
           </div>
 
           <div className="mt-3 rounded-[26px] border border-line bg-[linear-gradient(180deg,#ffffff_0%,#f5f9fc_100%)] p-3 shadow-[0_14px_35px_rgba(13,31,55,0.08)]">
-            <div className="flex items-center gap-2">
+            <form action="/catalog" className="flex items-center gap-2">
               <Link
                 href="/catalog"
                 className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-[16px] bg-catalog px-4 text-sm font-semibold text-white shadow-[0_14px_28px_rgba(84,196,58,0.26)]"
@@ -129,12 +135,13 @@ export function SiteHeader() {
                 <SearchIcon className="h-4 w-4 shrink-0 text-muted" />
                 <input
                   aria-label="Mahsulot qidirish"
+                  name="query"
                   className="min-w-0 flex-1 bg-transparent px-2 text-sm text-foreground outline-none placeholder:text-muted"
                   placeholder="Qidirish"
                   type="search"
                 />
               </div>
-            </div>
+            </form>
 
             <div className="mt-3 flex items-center gap-2 overflow-x-auto no-scrollbar">
               <div className="flex items-center gap-1.5 rounded-full bg-[#edf6ff] px-3 py-2 text-[11px] font-medium text-[#0a336c]">
@@ -218,7 +225,7 @@ export function SiteHeader() {
             className="reveal-up flex flex-col gap-1.5"
           />
 
-          <div className="reveal-up reveal-up-delay-1 flex flex-col gap-3 lg:flex-row">
+          <form action="/catalog" className="reveal-up reveal-up-delay-1 flex flex-col gap-3 lg:flex-row">
             <Link
               href="/catalog"
               className="inline-flex h-12 items-center justify-center gap-2 rounded-[18px] bg-catalog px-6 text-sm font-semibold text-white shadow-[0_14px_28px_rgba(84,196,58,0.26)] transition hover:bg-catalog-strong"
@@ -231,19 +238,20 @@ export function SiteHeader() {
               <SearchIcon className="ml-4 h-5 w-5 shrink-0 text-muted" />
               <input
                 aria-label="Mahsulot qidirish"
+                name="query"
                 className="min-w-0 flex-1 bg-transparent px-4 text-sm text-foreground outline-none placeholder:text-muted"
                 placeholder="Siz qidirayotgan mahsulotni yozing"
                 type="search"
               />
               <button
-                type="button"
+                type="submit"
                 className="inline-flex h-full items-center justify-center gap-2 bg-accent px-5 text-sm font-semibold text-white transition hover:bg-accent-strong"
               >
                 <SearchIcon className="h-4 w-4" />
                 Qidirish
               </button>
             </div>
-          </div>
+          </form>
 
           <div className="reveal-up reveal-up-delay-2 grid grid-cols-5 gap-2">
             {quickActions.map((item) => (

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { AddToCartButton } from "@/components/add-to-cart-button";
 import { ProductCard } from "@/components/product-card";
 import { ProductUtilityActions } from "@/components/product-utility-actions";
 import { ProductVisual } from "@/components/product-visual";
@@ -193,20 +194,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </div>
 
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              <a
-                href="tel:+998911234567"
-                className="inline-flex items-center justify-center rounded-2xl bg-foreground px-6 py-4 text-sm font-semibold text-white transition hover:bg-[#12233b]"
-              >
-                Bir klikda buyurtma
-              </a>
-              <a
-                href="https://t.me/"
-                target="_blank"
-                rel="noreferrer"
+              <AddToCartButton productSlug={product.slug} className="w-full" />
+              <Link
+                href="/login"
                 className="inline-flex items-center justify-center rounded-2xl border border-line bg-white px-6 py-4 text-sm font-semibold text-foreground transition hover:border-accent/35 hover:text-accent"
               >
-                Telegram orqali yozish
-              </a>
+                Kirib buyurtma berish
+              </Link>
             </div>
 
             <div className="mt-3">
@@ -312,12 +306,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </p>
             <p className="truncate text-base font-semibold text-foreground">{formatSum(product.price)}</p>
           </div>
-          <Link
-            href="#purchase"
-            className="inline-flex h-11 items-center justify-center rounded-[16px] bg-accent px-5 text-sm font-semibold text-white"
-          >
-            Sotib olish
-          </Link>
+          <AddToCartButton productSlug={product.slug} />
         </div>
       </div>
 

@@ -26,9 +26,9 @@ export function ProductVisual({
   const visualSize = size ?? (compact ? "compact" : "default");
   const heightClass =
     visualSize === "hero"
-      ? "h-[15.5rem] rounded-[30px] sm:h-[18rem] lg:h-[20rem]"
+      ? "h-[14rem] rounded-[30px] sm:h-[17rem] lg:h-[19rem]"
       : visualSize === "compact"
-        ? "h-40 rounded-[24px]"
+        ? "h-36 rounded-[22px]"
         : "h-[26rem] rounded-[36px]";
   const paddingClass =
     visualSize === "compact" ? "p-4" : visualSize === "hero" ? "p-6 sm:p-8" : "p-8";
@@ -45,6 +45,24 @@ export function ProductVisual({
       }}
     >
       <div className="absolute inset-0 opacity-50 grid-fade" />
+      <div
+        className="absolute -right-6 top-5 h-28 w-28 rounded-full opacity-[0.16]"
+        style={{
+          backgroundImage: "url('/brand/aloo-mark-light.png')",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "contain",
+        }}
+      />
+      <div
+        className="absolute -left-6 bottom-4 h-24 w-24 rounded-full opacity-[0.12]"
+        style={{
+          backgroundImage: "url('/brand/aloo-mark-dark.png')",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "contain",
+        }}
+      />
       <div className="absolute left-6 top-6 h-24 w-24 rounded-full bg-white/25 blur-2xl" />
       <div className="absolute bottom-8 right-8 h-28 w-28 rounded-full bg-black/10 blur-3xl" />
 

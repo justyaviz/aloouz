@@ -12,10 +12,11 @@ type CatalogPageProps = {
   searchParams: Promise<{
     category?: string;
     brand?: string;
+    query?: string;
   }>;
 };
 
-function buildCatalogHref(category?: string, brand?: string) {
+function buildCatalogHref(category?: string, brand?: string, query?: string) {
   const params = new URLSearchParams();
 
   if (category) {
@@ -26,9 +27,13 @@ function buildCatalogHref(category?: string, brand?: string) {
     params.set("brand", brand);
   }
 
-  const query = params.toString();
+  if (query) {
+    params.set("query", query);
+  }
 
-  return query ? `/catalog?${query}` : "/catalog";
+  const queryString = params.toString();
+
+  return queryString ? `/catalog?${queryString}` : "/catalog";
 }
 
 export const metadata = {
@@ -41,17 +46,23 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   const filters = await searchParams;
   const activeCategory = filters.category;
   const activeBrand = filters.brand;
+  const activeQuery = filters.query?.trim();
 
   const selectedCategory = categories.find((category) => category.slug === activeCategory);
 
   const filteredProducts = products.filter((product) => {
     const categoryMatch = activeCategory ? product.categorySlug === activeCategory : true;
     const brandMatch = activeBrand ? product.brand === activeBrand : true;
+    const queryMatch = activeQuery
+      ? `${product.name} ${product.brand} ${product.category} ${product.shortDescription}`
+          .toLowerCase()
+          .includes(activeQuery.toLowerCase())
+      : true;
 
-    return categoryMatch && brandMatch;
+    return categoryMatch && brandMatch && queryMatch;
   });
 
-  const activeLabels = [selectedCategory?.name, activeBrand].filter(Boolean);
+  const activeLabels = [selectedCategory?.name, activeBrand, activeQuery ? `"${activeQuery}"` : undefined].filter(Boolean);
 
   return (
     <>
@@ -95,7 +106,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
                 {categories.map((category) => (
                   <Link
                     key={category.slug}
-                    href={buildCatalogHref(category.slug, activeBrand)}
+                  href={buildCatalogHref(category.slug, activeBrand, activeQuery)}
                     className={`shrink-0 rounded-full px-5 py-3 text-sm font-semibold transition ${
                       activeCategory === category.slug
                         ? "bg-accent text-white"
@@ -137,7 +148,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <Link
-                  href={buildCatalogHref(activeCategory)}
+                  href={buildCatalogHref(activeCategory, undefined, activeQuery)}
                   className={`rounded-full px-4 py-2 text-sm font-medium transition ${
                     !activeBrand
                       ? "bg-accent text-white"
@@ -149,7 +160,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
                 {brands.map((brand) => (
                   <Link
                     key={brand}
-                    href={buildCatalogHref(activeCategory, brand)}
+                    href={buildCatalogHref(activeCategory, brand, activeQuery)}
                     className={`rounded-full px-4 py-2 text-sm font-medium transition ${
                       activeBrand === brand
                         ? "bg-accent text-white"
@@ -204,7 +215,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
                 </p>
                 <div className="no-scrollbar mt-4 flex gap-2 overflow-x-auto pb-1">
                   <Link
-                    href={buildCatalogHref(activeCategory)}
+                  href={buildCatalogHref(activeCategory, undefined, activeQuery)}
                     className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition ${
                       !activeBrand
                         ? "bg-accent text-white"
@@ -216,7 +227,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
                   {brands.map((brand) => (
                     <Link
                       key={brand}
-                      href={buildCatalogHref(activeCategory, brand)}
+                      href={buildCatalogHref(activeCategory, brand, activeQuery)}
                       className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition ${
                         activeBrand === brand
                           ? "bg-accent text-white"
@@ -266,7 +277,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
                   </span>
                 ))}
 
-                {(activeCategory || activeBrand) && (
+                {(activeCategory || activeBrand || activeQuery) && (
                   <Link
                     href="/catalog"
                     className="inline-flex items-center justify-center rounded-full border border-line bg-white px-4 py-2 text-sm font-semibold text-foreground transition hover:border-accent/30 hover:text-accent"

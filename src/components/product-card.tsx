@@ -1,11 +1,11 @@
-/* eslint-disable react/no-unescaped-entities */
 "use client";
 import Link from "next/link";
 
 import type { Product } from "@/data/store";
 import { formatMonthly, formatSum } from "@/lib/format";
 
-import { ArrowRightIcon, CartIcon } from "./icons";
+import { AddToCartButton } from "./add-to-cart-button";
+import { ArrowRightIcon } from "./icons";
 import { ProductUtilityActions } from "./product-utility-actions";
 import { ProductVisual } from "./product-visual";
 
@@ -59,30 +59,35 @@ export function ProductCard({ product }: ProductCardProps) {
 
         <Link
           href={`/product/${product.slug}`}
-          className="line-clamp-2 mt-3 min-h-[3.35rem] font-display text-[1.05rem] font-semibold leading-7 tracking-tight text-foreground"
+          className="line-clamp-2 mt-3 min-h-[3.05rem] font-display text-[1rem] font-semibold leading-6 tracking-tight text-foreground"
         >
           {product.name}
         </Link>
 
-        <p className="line-clamp-2 mt-2 min-h-[2.7rem] text-[13px] leading-5 text-muted">
+        <p className="line-clamp-1 mt-2 min-h-[1.4rem] text-[13px] leading-5 text-muted">
           {product.shortDescription}
         </p>
 
-        <div className="mt-3 rounded-[18px] bg-[#f6faff] px-4 py-3">
-          <p className="text-xs uppercase tracking-[0.18em] text-muted">Bo'lib to'lash</p>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {installmentOptions.map((option) => (
-              <span
-                key={option.months}
-                className="rounded-full bg-white px-3 py-1.5 text-[11px] font-semibold text-foreground"
-              >
-                {option.months} oy: {formatMonthly(option.amount)}
-              </span>
-            ))}
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <span className="rounded-full border border-accent/20 bg-[#f6faff] px-3 py-2 text-[11px] font-semibold text-accent">
+            12 oy: {formatMonthly(product.installment12 ?? product.monthlyPrice)}
+          </span>
+          <div className="flex flex-wrap gap-2">
+            {installmentOptions
+              .filter((option) => option.months !== 12)
+              .slice(0, 2)
+              .map((option) => (
+                <span
+                  key={option.months}
+                  className="rounded-full bg-[#f4f7fb] px-3 py-2 text-[11px] font-semibold text-muted"
+                >
+                  {option.months} oy
+                </span>
+              ))}
           </div>
         </div>
 
-        <div className="mt-3 flex items-end justify-between gap-4">
+        <div className="mt-4 flex items-end justify-between gap-4">
           <div>
             {product.oldPrice ? (
               <p className="text-sm text-muted line-through">{formatSum(product.oldPrice)}</p>
@@ -99,7 +104,7 @@ export function ProductCard({ product }: ProductCardProps) {
           </span>
         </div>
 
-        <div className="mt-4 grid gap-2 sm:grid-cols-2">
+        <div className="mt-4 grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
           <Link
             href={`/product/${product.slug}`}
             className="inline-flex items-center justify-center gap-2 rounded-2xl border border-line bg-white px-4 py-3 text-sm font-semibold text-foreground transition hover:border-accent/35 hover:text-accent"
@@ -107,16 +112,10 @@ export function ProductCard({ product }: ProductCardProps) {
             <ArrowRightIcon className="h-4 w-4" />
             Batafsil
           </Link>
-          <Link
-            href={`/product/${product.slug}#purchase`}
-            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-accent px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#0b74d1]"
-          >
-            <CartIcon className="h-4 w-4" />
-            Savatga
-          </Link>
+          <AddToCartButton productSlug={product.slug} />
         </div>
 
-        <div className="mt-2">
+        <div className="mt-2 flex justify-end">
           <ProductUtilityActions productSlug={product.slug} productName={product.name} />
         </div>
       </div>
