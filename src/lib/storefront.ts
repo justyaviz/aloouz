@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { resolveProductImageUrl } from "@/lib/product-images";
 import {
   articles as fallbackArticles,
   brands as fallbackBrands,
@@ -322,6 +323,7 @@ function mapProductRecord(
     specs: unknown;
     toneFrom: string;
     toneTo: string;
+    imageAssetId: string | null;
     imageUrl: string | null;
     isActive: boolean;
     isFeatured: boolean;
@@ -357,7 +359,7 @@ function mapProductRecord(
     specs: parseSpecs(product.specs),
     toneFrom: product.toneFrom,
     toneTo: product.toneTo,
-    imageUrl: product.imageUrl ?? undefined,
+    imageUrl: resolveProductImageUrl(product.imageAssetId, product.imageUrl),
     isActive: product.isActive,
     isFeatured: product.isFeatured,
     isNewArrival: product.isNewArrival,

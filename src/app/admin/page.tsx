@@ -1,4 +1,4 @@
-/* eslint-disable react/no-unescaped-entities */
+/* eslint-disable react/no-unescaped-entities, @next/next/no-img-element */
 import Link from "next/link";
 
 import {
@@ -79,6 +79,20 @@ function feedbackMessage(status?: string, error?: string, auth?: string) {
     return {
       tone: "error" as const,
       text: "Promo blokni saqlash uchun kamida sarlavha kerak.",
+    };
+  }
+
+  if (error === "image-type") {
+    return {
+      tone: "error" as const,
+      text: "Faqat PNG, JPG, WEBP yoki AVIF formatdagi rasmlarni yuklash mumkin.",
+    };
+  }
+
+  if (error === "image-size") {
+    return {
+      tone: "error" as const,
+      text: "Mahsulot rasmi 5 MB dan oshmasligi kerak.",
     };
   }
 
@@ -385,7 +399,12 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
               formda boshqarasiz.
             </p>
 
-            <form action={saveProductAction} className="mt-6 space-y-6" id="products">
+            <form
+              action={saveProductAction}
+              className="mt-6 space-y-6"
+              encType="multipart/form-data"
+              id="products"
+            >
               <input type="hidden" name="id" value={productForm.id} />
               <input type="hidden" name="previousSlug" value={productForm.previousSlug} />
 
@@ -438,7 +457,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                 <textarea name="description" defaultValue={productForm.description} rows={4} className="w-full rounded-[16px] border border-line px-4 py-3 text-sm outline-none focus:border-accent" />
               </div>
 
-              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                 {[
                   { name: "price", label: "Narxi", value: productForm.price },
                   { name: "oldPrice", label: "Eski narx", value: productForm.oldPrice },
@@ -462,16 +481,60 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                   <input name="heroLabel" defaultValue={productForm.heroLabel} className="h-12 w-full rounded-[16px] border border-line px-4 text-sm outline-none focus:border-accent" />
                 </div>
                 <div>
-                  <label className="mb-2 block text-sm font-semibold text-foreground">Rasm URL</label>
-                  <input name="imageUrl" defaultValue={productForm.imageUrl} className="h-12 w-full rounded-[16px] border border-line px-4 text-sm outline-none focus:border-accent" />
-                </div>
-                <div>
                   <label className="mb-2 block text-sm font-semibold text-foreground">Gradient from</label>
                   <input name="toneFrom" defaultValue={productForm.toneFrom} className="h-12 w-full rounded-[16px] border border-line px-4 text-sm outline-none focus:border-accent" />
                 </div>
                 <div>
                   <label className="mb-2 block text-sm font-semibold text-foreground">Gradient to</label>
                   <input name="toneTo" defaultValue={productForm.toneTo} className="h-12 w-full rounded-[16px] border border-line px-4 text-sm outline-none focus:border-accent" />
+                </div>
+              </div>
+
+              <div className="rounded-[24px] border border-line bg-[#f7fbff] p-5">
+                <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+                  <div className="max-w-xl">
+                    <label className="block text-sm font-semibold text-foreground">
+                      Mahsulot rasmi
+                    </label>
+                    <p className="mt-2 text-sm leading-6 text-muted">
+                      Endi rasm link bilan emas, shu panel ichidan yuklanadi. PNG, JPG, WEBP
+                      yoki AVIF formatlarini qabul qilamiz.
+                    </p>
+                    <input
+                      accept="image/png,image/jpeg,image/webp,image/avif"
+                      className="mt-4 block w-full rounded-[16px] border border-dashed border-line bg-white px-4 py-3 text-sm text-foreground file:mr-4 file:rounded-full file:border-0 file:bg-accent file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
+                      name="imageFile"
+                      type="file"
+                    />
+                    <p className="mt-3 text-xs font-medium uppercase tracking-[0.18em] text-muted">
+                      Maksimal hajm: 5 MB
+                    </p>
+                    {editingProduct ? (
+                      <label className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-foreground">
+                        <input type="checkbox" name="removeImage" className="h-4 w-4" />
+                        Joriy rasmni olib tashlash
+                      </label>
+                    ) : null}
+                  </div>
+
+                  <div className="w-full max-w-[16rem]">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">
+                      Joriy preview
+                    </p>
+                    <div className="mt-3 overflow-hidden rounded-[24px] border border-line bg-white p-4 shadow-[0_12px_30px_rgba(13,31,55,0.06)]">
+                      {productForm.imageUrl ? (
+                        <img
+                          src={productForm.imageUrl}
+                          alt={productForm.name || "Mahsulot rasmi"}
+                          className="h-44 w-full rounded-[20px] object-contain"
+                        />
+                      ) : (
+                        <div className="flex h-44 items-center justify-center rounded-[20px] bg-[#eef4fb] px-4 text-center text-sm text-muted">
+                          Hozircha mahsulot rasmi yuklanmagan.
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
 

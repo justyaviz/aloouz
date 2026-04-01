@@ -4,6 +4,10 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { loginAdmin, logoutAdmin, requireAdmin } from "@/lib/admin-auth";
+import {
+  PRODUCT_IMAGE_MAX_SIZE,
+  isAcceptedProductImageType,
+} from "@/lib/product-images";
 import { prisma } from "@/lib/prisma";
 import { getCategoryOptions, getCategoryPalette, hasDatabaseUrl, slugify } from "@/lib/storefront";
 
@@ -73,6 +77,20 @@ function ensureDatabase() {
   }
 }
 
+function productTabPath(params?: Record<string, string | undefined>) {
+  const searchParams = new URLSearchParams({ tab: "products" });
+
+  if (params) {
+    for (const [key, value] of Object.entries(params)) {
+      if (value) {
+        searchParams.set(key, value);
+      }
+    }
+  }
+
+  return `/admin?${searchParams.toString()}#products`;
+}
+
 function revalidateStorefront(productSlug?: string, previousSlug?: string) {
   revalidatePath("/");
   revalidatePath("/catalog");
@@ -85,6 +103,40 @@ function revalidateStorefront(productSlug?: string, previousSlug?: string) {
   if (productSlug) {
     revalidatePath(`/product/${productSlug}`);
   }
+}
+
+async function parseUploadedProductImage(
+  value: FormDataEntryValue | null,
+  editProductId?: string,
+) {
+  if (!(value instanceof File) || value.size === 0) {
+    return null;
+  }
+
+  if (!isAcceptedProductImageType(value.type)) {
+    redirect(
+      productTabPath({
+        error: "image-type",
+        editProduct: editProductId,
+      }),
+    );
+  }
+
+  if (value.size > PRODUCT_IMAGE_MAX_SIZE) {
+    redirect(
+      productTabPath({
+        error: "image-size",
+        editProduct: editProductId,
+      }),
+    );
+  }
+
+  return {
+    filename: value.name || "product-image",
+    mimeType: value.type,
+    size: value.size,
+    bytes: Buffer.from(await value.arrayBuffer()),
+  };
 }
 
 export async function loginAction(formData: FormData) {
@@ -114,9 +166,16 @@ export async function saveProductAction(formData: FormData) {
   const brandName = asString(formData.get("brand"));
   const categorySlug = asString(formData.get("categorySlug"));
   const categoryOption = getCategoryOptions().find((item) => item.slug === categorySlug);
+  const removeImage = asBool(formData.get("removeImage"));
+  const uploadedImage = await parseUploadedProductImage(formData.get("imageFile"), id);
 
   if (!name || !brandName || !categoryOption) {
-    redirect("/admin?tab=products&error=product");
+    redirect(
+      productTabPath({
+        error: "product",
+        editProduct: id,
+      }),
+    );
   }
 
   const category = await prisma.category.upsert({
@@ -146,6 +205,24 @@ export async function saveProductAction(formData: FormData) {
   const palette = getCategoryPalette(categorySlug);
   const price = asInt(formData.get("price"));
   const monthlyPrice = asInt(formData.get("monthlyPrice"), Math.round(price / 12));
+  const existingProduct = id
+    ? await prisma.product.findUnique({
+        where: { id },
+        select: {
+          id: true,
+          imageAssetId: true,
+          slug: true,
+        },
+      })
+    : null;
+
+  if (id && !existingProduct) {
+    redirect(
+      productTabPath({
+        error: "product",
+      }),
+    );
+  }
 
   const data = {
     name,
@@ -171,7 +248,6 @@ export async function saveProductAction(formData: FormData) {
     specs: parseSpecs(formData.get("specs")),
     toneFrom: asString(formData.get("toneFrom")) || palette.toneFrom,
     toneTo: asString(formData.get("toneTo")) || palette.toneTo,
-    imageUrl: asOptionalString(formData.get("imageUrl")) ?? null,
     isActive: asBool(formData.get("isActive")),
     isFeatured: asBool(formData.get("isFeatured")),
     isNewArrival: asBool(formData.get("isNewArrival")),
@@ -181,18 +257,65 @@ export async function saveProductAction(formData: FormData) {
     brandId: brand.id,
   };
 
-  if (id) {
-    await prisma.product.update({
-      where: { id },
-      data,
+  const productRecord = await prisma.$transaction(async (tx) => {
+    let nextImageAssetId: string | null = existingProduct?.imageAssetId ?? null;
+
+    if (uploadedImage) {
+      const asset = await tx.mediaAsset.create({
+        data: uploadedImage,
+      });
+
+      nextImageAssetId = asset.id;
+    } else if (removeImage) {
+      nextImageAssetId = null;
+    }
+
+    const imageData =
+      uploadedImage || removeImage
+        ? {
+            imageAssetId: nextImageAssetId,
+            imageUrl: uploadedImage ? null : removeImage ? null : undefined,
+          }
+        : {};
+
+    if (id) {
+      return tx.product.update({
+        where: { id },
+        data: {
+          ...data,
+          ...imageData,
+        },
+        select: {
+          slug: true,
+          imageAssetId: true,
+        },
+      });
+    }
+
+    return tx.product.create({
+      data: {
+        ...data,
+        imageAssetId: nextImageAssetId,
+        imageUrl: null,
+      },
+      select: {
+        slug: true,
+        imageAssetId: true,
+      },
     });
-  } else {
-    await prisma.product.create({
-      data,
+  });
+
+  if (
+    existingProduct?.imageAssetId &&
+    existingProduct.imageAssetId !== productRecord.imageAssetId &&
+    (uploadedImage || removeImage)
+  ) {
+    await prisma.mediaAsset.delete({
+      where: { id: existingProduct.imageAssetId },
     });
   }
 
-  revalidateStorefront(slug, previousSlug);
+  revalidateStorefront(productRecord.slug, previousSlug);
   redirect("/admin?tab=products&status=product-saved");
 }
 
@@ -204,9 +327,22 @@ export async function deleteProductAction(formData: FormData) {
   const slug = asOptionalString(formData.get("slug"));
 
   if (id) {
+    const product = await prisma.product.findUnique({
+      where: { id },
+      select: {
+        imageAssetId: true,
+      },
+    });
+
     await prisma.product.delete({
       where: { id },
     });
+
+    if (product?.imageAssetId) {
+      await prisma.mediaAsset.delete({
+        where: { id: product.imageAssetId },
+      });
+    }
   }
 
   revalidateStorefront(undefined, slug);
