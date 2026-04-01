@@ -52,8 +52,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
     <>
       <SiteHeader />
 
-      <main className="shell py-6 pb-16">
-        <nav className="mb-4 flex flex-wrap items-center gap-2 text-sm text-muted">
+      <main className="shell py-5 pb-24 md:pb-16">
+        <nav className="mb-4 hidden flex-wrap items-center gap-2 text-sm text-muted sm:flex">
           <Link href="/" className="hover:text-foreground">
             Bosh sahifa
           </Link>
@@ -65,8 +65,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <span className="text-foreground">{product.name}</span>
         </nav>
 
-        <section className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
-          <div className="rounded-[32px] border border-line bg-white p-6 shadow-[0_18px_45px_rgba(13,31,55,0.08)] sm:p-8">
+        <section className="grid gap-4 xl:grid-cols-[1.05fr_0.95fr] xl:gap-6">
+          <div className="order-2 rounded-[32px] border border-line bg-white p-5 shadow-[0_18px_45px_rgba(13,31,55,0.08)] sm:p-8 xl:order-1">
             <div className="flex flex-wrap items-center gap-2">
               <span className="rounded-full bg-[#eef6ff] px-3 py-1.5 text-xs font-semibold text-accent">
                 {product.badge}
@@ -104,7 +104,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
           <div
             id="purchase"
-            className="rounded-[32px] border border-line bg-white p-6 shadow-[0_18px_45px_rgba(13,31,55,0.08)] sm:p-8"
+            className="order-1 rounded-[32px] border border-line bg-white p-5 shadow-[0_18px_45px_rgba(13,31,55,0.08)] sm:p-8 xl:order-2"
           >
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
               {product.brand}
@@ -262,14 +262,33 @@ export default async function ProductPage({ params }: ProductPageProps) {
               title="Shu kategoriya ichidagi boshqa tavsiyalar"
               description="Detail sahifa ichida ham merchandizing shelf saqlanadi, bu retail tajriba uchun muhim."
             />
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            <div className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 md:grid md:overflow-visible xl:grid-cols-3">
               {relatedProducts.map((relatedProduct) => (
-                <ProductCard key={relatedProduct.slug} product={relatedProduct} />
+                <div key={relatedProduct.slug} className="min-w-[280px] snap-start md:min-w-0">
+                  <ProductCard product={relatedProduct} />
+                </div>
               ))}
             </div>
           </section>
         ) : null}
       </main>
+
+      <div className="pointer-events-none fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+5.7rem)] z-40 px-3 md:hidden">
+        <div className="pointer-events-auto mx-auto flex max-w-xl items-center justify-between rounded-[24px] border border-white/12 bg-[rgba(255,255,255,0.94)] px-4 py-3 shadow-[0_16px_40px_rgba(10,24,44,0.18)] backdrop-blur-xl">
+          <div className="min-w-0">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+              {formatMonthly(product.monthlyPrice)}
+            </p>
+            <p className="truncate text-base font-semibold text-foreground">{formatSum(product.price)}</p>
+          </div>
+          <Link
+            href="#purchase"
+            className="inline-flex h-11 items-center justify-center rounded-[16px] bg-accent px-5 text-sm font-semibold text-white"
+          >
+            Sotib olish
+          </Link>
+        </div>
+      </div>
 
       <SiteFooter />
     </>

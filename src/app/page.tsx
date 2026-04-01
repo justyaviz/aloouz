@@ -264,12 +264,12 @@ export default async function Home() {
             Ommabop kategoriyalar
           </h2>
 
-          <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="no-scrollbar mt-5 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 sm:grid sm:overflow-visible xl:grid-cols-4">
             {categories.slice(0, 8).map((category, index) => (
               <Link
                 key={category.slug}
                 href={`/catalog?category=${category.slug}`}
-                className="flex min-h-[120px] items-center justify-between gap-4 rounded-[24px] border border-line bg-[#f7f9fc] px-5 py-5 transition hover:-translate-y-1 hover:bg-white hover:shadow-[0_14px_35px_rgba(13,31,55,0.08)]"
+                className="flex min-h-[120px] min-w-[250px] snap-start items-center justify-between gap-4 rounded-[24px] border border-line bg-[#f7f9fc] px-5 py-5 transition hover:-translate-y-1 hover:bg-white hover:shadow-[0_14px_35px_rgba(13,31,55,0.08)] sm:min-w-0"
               >
                 <div className="min-w-0">
                   <p className="text-lg font-semibold leading-7 text-foreground">{category.name}</p>
@@ -288,22 +288,24 @@ export default async function Home() {
           </div>
         </section>
 
-        <section className="shell reveal-up reveal-up-delay-2 pt-9">
+        <section id="new-arrivals" className="shell reveal-up reveal-up-delay-2 pt-9">
           <SectionHeading
             eyebrow="Yangiliklar"
             title="Yangi kelgan smartfon va gadjetlar"
             description="Admin paneldagi `Yangilik shelf'i` flag'i orqali bosh sahifadagi asosiy mahsulot kartalari boshqariladi."
           />
 
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+          <div className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 md:grid md:overflow-visible xl:grid-cols-4">
             {visibleNewItems.map((product) => (
-              <ProductCard key={product.id ?? product.slug} product={product} />
+              <div key={product.id ?? product.slug} className="min-w-[280px] snap-start md:min-w-0">
+                <ProductCard product={product} />
+              </div>
             ))}
           </div>
         </section>
 
-        <section className="shell reveal-up reveal-up-delay-2 pt-9">
-          <div className="grid gap-4 lg:grid-cols-3">
+        <section id="promos" className="shell reveal-up reveal-up-delay-2 pt-9">
+          <div className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 lg:grid lg:overflow-visible lg:grid-cols-3">
             {visiblePromoDeals.map((promo) => {
               const hasDarkTone =
                 isDarkColor(promo.backgroundFrom) || isDarkColor(promo.backgroundTo);
@@ -312,7 +314,7 @@ export default async function Home() {
                 <Link
                   key={promo.id ?? promo.title}
                   href={promo.ctaHref}
-                  className="rounded-[28px] border border-line p-6 shadow-[0_12px_30px_rgba(13,31,55,0.06)] transition hover:-translate-y-1"
+                  className="min-w-[282px] snap-start rounded-[28px] border border-line p-6 shadow-[0_12px_30px_rgba(13,31,55,0.06)] transition hover:-translate-y-1 lg:min-w-0"
                   style={{
                     background: `linear-gradient(180deg, ${promo.backgroundFrom} 0%, ${promo.backgroundTo} 100%)`,
                   }}
@@ -360,9 +362,11 @@ export default async function Home() {
             ctaHref="/catalog"
           />
 
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+          <div className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 md:grid md:overflow-visible xl:grid-cols-4">
             {hotOffers.map((product) => (
-              <ProductCard key={product.id ?? product.slug} product={product} />
+              <div key={product.id ?? product.slug} className="min-w-[280px] snap-start md:min-w-0">
+                <ProductCard product={product} />
+              </div>
             ))}
           </div>
         </section>
@@ -374,11 +378,11 @@ export default async function Home() {
             description="Apple, Samsung, Xiaomi va boshqa brendlar ham bosh sahifada ko'rinib turadi."
           />
 
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 sm:grid sm:overflow-visible lg:grid-cols-4">
             {brands.map((brand) => (
               <div
                 key={brand}
-                className="rounded-[24px] border border-line bg-white px-6 py-8 text-center shadow-[0_12px_30px_rgba(13,31,55,0.06)]"
+                className="min-w-[210px] snap-start rounded-[24px] border border-line bg-white px-6 py-8 text-center shadow-[0_12px_30px_rgba(13,31,55,0.06)] sm:min-w-0"
               >
                 <p className="font-display text-3xl font-semibold text-foreground">{brand}</p>
               </div>
@@ -386,18 +390,18 @@ export default async function Home() {
           </div>
         </section>
 
-        <section className="shell reveal-up reveal-up-delay-3 pt-9">
+        <section id="blog" className="shell reveal-up reveal-up-delay-3 pt-9">
           <SectionHeading
             eyebrow="Blog"
             title="Savdo va maslahat kontenti"
             description="Yangiliklar bo'limidagi maqolalar bosh sahifada avtomatik chiqadi."
           />
 
-          <div className="grid gap-4 lg:grid-cols-3">
+          <div className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 lg:grid lg:overflow-visible lg:grid-cols-3">
             {articles.map((article) => (
               <article
                 key={article.id ?? article.slug ?? article.title}
-                className="rounded-[24px] border border-line bg-white p-6 shadow-[0_12px_30px_rgba(13,31,55,0.06)]"
+                className="min-w-[280px] snap-start rounded-[24px] border border-line bg-white p-6 shadow-[0_12px_30px_rgba(13,31,55,0.06)] lg:min-w-0"
               >
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
                   {article.tag}

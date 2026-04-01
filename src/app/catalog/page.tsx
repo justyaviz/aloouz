@@ -56,7 +56,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
       <SiteHeader />
 
       <main className="shell py-6 pb-16">
-        <nav className="mb-4 flex flex-wrap items-center gap-2 text-sm text-muted">
+        <nav className="mb-4 hidden flex-wrap items-center gap-2 text-sm text-muted sm:flex">
           <Link href="/" className="hover:text-foreground">
             Bosh sahifa
           </Link>
@@ -64,7 +64,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
           <span className="text-foreground">Katalog</span>
         </nav>
 
-        <section className="rounded-[30px] border border-line bg-white p-6 shadow-[0_18px_45px_rgba(13,31,55,0.08)] sm:p-8">
+        <section className="rounded-[30px] border border-line bg-white p-5 shadow-[0_18px_45px_rgba(13,31,55,0.08)] sm:p-8">
           <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px] xl:items-start">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
@@ -79,10 +79,10 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
                 uslubiga yaqinroq ichki oqim beradi.
               </p>
 
-              <div className="mt-6 flex flex-wrap gap-3">
+              <div className="no-scrollbar mt-6 flex gap-3 overflow-x-auto pb-1">
                 <Link
                   href="/catalog"
-                  className={`rounded-full px-5 py-3 text-sm font-semibold transition ${
+                  className={`shrink-0 rounded-full px-5 py-3 text-sm font-semibold transition ${
                     !activeCategory
                       ? "bg-accent text-white"
                       : "border border-line bg-white text-foreground hover:border-accent/30 hover:text-accent"
@@ -94,7 +94,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
                   <Link
                     key={category.slug}
                     href={buildCatalogHref(category.slug, activeBrand)}
-                    className={`rounded-full px-5 py-3 text-sm font-semibold transition ${
+                    className={`shrink-0 rounded-full px-5 py-3 text-sm font-semibold transition ${
                       activeCategory === category.slug
                         ? "bg-accent text-white"
                         : "border border-line bg-white text-foreground hover:border-accent/30 hover:text-accent"
@@ -128,7 +128,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
         </section>
 
         <section className="mt-6 grid gap-6 xl:grid-cols-[280px_minmax(0,1fr)]">
-          <aside className="space-y-4">
+          <aside className="hidden space-y-4 xl:block">
             <div className="rounded-[26px] border border-line bg-white p-5 shadow-[0_12px_30px_rgba(13,31,55,0.06)]">
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted">
                 Brendlar
@@ -195,6 +195,39 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
           </aside>
 
           <div className="space-y-4">
+            <div className="xl:hidden">
+              <div className="rounded-[24px] border border-line bg-white p-4 shadow-[0_12px_30px_rgba(13,31,55,0.06)]">
+                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted">
+                  Mobil filterlar
+                </p>
+                <div className="no-scrollbar mt-4 flex gap-2 overflow-x-auto pb-1">
+                  <Link
+                    href={buildCatalogHref(activeCategory)}
+                    className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition ${
+                      !activeBrand
+                        ? "bg-accent text-white"
+                        : "border border-line bg-white text-foreground"
+                    }`}
+                  >
+                    Barcha brendlar
+                  </Link>
+                  {brands.map((brand) => (
+                    <Link
+                      key={brand}
+                      href={buildCatalogHref(activeCategory, brand)}
+                      className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition ${
+                        activeBrand === brand
+                          ? "bg-accent text-white"
+                          : "border border-line bg-white text-foreground"
+                      }`}
+                    >
+                      {brand}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+
             <div className="flex flex-col gap-4 rounded-[26px] border border-line bg-white p-5 shadow-[0_12px_30px_rgba(13,31,55,0.06)] lg:flex-row lg:items-center lg:justify-between">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted">
@@ -243,7 +276,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
             </div>
 
             {filteredProducts.length > 0 ? (
-              <div className="grid gap-5 md:grid-cols-2 2xl:grid-cols-3">
+              <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-3">
                 {filteredProducts.map((product) => (
                   <ProductCard key={product.slug} product={product} />
                 ))}

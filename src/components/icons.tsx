@@ -137,3 +137,31 @@ export function ClockIcon({ className }: IconProps) {
     </Svg>
   );
 }
+
+export function HomeIcon({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <path d="M3.5 10.5 12 4l8.5 6.5" />
+      <path d="M6.5 9.5V20h11V9.5" />
+    </Svg>
+  );
+}
+
+export function GridIcon({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <rect x="4" y="4" width="6.5" height="6.5" rx="1.2" />
+      <rect x="13.5" y="4" width="6.5" height="6.5" rx="1.2" />
+      <rect x="4" y="13.5" width="6.5" height="6.5" rx="1.2" />
+      <rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.2" />
+    </Svg>
+  );
+}
+
+export function BoltIcon({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <path d="M13.5 2 6 13h4l-1.5 9L16 11h-4.5L13.5 2Z" />
+    </Svg>
+  );
+}

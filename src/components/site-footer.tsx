@@ -2,13 +2,53 @@
 import Link from "next/link";
 
 import { ClockIcon, LocationIcon, PhoneIcon } from "@/components/icons";
+import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 import { SiteLogo } from "@/components/site-logo";
 import { categories } from "@/data/store";
 
 export function SiteFooter() {
   return (
-    <footer className="mt-auto border-t border-[#143862] bg-[linear-gradient(180deg,#062041_0%,#092d59_100%)] text-white">
-      <div className="shell grid gap-8 py-12 lg:grid-cols-[1.1fr_0.8fr_0.8fr_1fr]">
+    <footer className="mt-auto border-t border-[#143862] bg-[linear-gradient(180deg,#062041_0%,#092d59_100%)] pb-[calc(env(safe-area-inset-bottom)+5.5rem)] text-white md:pb-0">
+      <div className="shell py-8 md:hidden">
+        <div className="rounded-[28px] border border-white/10 bg-white/6 p-5 backdrop-blur-sm">
+          <SiteLogo
+            href="/"
+            variant="light"
+            width={136}
+            showTagline
+            className="inline-flex flex-col gap-1.5"
+            taglineClassName="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/68"
+          />
+          <p className="mt-4 text-sm leading-7 text-white/72">
+            mobil xarid uchun qulaylashtirilgan aloo tajribasi.
+          </p>
+
+          <div className="mt-5 flex flex-wrap gap-2">
+            {categories.slice(0, 4).map((category) => (
+              <Link
+                key={category.slug}
+                href={`/catalog?category=${category.slug}`}
+                className="rounded-full border border-white/12 bg-white/8 px-3 py-2 text-[13px] text-white/86"
+              >
+                {category.name}
+              </Link>
+            ))}
+          </div>
+
+          <div className="mt-5 space-y-2 text-sm text-white/76">
+            <p className="inline-flex items-center gap-2">
+              <PhoneIcon className="h-4 w-4 text-white/60" />
+              +998 91 123 45 67
+            </p>
+            <p className="inline-flex items-center gap-2">
+              <LocationIcon className="h-4 w-4 text-white/60" />
+              Toshkent
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="shell hidden gap-8 py-12 md:grid lg:grid-cols-[1.1fr_0.8fr_0.8fr_1fr]">
         <div>
           <SiteLogo
             href="/"
@@ -79,6 +119,8 @@ export function SiteFooter() {
           <p>Smartfonlar bozori va texno hayotga ulanish uchun yagona manzil.</p>
         </div>
       </div>
+
+      <MobileBottomNav />
     </footer>
   );
 }
