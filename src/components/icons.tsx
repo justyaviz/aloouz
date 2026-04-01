@@ -165,3 +165,84 @@ export function BoltIcon({ className }: IconProps) {
     </Svg>
   );
 }
+
+export function PackageIcon({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <path d="m12 3 7 3.8v10.4L12 21l-7-3.8V6.8L12 3Z" />
+      <path d="m5 6.8 7 4 7-4" />
+      <path d="M12 10.8V21" />
+    </Svg>
+  );
+}
+
+export function NewspaperIcon({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <path d="M6 5.5h11A1.5 1.5 0 0 1 18.5 7v10.5a2 2 0 0 1-2 2H7.5a2 2 0 0 1-2-2V7A1.5 1.5 0 0 1 7 5.5Z" />
+      <path d="M8.5 9.5h7" />
+      <path d="M8.5 13h7" />
+      <path d="M8.5 16.5h4.5" />
+    </Svg>
+  );
+}
+
+export function MegaphoneIcon({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <path d="M4.5 13.5V10a2 2 0 0 1 2-2h1.8L16.5 5v13l-8.2-3H6.5a2 2 0 0 1-2-1.5Z" />
+      <path d="m8.5 15 1 4" />
+      <path d="M18.5 9.5a3.5 3.5 0 0 1 0 7" />
+    </Svg>
+  );
+}
+
+export function TrendUpIcon({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <path d="M4 17 10 11l4 4 6-8" />
+      <path d="M14 7h6v6" />
+    </Svg>
+  );
+}
+
+export function DatabaseIcon({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <ellipse cx="12" cy="6.5" rx="6.5" ry="3.5" />
+      <path d="M5.5 6.5v5c0 1.9 2.9 3.5 6.5 3.5s6.5-1.6 6.5-3.5v-5" />
+      <path d="M5.5 11.5v5c0 1.9 2.9 3.5 6.5 3.5s6.5-1.6 6.5-3.5v-5" />
+    </Svg>
+  );
+}
+
+export function EditIcon({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <path d="M4 20h4l10-10-4-4L4 16v4Z" />
+      <path d="m12.5 6.5 4 4" />
+    </Svg>
+  );
+}
+
+export function TrashIcon({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <path d="M4.5 7.5h15" />
+      <path d="M9.5 3.5h5l1 2H8.5l1-2Z" />
+      <path d="M7 7.5 8 19a1.8 1.8 0 0 0 1.8 1.6h4.4A1.8 1.8 0 0 0 16 19l1-11.5" />
+      <path d="M10 11.5v5" />
+      <path d="M14 11.5v5" />
+    </Svg>
+  );
+}
+
+export function SparklesIcon({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <path d="m12 3 1.4 3.6L17 8l-3.6 1.4L12 13l-1.4-3.6L7 8l3.6-1.4L12 3Z" />
+      <path d="m18.5 14 0.8 2 2 0.8-2 0.8-0.8 2-0.8-2-2-0.8 2-0.8 0.8-2Z" />
+      <path d="m5.5 14 0.9 2.2L8.5 17l-2.1 0.8L5.5 20l-0.9-2.2L2.5 17l2.1-0.8 0.9-2.2Z" />
+    </Svg>
+  );
+}

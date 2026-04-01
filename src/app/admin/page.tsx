@@ -1,4 +1,10 @@
 /* eslint-disable react/no-unescaped-entities, @next/next/no-img-element */
+import type {
+  InputHTMLAttributes,
+  ReactNode,
+  SelectHTMLAttributes,
+  TextareaHTMLAttributes,
+} from "react";
 import Link from "next/link";
 
 import {
@@ -11,6 +17,18 @@ import {
   saveProductAction,
   savePromoDealAction,
 } from "@/app/admin/actions";
+import {
+  DatabaseIcon,
+  EditIcon,
+  GridIcon,
+  MegaphoneIcon,
+  NewspaperIcon,
+  PackageIcon,
+  SparklesIcon,
+  TrashIcon,
+  TrendUpIcon,
+} from "@/components/icons";
+import { ProductVisual } from "@/components/product-visual";
 import { getAdminSetup, isAdminAuthenticated } from "@/lib/admin-auth";
 import { formatMonthly, formatSum } from "@/lib/format";
 import { getAdminDashboardData, getCategoryOptions } from "@/lib/storefront";
@@ -27,12 +45,23 @@ type AdminPageProps = {
   }>;
 };
 
+type AdminTone = "success" | "error";
+
 const productKinds = [
   { value: "phone", label: "Telefon" },
   { value: "tablet", label: "Planshet" },
   { value: "watch", label: "Soat" },
   { value: "audio", label: "Audio" },
 ];
+
+const inputClassName =
+  "h-12 w-full rounded-[18px] border border-[#dbe4ef] bg-[#f8fbfd] px-4 text-sm text-foreground outline-none transition placeholder:text-muted focus:border-accent focus:bg-white";
+const textAreaClassName =
+  "w-full rounded-[18px] border border-[#dbe4ef] bg-[#f8fbfd] px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted focus:border-accent focus:bg-white";
+
+function cn(...values: Array<string | false | null | undefined>) {
+  return values.filter(Boolean).join(" ");
+}
 
 function toDateInputValue(value?: string) {
   if (!value) {
@@ -115,6 +144,21 @@ function feedbackMessage(status?: string, error?: string, auth?: string) {
   return null;
 }
 
+function loginFeatureList() {
+  return [
+    "Mahsulotlar va media upload boshqaruvi",
+    "Homepage yangilik va promo queue nazorati",
+    "Live storefront bilan bir xil data oqimi",
+    "Railway + PostgreSQL asosidagi professional foundation",
+  ];
+}
+
+function statusToneClass(tone: AdminTone) {
+  return tone === "success"
+    ? "border-[#b9e6c7] bg-[#eefaf0] text-[#24643a]"
+    : "border-[#ffd7c4] bg-[#fff4ee] text-[#b24616]";
+}
+
 export const metadata = {
   title: "Admin panel",
   description: "aloo storefront boshqaruv paneli",
@@ -128,92 +172,107 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
 
   if (!authenticated) {
     return (
-      <main className="min-h-screen bg-[linear-gradient(180deg,#f7fbff_0%,#eef4fb_100%)] px-4 py-10">
-        <div className="mx-auto grid w-full max-w-5xl gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-          <section className="rounded-[32px] bg-[linear-gradient(135deg,#0a56b8_0%,#1690F5_55%,#082f67_100%)] p-8 text-white shadow-[0_28px_70px_rgba(7,45,102,0.24)] sm:p-10">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-white/70">
-              aloo admin
-            </p>
-            <h1 className="mt-4 font-display text-4xl font-semibold tracking-tight sm:text-5xl">
-              Mahsulot, yangilik va promo bloklarni bir joydan boshqaring.
-            </h1>
-            <p className="mt-5 max-w-xl text-base leading-8 text-white/80">
-              Bu panel orqali storefrontdagi mahsulotlar, bosh sahifa promo kartalari va
-              yangilik maqolalarini qo'shish, tahrirlash va o'chirish mumkin bo'ladi.
-            </p>
+      <main className="min-h-screen overflow-hidden bg-[#06111d] px-4 py-8 sm:px-6">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute left-[-10%] top-[-5%] h-72 w-72 rounded-full bg-[#1690f5]/18 blur-3xl" />
+          <div className="absolute right-[-10%] top-[12%] h-72 w-72 rounded-full bg-[#54c43a]/14 blur-3xl" />
+          <div className="absolute bottom-0 left-1/3 h-96 w-96 rounded-full bg-[#fe6600]/10 blur-3xl" />
+        </div>
+
+        <div className="relative mx-auto grid w-full max-w-6xl gap-6 xl:grid-cols-[1.05fr_0.95fr]">
+          <GlassCard className="overflow-hidden p-8 sm:p-10">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <AdminEyebrow tone="light">aloo admin suite</AdminEyebrow>
+                <h1 className="mt-4 max-w-2xl font-display text-4xl font-semibold tracking-tight text-white sm:text-5xl">
+                  Katalog, kontent va promo boshqaruvi uchun yagona control center.
+                </h1>
+                <p className="mt-5 max-w-2xl text-base leading-8 text-white/74">
+                  Storefrontdagi mahsulotlar, yangiliklar, bannerlar va merchandising
+                  flag&apos;larini tartibli, tez va professional usulda boshqarish uchun yig&apos;ildi.
+                </p>
+              </div>
+              <div className="hidden h-14 w-14 items-center justify-center rounded-[20px] border border-white/12 bg-white/10 text-white sm:inline-flex">
+                <SparklesIcon className="h-6 w-6" />
+              </div>
+            </div>
 
             <div className="mt-8 grid gap-3 sm:grid-cols-2">
-              {[
-                "Mahsulot CRUD",
-                "Yangiliklar boshqaruvi",
-                "Promo va skidka bloklari",
-                "Homepage section nazorati",
-              ].map((item) => (
+              {loginFeatureList().map((item) => (
                 <div
                   key={item}
-                  className="rounded-[20px] border border-white/12 bg-white/10 px-4 py-4 text-sm text-white/85"
+                  className="rounded-[20px] border border-white/10 bg-white/6 px-4 py-4 text-sm text-white/86"
                 >
                   {item}
                 </div>
               ))}
             </div>
-          </section>
 
-          <section className="rounded-[32px] border border-line bg-white p-8 shadow-[0_18px_45px_rgba(13,31,55,0.08)] sm:p-10">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
-              Kirish
-            </p>
+            <div className="mt-8 grid gap-4 sm:grid-cols-3">
+              {[
+                { label: "Realtime panel", value: "24/7" },
+                { label: "Media upload", value: "DB-backed" },
+                { label: "Deploy flow", value: "GitHub + Railway" },
+              ].map((item) => (
+                <div
+                  key={item.label}
+                  className="rounded-[24px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] px-5 py-5"
+                >
+                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-white/58">
+                    {item.label}
+                  </p>
+                  <p className="mt-3 font-display text-3xl font-semibold text-white">
+                    {item.value}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </GlassCard>
+
+          <PanelCard className="p-8 sm:p-10">
+            <AdminEyebrow tone="accent">Kirish</AdminEyebrow>
             <h2 className="mt-4 font-display text-3xl font-semibold tracking-tight text-foreground">
-              Admin panelga login qiling
+              Panelga xavfsiz login
             </h2>
             <p className="mt-4 text-sm leading-7 text-muted">
               Username default holatda{" "}
               <span className="font-semibold text-foreground">{adminSetup.username}</span>.
               {adminSetup.hasCustomPassword
-                ? " Parol env orqali sozlangan."
+                ? " Parol hozir env orqali sozlangan."
                 : " Agar hali o'zgartirilmagan bo'lsa, vaqtinchalik parol `alooadmin123`."}
             </p>
 
             {feedback ? (
-              <div
-                className={`mt-6 rounded-[18px] px-4 py-4 text-sm font-medium ${
-                  feedback.tone === "success"
-                    ? "bg-[#eefaf0] text-[#24643a]"
-                    : "bg-[#fff1ec] text-[#b24616]"
-                }`}
-              >
-                {feedback.text}
-              </div>
+              <StatusNotice className="mt-6" text={feedback.text} tone={feedback.tone} />
             ) : null}
 
-            <form action={loginAction} className="mt-6 space-y-4">
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-foreground">Username</label>
-                <input
-                  name="username"
-                  type="text"
-                  defaultValue={adminSetup.username}
-                  className="h-12 w-full rounded-[16px] border border-line bg-white px-4 text-sm outline-none focus:border-accent"
-                />
-              </div>
+            <form action={loginAction} className="mt-8 space-y-5">
+              <Field label="Username">
+                <TextInput defaultValue={adminSetup.username} name="username" type="text" />
+              </Field>
 
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-foreground">Parol</label>
-                <input
-                  name="password"
-                  type="password"
-                  className="h-12 w-full rounded-[16px] border border-line bg-white px-4 text-sm outline-none focus:border-accent"
-                />
-              </div>
+              <Field label="Parol">
+                <TextInput name="password" type="password" />
+              </Field>
 
               <button
                 type="submit"
-                className="inline-flex h-12 items-center justify-center rounded-[16px] bg-support px-6 text-sm font-semibold text-white transition hover:bg-[#e25a00]"
+                className="inline-flex h-12 items-center justify-center rounded-[18px] bg-accent px-6 text-sm font-semibold text-white transition hover:bg-accent-strong"
               >
                 Panelga kirish
               </button>
             </form>
-          </section>
+
+            <div className="mt-8 rounded-[24px] border border-line bg-[#f7fbff] p-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
+                Access note
+              </p>
+              <p className="mt-3 text-sm leading-7 text-muted">
+                Bu panel orqali qilingan o&apos;zgarishlar storefrontda darhol ko&apos;rinadi:
+                mahsulotlar, kontent bloklar va admin ichidan yuklangan rasmlar shu oqimga ulangan.
+              </p>
+            </div>
+          </PanelCard>
         </div>
       </main>
     );
@@ -222,10 +281,6 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
   const dashboard = await getAdminDashboardData();
   const categoryOptions = getCategoryOptions();
   const activeTab = params.tab ?? "overview";
-  const showProducts = activeTab === "overview" || activeTab === "products";
-  const showArticles = activeTab === "overview" || activeTab === "articles";
-  const showPromos = activeTab === "overview" || activeTab === "promos";
-
   const editingProduct = dashboard.products.find((item) => item.id === params.editProduct);
   const editingArticle = dashboard.articles.find((item) => item.id === params.editArticle);
   const editingPromo = dashboard.promoDeals.find((item) => item.id === params.editPromo);
@@ -287,177 +342,627 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
     sortOrder: editingPromo?.sortOrder ?? 0,
   };
 
-  return (
-    <main className="min-h-screen bg-[linear-gradient(180deg,#f7fbff_0%,#eef4fb_100%)] pb-12">
-      <div className="border-b border-line bg-white">
-        <div className="shell flex flex-col gap-4 py-5 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
-              aloo admin
-            </p>
-            <h1 className="mt-2 font-display text-4xl font-semibold tracking-tight text-foreground">
-              Storefront boshqaruv paneli
-            </h1>
-            <p className="mt-3 text-sm text-muted">
-              Mahsulotlar, news va promo bo'limlarini shu yerdan boshqarasiz.
-            </p>
-          </div>
+  const totalProducts = dashboard.products.length;
+  const activeProducts = dashboard.products.filter((item) => item.isActive).length;
+  const featuredProducts = dashboard.products.filter((item) => item.isFeatured).length;
+  const newArrivalProducts = dashboard.products.filter((item) => item.isNewArrival).length;
+  const dayDeals = dashboard.products.filter((item) => item.isDayDeal).length;
+  const lowStockProducts = dashboard.products.filter((item) => item.stock <= 10);
+  const uploadedImages = dashboard.products.filter((item) => item.imageUrl).length;
+  const publishedArticles = dashboard.articles.filter((item) => item.isPublished).length;
+  const activePromos = dashboard.promoDeals.filter((item) => item.isActive).length;
 
-          <div className="flex flex-wrap gap-3">
-            <Link
-              href="/"
-              className="inline-flex h-12 items-center justify-center rounded-[16px] border border-line bg-white px-5 text-sm font-semibold text-foreground transition hover:border-accent/35 hover:text-accent"
-            >
-              Saytga qaytish
-            </Link>
-            <form action={logoutAction}>
-              <button
-                type="submit"
-                className="inline-flex h-12 items-center justify-center rounded-[16px] bg-support px-5 text-sm font-semibold text-white transition hover:bg-[#e25a00]"
-              >
-                Chiqish
-              </button>
-            </form>
+  const managementTabs = [
+    {
+      key: "overview",
+      label: "Overview",
+      description: "Operatsion ko'rinish va tezkor signal paneli",
+      icon: GridIcon,
+      count: null,
+    },
+    {
+      key: "products",
+      label: "Mahsulotlar",
+      description: "Katalog, narx, rasm va flag boshqaruvi",
+      icon: PackageIcon,
+      count: totalProducts,
+    },
+    {
+      key: "articles",
+      label: "Yangiliklar",
+      description: "Blog, guide va kampaniya kontenti",
+      icon: NewspaperIcon,
+      count: dashboard.articles.length,
+    },
+    {
+      key: "promos",
+      label: "Promo bloklar",
+      description: "Banner, gradient va CTA oqimi",
+      icon: MegaphoneIcon,
+      count: dashboard.promoDeals.length,
+    },
+  ] as const;
+
+  const currentEditCard =
+    editingProduct
+      ? {
+          title: "Mahsulot tahrirlanmoqda",
+          subtitle: editingProduct.name,
+        }
+      : editingArticle
+        ? {
+            title: "Yangilik tahrirlanmoqda",
+            subtitle: editingArticle.title,
+          }
+        : editingPromo
+          ? {
+              title: "Promo tahrirlanmoqda",
+              subtitle: editingPromo.title,
+            }
+          : null;
+
+  return (
+    <main className="min-h-screen overflow-hidden bg-[#06111d] pb-10">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute left-[-8%] top-[-3%] h-72 w-72 rounded-full bg-[#1690f5]/18 blur-3xl" />
+        <div className="absolute right-[-14%] top-[14%] h-80 w-80 rounded-full bg-[#54c43a]/12 blur-3xl" />
+        <div className="absolute bottom-[-10%] left-[32%] h-[28rem] w-[28rem] rounded-full bg-[#fe6600]/8 blur-3xl" />
+      </div>
+
+      <div className="shell relative py-6 lg:py-8">
+        <div className="grid gap-6 xl:grid-cols-[300px_minmax(0,1fr)]">
+          <aside className="space-y-5 xl:sticky xl:top-24 xl:self-start">
+            <GlassCard className="p-6">
+              <AdminEyebrow tone="light">aloo admin</AdminEyebrow>
+              <h1 className="mt-4 font-display text-3xl font-semibold tracking-tight text-white">
+                Professional storefront control center
+              </h1>
+              <p className="mt-4 text-sm leading-7 text-white/72">
+                Mahsulotlar, kontent va promo bloklarni bir ritmda boshqarish uchun yangilangan
+                workspace.
+              </p>
+
+              <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+                <MiniDarkStat label="Faol mahsulot" value={activeProducts.toString()} />
+                <MiniDarkStat label="Media upload" value={uploadedImages.toString()} />
+              </div>
+            </GlassCard>
+
+            <GlassCard className="p-3">
+              <div className="space-y-2">
+                {managementTabs.map((tab) => {
+                  const Icon = tab.icon;
+
+                  return (
+                    <Link
+                      key={tab.key}
+                      href={`/admin?tab=${tab.key}`}
+                      className={cn(
+                        "flex items-start gap-3 rounded-[22px] px-4 py-4 transition",
+                        activeTab === tab.key
+                          ? "bg-white text-foreground shadow-[0_18px_35px_rgba(7,19,34,0.12)]"
+                          : "text-white/76 hover:bg-white/8 hover:text-white",
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[16px]",
+                          activeTab === tab.key
+                            ? "bg-[#eef6ff] text-accent"
+                            : "bg-white/8 text-white",
+                        )}
+                      >
+                        <Icon className="h-5 w-5" />
+                      </span>
+
+                      <span className="min-w-0 flex-1">
+                        <span className="flex items-center justify-between gap-3">
+                          <span className="text-sm font-semibold">{tab.label}</span>
+                          {tab.count !== null ? (
+                            <span
+                              className={cn(
+                                "rounded-full px-2.5 py-1 text-[11px] font-semibold",
+                                activeTab === tab.key
+                                  ? "bg-[#f0f5fb] text-foreground"
+                                  : "bg-white/10 text-white/82",
+                              )}
+                            >
+                              {tab.count}
+                            </span>
+                          ) : null}
+                        </span>
+                        <span
+                          className={cn(
+                            "mt-1 block text-[12px] leading-5",
+                            activeTab === tab.key ? "text-muted" : "text-white/58",
+                          )}
+                        >
+                          {tab.description}
+                        </span>
+                      </span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </GlassCard>
+
+            <GlassCard className="p-6">
+              <div className="flex items-center gap-3">
+                <span
+                  className={cn(
+                    "inline-flex h-11 w-11 items-center justify-center rounded-[16px]",
+                    dashboard.databaseEnabled ? "bg-[#0f6b43] text-white" : "bg-support text-white",
+                  )}
+                >
+                  <DatabaseIcon className="h-5 w-5" />
+                </span>
+                <div>
+                  <p className="text-sm font-semibold text-white">Tizim holati</p>
+                  <p className="text-xs text-white/58">
+                    {dashboard.databaseEnabled ? "Database ulangan" : "Fallback rejim"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-5 space-y-3 text-sm text-white/76">
+                <SidebarSignal
+                  label="Published news"
+                  value={`${publishedArticles}/${dashboard.articles.length}`}
+                />
+                <SidebarSignal
+                  label="Faol promo"
+                  value={`${activePromos}/${dashboard.promoDeals.length}`}
+                />
+                <SidebarSignal
+                  label="Low stock"
+                  value={lowStockProducts.length.toString()}
+                />
+              </div>
+            </GlassCard>
+
+            {currentEditCard ? (
+              <GlassCard className="p-6">
+                <AdminEyebrow tone="light">Tahrirlash</AdminEyebrow>
+                <p className="mt-3 text-sm font-semibold text-white">{currentEditCard.title}</p>
+                <p className="mt-2 text-sm leading-6 text-white/68">{currentEditCard.subtitle}</p>
+              </GlassCard>
+            ) : null}
+          </aside>
+
+          <div className="space-y-6">
+            <GlassCard className="overflow-hidden p-6 sm:p-8">
+              <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+                <div>
+                  <AdminEyebrow tone="light">Workspace</AdminEyebrow>
+                  <h2 className="mt-4 font-display text-4xl font-semibold tracking-tight text-white">
+                    Storefront boshqaruv paneli
+                  </h2>
+                  <p className="mt-4 max-w-3xl text-sm leading-7 text-white/72">
+                    Katalog, blog va promo oqimi endi alohida workspacelarga bo'lingan.
+                    Professional ritmda ishlash uchun statistika, form va list qatlamlari
+                    ancha tartibli joylashtirildi.
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap gap-3">
+                  <Link
+                    href="/"
+                    className="inline-flex h-12 items-center justify-center rounded-[18px] border border-white/12 bg-white/8 px-5 text-sm font-semibold text-white transition hover:bg-white/14"
+                  >
+                    Saytga qaytish
+                  </Link>
+                  <form action={logoutAction}>
+                    <button
+                      type="submit"
+                      className="inline-flex h-12 items-center justify-center rounded-[18px] bg-support px-5 text-sm font-semibold text-white transition hover:bg-[#e25a00]"
+                    >
+                      Chiqish
+                    </button>
+                  </form>
+                </div>
+              </div>
+
+              <div className="mt-6 grid gap-4 md:grid-cols-2 2xl:grid-cols-4">
+                {[
+                  {
+                    label: "Mahsulotlar",
+                    value: totalProducts.toString(),
+                    note: `${featuredProducts} ta hero, ${dayDeals} ta day deal`,
+                    icon: PackageIcon,
+                  },
+                  {
+                    label: "Yangiliklar",
+                    value: dashboard.articles.length.toString(),
+                    note: `${publishedArticles} ta published`,
+                    icon: NewspaperIcon,
+                  },
+                  {
+                    label: "Promo bloklar",
+                    value: dashboard.promoDeals.length.toString(),
+                    note: `${activePromos} ta faol`,
+                    icon: MegaphoneIcon,
+                  },
+                  {
+                    label: "O'sish signali",
+                    value: `${newArrivalProducts}`,
+                    note: "Yangilik shelf mahsulotlari",
+                    icon: TrendUpIcon,
+                  },
+                ].map((card) => {
+                  const Icon = card.icon;
+
+                  return (
+                    <div
+                      key={card.label}
+                      className="rounded-[24px] border border-white/10 bg-white/6 p-5 text-white"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="text-sm font-medium text-white/72">{card.label}</p>
+                        <span className="inline-flex h-10 w-10 items-center justify-center rounded-[14px] bg-white/10 text-white">
+                          <Icon className="h-5 w-5" />
+                        </span>
+                      </div>
+                      <p className="mt-4 font-display text-4xl font-semibold">{card.value}</p>
+                      <p className="mt-2 text-sm text-white/62">{card.note}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </GlassCard>
+
+            {!dashboard.databaseEnabled ? (
+              <StatusNotice
+                text="Database hali ulanmagan. Panel fallback data ko'rsatmoqda, lekin saqlash uchun Railway PostgreSQL kerak."
+                tone="error"
+              />
+            ) : null}
+
+            {feedback ? <StatusNotice text={feedback.text} tone={feedback.tone} /> : null}
+
+            {activeTab === "overview" ? (
+              <OverviewWorkspace
+                activePromos={activePromos}
+                dashboard={dashboard}
+                lowStockProducts={lowStockProducts}
+                uploadedImages={uploadedImages}
+              />
+            ) : null}
+
+            {activeTab === "products" ? (
+              <ProductsWorkspace
+                categoryOptions={categoryOptions}
+                dashboard={dashboard}
+                dayDeals={dayDeals}
+                editingProduct={editingProduct}
+                featuredProducts={featuredProducts}
+                lowStockProducts={lowStockProducts}
+                newArrivalProducts={newArrivalProducts}
+                productForm={productForm}
+              />
+            ) : null}
+
+            {activeTab === "articles" ? (
+              <ArticlesWorkspace
+                articleForm={articleForm}
+                dashboard={dashboard}
+                editingArticle={editingArticle}
+              />
+            ) : null}
+
+            {activeTab === "promos" ? (
+              <PromosWorkspace
+                dashboard={dashboard}
+                editingPromo={editingPromo}
+                promoForm={promoForm}
+              />
+            ) : null}
           </div>
         </div>
       </div>
+    </main>
+  );
+}
 
-      <div className="shell pt-6">
-        {!dashboard.databaseEnabled ? (
-          <div className="rounded-[20px] bg-[#fff1ec] px-5 py-4 text-sm font-medium text-[#b24616]">
-            Database hali ulanmagan. Panel fallback data ko'rsatmoqda, lekin saqlash uchun
-            Railway PostgreSQL kerak bo'ladi.
-          </div>
-        ) : null}
+function OverviewWorkspace({
+  activePromos,
+  dashboard,
+  lowStockProducts,
+  uploadedImages,
+}: {
+  activePromos: number;
+  dashboard: Awaited<ReturnType<typeof getAdminDashboardData>>;
+  lowStockProducts: Awaited<ReturnType<typeof getAdminDashboardData>>["products"];
+  uploadedImages: number;
+}) {
+  const managementCards = [
+    {
+      key: "products",
+      title: "Katalog boshqaruvi",
+      description: "Narx, stock, rasm upload va merchandising flag'lari shu workspace ichida.",
+      href: "/admin?tab=products#products",
+      count: `${dashboard.products.length} ta mahsulot`,
+      accentClass: "from-[#eaf4ff] to-[#ffffff]",
+    },
+    {
+      key: "articles",
+      title: "Kontent va blog",
+      description: "Yangiliklar, guide va marketing maqolalarini published queue bilan boshqaring.",
+      href: "/admin?tab=articles#articles",
+      count: `${dashboard.articles.length} ta maqola`,
+      accentClass: "from-[#eef8ef] to-[#ffffff]",
+    },
+    {
+      key: "promos",
+      title: "Promo va bannerlar",
+      description: "Gradient, CTA va homepage merchandising bloklarini bir joydan nazorat qiling.",
+      href: "/admin?tab=promos#promos",
+      count: `${dashboard.promoDeals.length} ta promo`,
+      accentClass: "from-[#fff4eb] to-[#ffffff]",
+    },
+  ];
 
-        {feedback ? (
-          <div
-            className={`mt-4 rounded-[20px] px-5 py-4 text-sm font-medium ${
-              feedback.tone === "success"
-                ? "bg-[#eefaf0] text-[#24643a]"
-                : "bg-[#fff1ec] text-[#b24616]"
-            }`}
-          >
-            {feedback.text}
-          </div>
-        ) : null}
-
-        <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {[
-            { label: "Mahsulotlar", value: dashboard.products.length.toString() },
-            { label: "Yangiliklar", value: dashboard.articles.length.toString() },
-            { label: "Promo bloklar", value: dashboard.promoDeals.length.toString() },
-            {
-              label: "Faol mahsulotlar",
-              value: dashboard.products.filter((item) => item.isActive).length.toString(),
-            },
-          ].map((card) => (
-            <div
-              key={card.label}
-              className="rounded-[24px] border border-line bg-white p-5 shadow-[0_12px_30px_rgba(13,31,55,0.06)]"
-            >
-              <p className="text-sm font-medium text-muted">{card.label}</p>
-              <p className="mt-3 font-display text-4xl font-semibold text-foreground">
-                {card.value}
-              </p>
+  return (
+    <>
+      <div className="grid gap-6 2xl:grid-cols-[1.05fr_0.95fr]">
+        <PanelCard className="p-6 sm:p-8">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <AdminEyebrow tone="accent">Control map</AdminEyebrow>
+              <h3 className="mt-3 font-display text-3xl font-semibold text-foreground">
+                Bo'limlar bo'yicha tezkor kirish
+              </h3>
             </div>
-          ))}
-        </div>
+            <p className="text-sm text-muted">Ishni kerakli workspace'dan boshlang.</p>
+          </div>
 
-        <div className="mt-6 flex flex-wrap gap-3">
-          {[
-            { key: "overview", label: "Overview" },
-            { key: "products", label: "Mahsulotlar" },
-            { key: "articles", label: "Yangiliklar" },
-            { key: "promos", label: "Promo bloklar" },
-          ].map((tab) => (
-            <Link
-              key={tab.key}
-              href={`/admin?tab=${tab.key}`}
-              className={`inline-flex h-11 items-center rounded-full px-5 text-sm font-semibold transition ${
-                activeTab === tab.key
-                  ? "bg-accent text-white"
-                  : "border border-line bg-white text-foreground hover:border-accent/35 hover:text-accent"
-              }`}
-            >
-              {tab.label}
-            </Link>
-          ))}
-        </div>
+          <div className="mt-6 grid gap-4 lg:grid-cols-3">
+            {managementCards.map((card) => (
+              <Link
+                key={card.key}
+                href={card.href}
+                className={`rounded-[26px] border border-line bg-[linear-gradient(180deg,var(--tw-gradient-from),var(--tw-gradient-to))] p-5 shadow-[0_12px_30px_rgba(13,31,55,0.06)] transition hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(13,31,55,0.08)] ${card.accentClass}`}
+              >
+                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
+                  {card.count}
+                </p>
+                <h4 className="mt-3 text-xl font-semibold text-foreground">{card.title}</h4>
+                <p className="mt-3 text-sm leading-7 text-muted">{card.description}</p>
+                <p className="mt-5 text-sm font-semibold text-accent">Workspace'ni ochish</p>
+              </Link>
+            ))}
+          </div>
+        </PanelCard>
 
-        {showProducts ? (
-          <section className="mt-8 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="rounded-[28px] border border-line bg-white p-6 shadow-[0_12px_30px_rgba(13,31,55,0.06)] sm:p-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
-              Mahsulotlar
-            </p>
-            <h2 className="mt-3 font-display text-3xl font-semibold text-foreground">
-              {editingProduct ? "Mahsulotni tahrirlash" : "Yangi mahsulot qo'shish"}
-            </h2>
-            <p className="mt-3 text-sm leading-7 text-muted">
-              Brend, kategoriya, narx, homepage flag va product detail ma'lumotlarini bir
-              formda boshqarasiz.
-            </p>
+        <PanelCard className="p-6 sm:p-8">
+          <AdminEyebrow tone="accent">Signal panel</AdminEyebrow>
+          <h3 className="mt-3 font-display text-3xl font-semibold text-foreground">
+            Operatsion status
+          </h3>
 
-            <form
-              action={saveProductAction}
-              className="mt-6 space-y-6"
-              encType="multipart/form-data"
-              id="products"
-            >
-              <input type="hidden" name="id" value={productForm.id} />
-              <input type="hidden" name="previousSlug" value={productForm.previousSlug} />
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            {[
+              {
+                label: "Low stock",
+                value: lowStockProducts.length.toString(),
+                note: "10 donadan kam qolgan mahsulotlar",
+              },
+              {
+                label: "Uploaded visuals",
+                value: uploadedImages.toString(),
+                note: "Admin orqali rasm yuklangan productlar",
+              },
+              {
+                label: "Published news",
+                value: dashboard.articles.filter((item) => item.isPublished).length.toString(),
+                note: "Ko'rinayotgan kontent birliklari",
+              },
+              {
+                label: "Faol promo",
+                value: activePromos.toString(),
+                note: "Homepage'dagi ishlayotgan bannerlar",
+              },
+            ].map((item) => (
+              <div key={item.label} className="rounded-[22px] bg-[#f7fbff] p-5">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">
+                  {item.label}
+                </p>
+                <p className="mt-3 font-display text-3xl font-semibold text-foreground">
+                  {item.value}
+                </p>
+                <p className="mt-2 text-sm leading-6 text-muted">{item.note}</p>
+              </div>
+            ))}
+          </div>
+        </PanelCard>
+      </div>
 
-              <div className="grid gap-4 md:grid-cols-2">
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-foreground">Nomi</label>
-                  <input name="name" defaultValue={productForm.name} className="h-12 w-full rounded-[16px] border border-line px-4 text-sm outline-none focus:border-accent" />
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-foreground">Slug</label>
-                  <input name="slug" defaultValue={productForm.slug} className="h-12 w-full rounded-[16px] border border-line px-4 text-sm outline-none focus:border-accent" />
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-foreground">SKU</label>
-                  <input name="sku" defaultValue={productForm.sku} className="h-12 w-full rounded-[16px] border border-line px-4 text-sm outline-none focus:border-accent" />
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-foreground">Brend</label>
-                  <input name="brand" defaultValue={productForm.brand} className="h-12 w-full rounded-[16px] border border-line px-4 text-sm outline-none focus:border-accent" />
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-foreground">Kategoriya</label>
-                  <select name="categorySlug" defaultValue={productForm.categorySlug} className="h-12 w-full rounded-[16px] border border-line px-4 text-sm outline-none focus:border-accent">
+      <div className="grid gap-6 xl:grid-cols-3">
+        <PanelCard className="p-6 sm:p-8">
+          <SectionHeader
+            eyebrow="Mahsulotlar"
+            title="So'nggi katalog birikmalari"
+            description="Tez ko'rish uchun so'nggi mahsulotlar."
+          />
+          <div className="mt-6 space-y-3">
+            {dashboard.products.slice(0, 5).map((product) => (
+              <CompactListItem
+                key={product.id}
+                href={`/admin?tab=products&editProduct=${product.id}#products`}
+                title={product.name}
+                subtitle={`${product.brand} • ${formatMonthly(product.monthlyPrice)}`}
+                meta={formatSum(product.price)}
+              />
+            ))}
+          </div>
+        </PanelCard>
+
+        <PanelCard className="p-6 sm:p-8">
+          <SectionHeader
+            eyebrow="Yangiliklar"
+            title="Kontent navbati"
+            description="Blog va yangiliklar ketma-ketligi."
+          />
+          <div className="mt-6 space-y-3">
+            {dashboard.articles.slice(0, 5).map((article) => (
+              <CompactListItem
+                key={article.id}
+                href={`/admin?tab=articles&editArticle=${article.id}#articles`}
+                title={article.title}
+                subtitle={`${article.tag} • ${article.date}`}
+                meta={article.isPublished ? "Published" : "Draft"}
+              />
+            ))}
+          </div>
+        </PanelCard>
+
+        <PanelCard className="p-6 sm:p-8">
+          <SectionHeader
+            eyebrow="Promo"
+            title="Banner va CTA navbati"
+            description="Homepage merchandising bloklari."
+          />
+          <div className="mt-6 space-y-3">
+            {dashboard.promoDeals.slice(0, 5).map((promo) => (
+              <CompactListItem
+                key={promo.id}
+                href={`/admin?tab=promos&editPromo=${promo.id}#promos`}
+                title={promo.title}
+                subtitle={promo.eyebrow}
+                meta={promo.isActive ? "Faol" : "Pausa"}
+              />
+            ))}
+          </div>
+        </PanelCard>
+      </div>
+    </>
+  );
+}
+
+function ProductsWorkspace({
+  categoryOptions,
+  dashboard,
+  dayDeals,
+  editingProduct,
+  featuredProducts,
+  lowStockProducts,
+  newArrivalProducts,
+  productForm,
+}: {
+  categoryOptions: ReturnType<typeof getCategoryOptions>;
+  dashboard: Awaited<ReturnType<typeof getAdminDashboardData>>;
+  dayDeals: number;
+  editingProduct: Awaited<ReturnType<typeof getAdminDashboardData>>["products"][number] | undefined;
+  featuredProducts: number;
+  lowStockProducts: Awaited<ReturnType<typeof getAdminDashboardData>>["products"];
+  newArrivalProducts: number;
+  productForm: {
+    id: string;
+    previousSlug: string;
+    name: string;
+    slug: string;
+    sku: string;
+    brand: string;
+    categorySlug: string;
+    kind: string;
+    shortDescription: string;
+    description: string;
+    price: number | string;
+    oldPrice: number | string;
+    monthlyPrice: number | string;
+    stock: number | string;
+    badge: string;
+    rating: number | string;
+    reviews: number | string;
+    heroLabel: string;
+    delivery: string;
+    toneFrom: string;
+    toneTo: string;
+    imageUrl: string;
+    highlights: string;
+    colors: string;
+    specs: string;
+    isActive: boolean;
+    isFeatured: boolean;
+    isNewArrival: boolean;
+    isDayDeal: boolean;
+    sortOrder: number | string;
+  };
+}) {
+  const previewProduct = editingProduct ?? dashboard.products[0];
+  const previewKind = productForm.kind as "phone" | "tablet" | "watch" | "audio";
+  const checklist = [
+    { label: "Nomi va brend tayyor", done: Boolean(productForm.name && productForm.brand) },
+    { label: "Narx va bo'lib to'lash kiritilgan", done: Boolean(productForm.price && productForm.monthlyPrice) },
+    { label: "Mahsulot rasmi biriktirilgan", done: Boolean(productForm.imageUrl) },
+    { label: "Highlights va specs tayyor", done: Boolean(productForm.highlights && productForm.specs) },
+  ];
+
+  return (
+    <>
+      <div className="grid gap-6 2xl:grid-cols-[minmax(0,1.08fr)_360px]">
+        <PanelCard className="p-6 sm:p-8" id="products">
+          <SectionHeader
+            eyebrow="Mahsulot workspace"
+            title={editingProduct ? "Mahsulotni professional tartibda tahrirlash" : "Yangi mahsulot qo'shish"}
+            description="Katalog, narx, rasm upload, merchandising flag va product detail ma'lumotlari shu form ichida boshqariladi."
+          />
+
+          <form
+            action={saveProductAction}
+            className="mt-8 space-y-6"
+            encType="multipart/form-data"
+          >
+            <input type="hidden" name="id" value={productForm.id} />
+            <input type="hidden" name="previousSlug" value={productForm.previousSlug} />
+
+            <FormGroup title="Asosiy ma'lumotlar" description="Slug, SKU, tur va kategoriya shu blokda.">
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                <Field label="Nomi">
+                  <TextInput defaultValue={productForm.name} name="name" />
+                </Field>
+                <Field label="Slug">
+                  <TextInput defaultValue={productForm.slug} name="slug" />
+                </Field>
+                <Field label="SKU">
+                  <TextInput defaultValue={productForm.sku} name="sku" />
+                </Field>
+                <Field label="Brend">
+                  <TextInput defaultValue={productForm.brand} name="brand" />
+                </Field>
+                <Field label="Kategoriya">
+                  <SelectInput defaultValue={productForm.categorySlug} name="categorySlug">
                     {categoryOptions.map((item) => (
                       <option key={item.slug} value={item.slug}>
                         {item.name}
                       </option>
                     ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-foreground">Turi</label>
-                  <select name="kind" defaultValue={productForm.kind} className="h-12 w-full rounded-[16px] border border-line px-4 text-sm outline-none focus:border-accent">
+                  </SelectInput>
+                </Field>
+                <Field label="Turi">
+                  <SelectInput defaultValue={productForm.kind} name="kind">
                     {productKinds.map((item) => (
                       <option key={item.value} value={item.value}>
                         {item.label}
                       </option>
                     ))}
-                  </select>
-                </div>
+                  </SelectInput>
+                </Field>
               </div>
+            </FormGroup>
 
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-foreground">Qisqa tavsif</label>
-                <textarea name="shortDescription" defaultValue={productForm.shortDescription} rows={3} className="w-full rounded-[16px] border border-line px-4 py-3 text-sm outline-none focus:border-accent" />
+            <FormGroup title="Tavsiflar" description="Kartochka va detail sahifada ko'rinadigan matnlar.">
+              <div className="grid gap-4">
+                <Field label="Qisqa tavsif">
+                  <TextArea defaultValue={productForm.shortDescription} name="shortDescription" rows={3} />
+                </Field>
+                <Field label="Batafsil tavsif">
+                  <TextArea defaultValue={productForm.description} name="description" rows={5} />
+                </Field>
               </div>
+            </FormGroup>
 
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-foreground">Batafsil tavsif</label>
-                <textarea name="description" defaultValue={productForm.description} rows={4} className="w-full rounded-[16px] border border-line px-4 py-3 text-sm outline-none focus:border-accent" />
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <FormGroup title="Savdo ko'rsatkichlari" description="Narx, stock, reyting va merchandising tartibi.">
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                 {[
                   { name: "price", label: "Narxi", value: productForm.price },
                   { name: "oldPrice", label: "Eski narx", value: productForm.oldPrice },
@@ -468,50 +973,46 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                   { name: "sortOrder", label: "Tartib", value: productForm.sortOrder },
                   { name: "badge", label: "Badge", value: productForm.badge },
                 ].map((field) => (
-                  <div key={field.name}>
-                    <label className="mb-2 block text-sm font-semibold text-foreground">{field.label}</label>
-                    <input name={field.name} defaultValue={field.value} className="h-12 w-full rounded-[16px] border border-line px-4 text-sm outline-none focus:border-accent" />
-                  </div>
+                  <Field key={field.name} label={field.label}>
+                    <TextInput defaultValue={field.value} name={field.name} />
+                  </Field>
                 ))}
               </div>
+            </FormGroup>
 
+            <FormGroup title="Vizual va delivery" description="Hero label, gradient, upload va logistika matni.">
               <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-foreground">Hero label</label>
-                  <input name="heroLabel" defaultValue={productForm.heroLabel} className="h-12 w-full rounded-[16px] border border-line px-4 text-sm outline-none focus:border-accent" />
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-foreground">Gradient from</label>
-                  <input name="toneFrom" defaultValue={productForm.toneFrom} className="h-12 w-full rounded-[16px] border border-line px-4 text-sm outline-none focus:border-accent" />
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-foreground">Gradient to</label>
-                  <input name="toneTo" defaultValue={productForm.toneTo} className="h-12 w-full rounded-[16px] border border-line px-4 text-sm outline-none focus:border-accent" />
-                </div>
+                <Field label="Hero label">
+                  <TextInput defaultValue={productForm.heroLabel} name="heroLabel" />
+                </Field>
+                <Field label="Gradient from">
+                  <TextInput defaultValue={productForm.toneFrom} name="toneFrom" />
+                </Field>
+                <Field label="Gradient to">
+                  <TextInput defaultValue={productForm.toneTo} name="toneTo" />
+                </Field>
+                <Field label="Yetkazish matni">
+                  <TextInput defaultValue={productForm.delivery} name="delivery" />
+                </Field>
               </div>
 
-              <div className="rounded-[24px] border border-line bg-[#f7fbff] p-5">
+              <div className="mt-5 rounded-[24px] border border-line bg-[#f7fbff] p-5">
                 <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
                   <div className="max-w-xl">
-                    <label className="block text-sm font-semibold text-foreground">
-                      Mahsulot rasmi
-                    </label>
+                    <p className="text-sm font-semibold text-foreground">Mahsulot rasmi</p>
                     <p className="mt-2 text-sm leading-6 text-muted">
-                      Endi rasm link bilan emas, shu panel ichidan yuklanadi. PNG, JPG, WEBP
-                      yoki AVIF formatlarini qabul qilamiz.
+                      Endi rasm link bilan emas, shu panel ichidan yuklanadi. Tavsiya: tiniq
+                      fonli PNG yoki WEBP, 5 MB gacha.
                     </p>
                     <input
                       accept="image/png,image/jpeg,image/webp,image/avif"
-                      className="mt-4 block w-full rounded-[16px] border border-dashed border-line bg-white px-4 py-3 text-sm text-foreground file:mr-4 file:rounded-full file:border-0 file:bg-accent file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
+                      className="mt-4 block w-full rounded-[18px] border border-dashed border-[#c9d7e6] bg-white px-4 py-3 text-sm text-foreground file:mr-4 file:rounded-full file:border-0 file:bg-accent file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
                       name="imageFile"
                       type="file"
                     />
-                    <p className="mt-3 text-xs font-medium uppercase tracking-[0.18em] text-muted">
-                      Maksimal hajm: 5 MB
-                    </p>
                     {editingProduct ? (
                       <label className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-foreground">
-                        <input type="checkbox" name="removeImage" className="h-4 w-4" />
+                        <input className="h-4 w-4" name="removeImage" type="checkbox" />
                         Joriy rasmni olib tashlash
                       </label>
                     ) : null}
@@ -519,17 +1020,17 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
 
                   <div className="w-full max-w-[16rem]">
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">
-                      Joriy preview
+                      Preview
                     </p>
-                    <div className="mt-3 overflow-hidden rounded-[24px] border border-line bg-white p-4 shadow-[0_12px_30px_rgba(13,31,55,0.06)]">
+                    <div className="mt-3 overflow-hidden rounded-[24px] border border-line bg-white p-4">
                       {productForm.imageUrl ? (
                         <img
                           src={productForm.imageUrl}
                           alt={productForm.name || "Mahsulot rasmi"}
-                          className="h-44 w-full rounded-[20px] object-contain"
+                          className="h-44 w-full rounded-[18px] object-contain"
                         />
                       ) : (
-                        <div className="flex h-44 items-center justify-center rounded-[20px] bg-[#eef4fb] px-4 text-center text-sm text-muted">
+                        <div className="flex h-44 items-center justify-center rounded-[18px] bg-[#eef4fb] px-4 text-center text-sm text-muted">
                           Hozircha mahsulot rasmi yuklanmagan.
                         </div>
                       )}
@@ -537,318 +1038,966 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                   </div>
                 </div>
               </div>
+            </FormGroup>
 
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-foreground">Yetkazish matni</label>
-                <input name="delivery" defaultValue={productForm.delivery} className="h-12 w-full rounded-[16px] border border-line px-4 text-sm outline-none focus:border-accent" />
-              </div>
-
+            <FormGroup title="Detail tarkibi" description="Highlights, ranglar va specs ro'yxati.">
               <div className="grid gap-4 lg:grid-cols-3">
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-foreground">Highlights</label>
-                  <textarea name="highlights" defaultValue={productForm.highlights} rows={5} className="w-full rounded-[16px] border border-line px-4 py-3 text-sm outline-none focus:border-accent" />
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-foreground">Ranglar</label>
-                  <textarea name="colors" defaultValue={productForm.colors} rows={5} className="w-full rounded-[16px] border border-line px-4 py-3 text-sm outline-none focus:border-accent" />
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-foreground">Specs (`Label: Value`)</label>
-                  <textarea name="specs" defaultValue={productForm.specs} rows={5} className="w-full rounded-[16px] border border-line px-4 py-3 text-sm outline-none focus:border-accent" />
-                </div>
+                <Field label="Highlights">
+                  <TextArea defaultValue={productForm.highlights} name="highlights" rows={6} />
+                </Field>
+                <Field label="Ranglar">
+                  <TextArea defaultValue={productForm.colors} name="colors" rows={6} />
+                </Field>
+                <Field label="Specs (`Label: Value`)">
+                  <TextArea defaultValue={productForm.specs} name="specs" rows={6} />
+                </Field>
               </div>
+            </FormGroup>
 
-              <div className="flex flex-wrap gap-5">
+            <FormGroup title="Merchandising flag'lari" description="Homepage va shelf ko'rinishini belgilash.">
+              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
                 {[
-                  { name: "isActive", label: "Faol", checked: productForm.isActive },
-                  { name: "isFeatured", label: "Hero product", checked: productForm.isFeatured },
-                  { name: "isNewArrival", label: "Yangilik shelf'i", checked: productForm.isNewArrival },
-                  { name: "isDayDeal", label: "Tovarlar kuni", checked: productForm.isDayDeal },
+                  {
+                    name: "isActive",
+                    label: "Faol",
+                    description: "Storefrontda ko'rinadi",
+                    checked: productForm.isActive,
+                  },
+                  {
+                    name: "isFeatured",
+                    label: "Hero product",
+                    description: "Bosh sahifa banneriga nomzod",
+                    checked: productForm.isFeatured,
+                  },
+                  {
+                    name: "isNewArrival",
+                    label: "Yangilik shelf'i",
+                    description: "Yangi kelganlar blokiga tushadi",
+                    checked: productForm.isNewArrival,
+                  },
+                  {
+                    name: "isDayDeal",
+                    label: "Tovarlar kuni",
+                    description: "Kunlik deal spotlight'i",
+                    checked: productForm.isDayDeal,
+                  },
                 ].map((item) => (
-                  <label key={item.name} className="inline-flex items-center gap-2 text-sm font-medium">
-                    <input type="checkbox" name={item.name} defaultChecked={item.checked} className="h-4 w-4" />
-                    {item.label}
+                  <label
+                    key={item.name}
+                    className="flex items-start gap-3 rounded-[20px] border border-line bg-[#f8fbfd] px-4 py-4"
+                  >
+                    <input
+                      className="mt-0.5 h-4 w-4"
+                      defaultChecked={item.checked}
+                      name={item.name}
+                      type="checkbox"
+                    />
+                    <span>
+                      <span className="block text-sm font-semibold text-foreground">
+                        {item.label}
+                      </span>
+                      <span className="mt-1 block text-sm leading-6 text-muted">
+                        {item.description}
+                      </span>
+                    </span>
                   </label>
                 ))}
               </div>
+            </FormGroup>
 
-              <div className="flex flex-wrap gap-3">
-                <button type="submit" className="inline-flex h-12 items-center justify-center rounded-[16px] bg-support px-6 text-sm font-semibold text-white transition hover:bg-[#e25a00]">
-                  {editingProduct ? "Mahsulotni saqlash" : "Mahsulot qo'shish"}
-                </button>
-                {editingProduct ? (
-                  <Link href="/admin?tab=products" className="inline-flex h-12 items-center justify-center rounded-[16px] border border-line bg-white px-6 text-sm font-semibold text-foreground transition hover:border-accent/35 hover:text-accent">
-                    Formani tozalash
-                  </Link>
-                ) : null}
-              </div>
-            </form>
-          </div>
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="submit"
+                className="inline-flex h-12 items-center justify-center rounded-[18px] bg-accent px-6 text-sm font-semibold text-white transition hover:bg-accent-strong"
+              >
+                {editingProduct ? "Mahsulotni saqlash" : "Mahsulot qo'shish"}
+              </button>
+              {editingProduct ? (
+                <Link
+                  href="/admin?tab=products"
+                  className="inline-flex h-12 items-center justify-center rounded-[18px] border border-line bg-white px-6 text-sm font-semibold text-foreground transition hover:border-accent/35 hover:text-accent"
+                >
+                  Formani tozalash
+                </Link>
+              ) : null}
+            </div>
+          </form>
+        </PanelCard>
 
-          <div className="rounded-[28px] border border-line bg-white p-6 shadow-[0_12px_30px_rgba(13,31,55,0.06)] sm:p-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">Tez overview</p>
-            <div className="mt-4 space-y-4">
-              {dashboard.products.slice(0, 4).map((product) => (
-                <div key={product.id} className="rounded-[20px] bg-[#f7fbff] p-4">
-                  <p className="font-semibold text-foreground">{product.name}</p>
-                  <p className="mt-1 text-sm text-muted">
-                    {product.brand} • {product.category}
+        <div className="space-y-6">
+          <PanelCard className="p-6">
+            <SectionHeader
+              eyebrow="Live preview"
+              title="Mahsulot kartasi ko'rinishi"
+              description="Storefront stilidagi tezkor preview."
+            />
+
+            <div className="mt-5">
+              <ProductVisual
+                compact
+                kind={previewKind ?? previewProduct?.kind ?? "phone"}
+                label={productForm.heroLabel || previewProduct?.heroLabel || "Original"}
+                toneFrom={productForm.toneFrom}
+                toneTo={productForm.toneTo}
+                imageUrl={productForm.imageUrl || previewProduct?.imageUrl}
+                imageAlt={productForm.name || previewProduct?.name || "Mahsulot"}
+              />
+            </div>
+
+            <div className="mt-5 space-y-2">
+              <p className="text-sm font-semibold text-foreground">
+                {productForm.name || previewProduct?.name || "Mahsulot nomi"}
+              </p>
+              <p className="text-sm text-muted">
+                {productForm.brand || previewProduct?.brand || "Brend"} •{" "}
+                {productForm.stock || previewProduct?.stock || 0} dona
+              </p>
+              <p className="text-lg font-semibold text-foreground">
+                {formatSum(Number(productForm.price || previewProduct?.price || 0))}
+              </p>
+              <p className="text-sm text-accent">
+                {formatMonthly(Number(productForm.monthlyPrice || previewProduct?.monthlyPrice || 0))}
+              </p>
+            </div>
+          </PanelCard>
+
+          <PanelCard className="p-6">
+            <SectionHeader
+              eyebrow="Checklist"
+              title="Saqlashdan oldingi tekshiruv"
+              description="Operator uchun tezkor sanity-check."
+            />
+            <div className="mt-5 space-y-3">
+              {checklist.map((item) => (
+                <div
+                  key={item.label}
+                  className={cn(
+                    "rounded-[18px] px-4 py-4 text-sm",
+                    item.done ? "bg-[#eefaf0] text-[#24643a]" : "bg-[#fff4ee] text-[#a25320]",
+                  )}
+                >
+                  {item.label}
+                </div>
+              ))}
+            </div>
+          </PanelCard>
+
+          <PanelCard className="p-6">
+            <SectionHeader
+              eyebrow="Signal panel"
+              title="Katalog snapshot"
+              description="Merchandising bo'yicha tezkor ko'rsatkichlar."
+            />
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 2xl:grid-cols-1">
+              {[
+                { label: "Hero product", value: featuredProducts },
+                { label: "Yangilik shelf'i", value: newArrivalProducts },
+                { label: "Kunlik deal", value: dayDeals },
+                { label: "Low stock", value: lowStockProducts.length },
+              ].map((item) => (
+                <div key={item.label} className="rounded-[18px] bg-[#f7fbff] px-4 py-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">
+                    {item.label}
                   </p>
-                  <div className="mt-3 flex items-center justify-between gap-3">
-                    <div>
-                      <p className="text-sm text-muted">{formatMonthly(product.monthlyPrice)}</p>
-                      <p className="text-lg font-semibold text-foreground">{formatSum(product.price)}</p>
-                    </div>
-                    <span className="rounded-full bg-white px-3 py-2 text-xs font-semibold text-accent">
-                      {product.stock} dona
-                    </span>
-                  </div>
+                  <p className="mt-3 text-2xl font-semibold text-foreground">{item.value}</p>
                 </div>
               ))}
             </div>
-          </div>
-          </section>
-        ) : null}
-
-        {showProducts ? (
-          <section className="mt-6 rounded-[28px] border border-line bg-white p-6 shadow-[0_12px_30px_rgba(13,31,55,0.06)] sm:p-8">
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">Mahsulotlar ro'yxati</p>
-              <h2 className="mt-3 font-display text-3xl font-semibold text-foreground">Mavjud mahsulotlar</h2>
-            </div>
-            <p className="text-sm text-muted">Tahrirlash uchun mahsulot ustidagi tugmani bosing.</p>
-          </div>
-
-          <div className="mt-6 overflow-x-auto">
-            <table className="min-w-full border-separate border-spacing-y-3">
-              <thead>
-                <tr className="text-left text-xs uppercase tracking-[0.2em] text-muted">
-                  <th className="px-4">Mahsulot</th>
-                  <th className="px-4">Narx</th>
-                  <th className="px-4">Holat</th>
-                  <th className="px-4">Flags</th>
-                  <th className="px-4 text-right">Amallar</th>
-                </tr>
-              </thead>
-              <tbody>
-                {dashboard.products.map((product) => (
-                  <tr key={product.id} className="rounded-[20px] bg-[#f7fbff]">
-                    <td className="rounded-l-[18px] px-4 py-4">
-                      <p className="font-semibold text-foreground">{product.name}</p>
-                      <p className="mt-1 text-sm text-muted">{product.brand} • {product.category}</p>
-                    </td>
-                    <td className="px-4 py-4 text-sm text-foreground">
-                      <p className="font-semibold">{formatSum(product.price)}</p>
-                      <p className="text-muted">{formatMonthly(product.monthlyPrice)}</p>
-                    </td>
-                    <td className="px-4 py-4 text-sm text-foreground">
-                      <p>{product.stock} dona</p>
-                      <p className={product.isActive ? "text-[#24643a]" : "text-[#b24616]"}>
-                        {product.isActive ? "Faol" : "Nofaol"}
-                      </p>
-                    </td>
-                    <td className="px-4 py-4 text-sm text-foreground">
-                      <div className="flex flex-wrap gap-2">
-                        {product.isFeatured ? <span className="rounded-full bg-[#eef6ff] px-3 py-1 text-xs font-semibold text-accent">Hero</span> : null}
-                        {product.isNewArrival ? <span className="rounded-full bg-[#eff8ef] px-3 py-1 text-xs font-semibold text-[#24643a]">Yangilik</span> : null}
-                        {product.isDayDeal ? <span className="rounded-full bg-[#fff1ec] px-3 py-1 text-xs font-semibold text-support">Tovarlar kuni</span> : null}
-                      </div>
-                    </td>
-                    <td className="rounded-r-[18px] px-4 py-4">
-                      <div className="flex justify-end gap-2">
-                        <Link href={`/admin?tab=products&editProduct=${product.id}#products`} className="inline-flex h-10 items-center justify-center rounded-[14px] border border-line bg-white px-4 text-sm font-semibold text-foreground transition hover:border-accent/35 hover:text-accent">
-                          Tahrirlash
-                        </Link>
-                        <form action={deleteProductAction}>
-                          <input type="hidden" name="id" value={product.id} />
-                          <input type="hidden" name="slug" value={product.slug} />
-                          <button type="submit" className="inline-flex h-10 items-center justify-center rounded-[14px] bg-[#ffefe7] px-4 text-sm font-semibold text-support transition hover:bg-[#ffe2d3]">
-                            O'chirish
-                          </button>
-                        </form>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          </section>
-        ) : null}
-
-        {showArticles ? (
-          <section className="mt-6 grid gap-6 lg:grid-cols-2">
-          <div className="rounded-[28px] border border-line bg-white p-6 shadow-[0_12px_30px_rgba(13,31,55,0.06)] sm:p-8" id="articles">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">Yangiliklar</p>
-            <h2 className="mt-3 font-display text-3xl font-semibold text-foreground">
-              {editingArticle ? "Yangilikni tahrirlash" : "Yangi maqola qo'shish"}
-            </h2>
-
-            <form action={saveArticleAction} className="mt-6 space-y-4">
-              <input type="hidden" name="id" value={articleForm.id} />
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-foreground">Sarlavha</label>
-                <input name="title" defaultValue={articleForm.title} className="h-12 w-full rounded-[16px] border border-line px-4 text-sm outline-none focus:border-accent" />
-              </div>
-              <div className="grid gap-4 md:grid-cols-2">
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-foreground">Slug</label>
-                  <input name="slug" defaultValue={articleForm.slug} className="h-12 w-full rounded-[16px] border border-line px-4 text-sm outline-none focus:border-accent" />
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-foreground">Tag</label>
-                  <input name="tag" defaultValue={articleForm.tag} className="h-12 w-full rounded-[16px] border border-line px-4 text-sm outline-none focus:border-accent" />
-                </div>
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-foreground">Summary</label>
-                <textarea name="summary" defaultValue={articleForm.summary} rows={4} className="w-full rounded-[16px] border border-line px-4 py-3 text-sm outline-none focus:border-accent" />
-              </div>
-              <div className="grid gap-4 md:grid-cols-2">
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-foreground">Sana</label>
-                  <input type="date" name="publishedAt" defaultValue={articleForm.publishedAt} className="h-12 w-full rounded-[16px] border border-line px-4 text-sm outline-none focus:border-accent" />
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-foreground">Tartib</label>
-                  <input name="sortOrder" defaultValue={articleForm.sortOrder} className="h-12 w-full rounded-[16px] border border-line px-4 text-sm outline-none focus:border-accent" />
-                </div>
-              </div>
-              <label className="inline-flex items-center gap-2 text-sm font-medium">
-                <input type="checkbox" name="isPublished" defaultChecked={articleForm.isPublished} />
-                E'lon qilingan
-              </label>
-              <div className="flex flex-wrap gap-3">
-                <button type="submit" className="inline-flex h-12 items-center justify-center rounded-[16px] bg-support px-6 text-sm font-semibold text-white transition hover:bg-[#e25a00]">
-                  {editingArticle ? "Yangilikni saqlash" : "Yangilik qo'shish"}
-                </button>
-                {editingArticle ? (
-                  <Link href="/admin?tab=articles" className="inline-flex h-12 items-center justify-center rounded-[16px] border border-line bg-white px-6 text-sm font-semibold text-foreground transition hover:border-accent/35 hover:text-accent">
-                    Formani tozalash
-                  </Link>
-                ) : null}
-              </div>
-            </form>
-          </div>
-
-          <div className="rounded-[28px] border border-line bg-white p-6 shadow-[0_12px_30px_rgba(13,31,55,0.06)] sm:p-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">Mavjud yangiliklar</p>
-            <div className="mt-6 space-y-4">
-              {dashboard.articles.map((article) => (
-                <div key={article.id} className="rounded-[20px] bg-[#f7fbff] p-4">
-                  <p className="font-semibold text-foreground">{article.title}</p>
-                  <p className="mt-1 text-sm text-muted">{article.tag} • {article.date}</p>
-                  <p className="mt-3 text-sm leading-6 text-muted">{article.summary}</p>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    <Link href={`/admin?tab=articles&editArticle=${article.id}#articles`} className="inline-flex h-10 items-center justify-center rounded-[14px] border border-line bg-white px-4 text-sm font-semibold text-foreground transition hover:border-accent/35 hover:text-accent">
-                      Tahrirlash
-                    </Link>
-                    <form action={deleteArticleAction}>
-                      <input type="hidden" name="id" value={article.id} />
-                      <button type="submit" className="inline-flex h-10 items-center justify-center rounded-[14px] bg-[#ffefe7] px-4 text-sm font-semibold text-support transition hover:bg-[#ffe2d3]">
-                        O'chirish
-                      </button>
-                    </form>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-          </section>
-        ) : null}
-
-        {showPromos ? (
-          <section className="mt-6 grid gap-6 lg:grid-cols-2">
-          <div className="rounded-[28px] border border-line bg-white p-6 shadow-[0_12px_30px_rgba(13,31,55,0.06)] sm:p-8" id="promos">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">Promo bloklar</p>
-            <h2 className="mt-3 font-display text-3xl font-semibold text-foreground">
-              {editingPromo ? "Promo blokni tahrirlash" : "Yangi promo qo'shish"}
-            </h2>
-
-            <form action={savePromoDealAction} className="mt-6 space-y-4">
-              <input type="hidden" name="id" value={promoForm.id} />
-              <div className="grid gap-4 md:grid-cols-2">
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-foreground">Eyebrow</label>
-                  <input name="eyebrow" defaultValue={promoForm.eyebrow} className="h-12 w-full rounded-[16px] border border-line px-4 text-sm outline-none focus:border-accent" />
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-foreground">Sarlavha</label>
-                  <input name="title" defaultValue={promoForm.title} className="h-12 w-full rounded-[16px] border border-line px-4 text-sm outline-none focus:border-accent" />
-                </div>
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-foreground">Tavsif</label>
-                <textarea name="description" defaultValue={promoForm.description} rows={4} className="w-full rounded-[16px] border border-line px-4 py-3 text-sm outline-none focus:border-accent" />
-              </div>
-              <div className="grid gap-4 md:grid-cols-2">
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-foreground">CTA label</label>
-                  <input name="ctaLabel" defaultValue={promoForm.ctaLabel} className="h-12 w-full rounded-[16px] border border-line px-4 text-sm outline-none focus:border-accent" />
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-foreground">CTA link</label>
-                  <input name="ctaHref" defaultValue={promoForm.ctaHref} className="h-12 w-full rounded-[16px] border border-line px-4 text-sm outline-none focus:border-accent" />
-                </div>
-              </div>
-              <div className="grid gap-4 md:grid-cols-3">
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-foreground">Background from</label>
-                  <input name="backgroundFrom" defaultValue={promoForm.backgroundFrom} className="h-12 w-full rounded-[16px] border border-line px-4 text-sm outline-none focus:border-accent" />
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-foreground">Background to</label>
-                  <input name="backgroundTo" defaultValue={promoForm.backgroundTo} className="h-12 w-full rounded-[16px] border border-line px-4 text-sm outline-none focus:border-accent" />
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-foreground">Tartib</label>
-                  <input name="sortOrder" defaultValue={promoForm.sortOrder} className="h-12 w-full rounded-[16px] border border-line px-4 text-sm outline-none focus:border-accent" />
-                </div>
-              </div>
-              <label className="inline-flex items-center gap-2 text-sm font-medium">
-                <input type="checkbox" name="isActive" defaultChecked={promoForm.isActive} />
-                Faol promo
-              </label>
-              <div className="flex flex-wrap gap-3">
-                <button type="submit" className="inline-flex h-12 items-center justify-center rounded-[16px] bg-support px-6 text-sm font-semibold text-white transition hover:bg-[#e25a00]">
-                  {editingPromo ? "Promo blokni saqlash" : "Promo qo'shish"}
-                </button>
-                {editingPromo ? (
-                  <Link href="/admin?tab=promos" className="inline-flex h-12 items-center justify-center rounded-[16px] border border-line bg-white px-6 text-sm font-semibold text-foreground transition hover:border-accent/35 hover:text-accent">
-                    Formani tozalash
-                  </Link>
-                ) : null}
-              </div>
-            </form>
-          </div>
-
-          <div className="rounded-[28px] border border-line bg-white p-6 shadow-[0_12px_30px_rgba(13,31,55,0.06)] sm:p-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">Mavjud promo bloklar</p>
-            <div className="mt-6 space-y-4">
-              {dashboard.promoDeals.map((deal) => (
-                <div key={deal.id} className="rounded-[20px] border border-line p-4" style={{ background: `linear-gradient(180deg, ${deal.backgroundFrom}, ${deal.backgroundTo})` }}>
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">{deal.eyebrow}</p>
-                  <p className="mt-3 text-xl font-semibold text-foreground">{deal.title}</p>
-                  <p className="mt-2 text-sm leading-6 text-muted">{deal.description}</p>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    <Link href={`/admin?tab=promos&editPromo=${deal.id}#promos`} className="inline-flex h-10 items-center justify-center rounded-[14px] border border-line bg-white px-4 text-sm font-semibold text-foreground transition hover:border-accent/35 hover:text-accent">
-                      Tahrirlash
-                    </Link>
-                    <form action={deletePromoDealAction}>
-                      <input type="hidden" name="id" value={deal.id} />
-                      <button type="submit" className="inline-flex h-10 items-center justify-center rounded-[14px] bg-[#ffefe7] px-4 text-sm font-semibold text-support transition hover:bg-[#ffe2d3]">
-                        O'chirish
-                      </button>
-                    </form>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-          </section>
-        ) : null}
+          </PanelCard>
+        </div>
       </div>
-    </main>
+
+      <PanelCard className="p-6 sm:p-8">
+        <SectionHeader
+          eyebrow="Mahsulotlar ro'yxati"
+          title="Mavjud katalog birliklari"
+          description="Rasm preview, stock holati va merch flag'lari bilan boyitilgan ro'yxat."
+        />
+
+        <div className="mt-6 space-y-3">
+          {dashboard.products.map((product) => (
+            <EntityRow
+              key={product.id}
+              actions={
+                <>
+                  <Link
+                    href={`/admin?tab=products&editProduct=${product.id}#products`}
+                    className="inline-flex h-10 items-center justify-center gap-2 rounded-[14px] border border-line bg-white px-4 text-sm font-semibold text-foreground transition hover:border-accent/35 hover:text-accent"
+                  >
+                    <EditIcon className="h-4 w-4" />
+                    Tahrirlash
+                  </Link>
+                  <form action={deleteProductAction}>
+                    <input type="hidden" name="id" value={product.id} />
+                    <input type="hidden" name="slug" value={product.slug} />
+                    <button
+                      type="submit"
+                      className="inline-flex h-10 items-center justify-center gap-2 rounded-[14px] bg-[#fff2ec] px-4 text-sm font-semibold text-support transition hover:bg-[#ffe5d8]"
+                    >
+                      <TrashIcon className="h-4 w-4" />
+                      O'chirish
+                    </button>
+                  </form>
+                </>
+              }
+              badges={[
+                product.isFeatured ? { label: "Hero", className: "bg-[#eef6ff] text-accent" } : null,
+                product.isNewArrival
+                  ? { label: "Yangilik", className: "bg-[#eefaf0] text-[#24643a]" }
+                  : null,
+                product.isDayDeal
+                  ? { label: "Day deal", className: "bg-[#fff4ee] text-support" }
+                  : null,
+                product.isActive
+                  ? { label: "Faol", className: "bg-[#eff8ef] text-[#24643a]" }
+                  : { label: "Pausa", className: "bg-[#f2f4f7] text-muted" },
+              ]}
+              media={
+                <MediaThumb
+                  imageUrl={product.imageUrl}
+                  label={product.name}
+                  toneFrom={product.toneFrom}
+                  toneTo={product.toneTo}
+                />
+              }
+              meta={
+                <>
+                  <div>
+                    <p className="text-sm text-muted">Narx</p>
+                    <p className="mt-1 font-semibold text-foreground">{formatSum(product.price)}</p>
+                    <p className="text-sm text-accent">{formatMonthly(product.monthlyPrice)}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted">Holat</p>
+                    <p className="mt-1 font-semibold text-foreground">{product.stock} dona</p>
+                    <p className="text-sm text-muted">{product.brand}</p>
+                  </div>
+                </>
+              }
+              subtitle={`${product.brand} • ${product.category}`}
+              title={product.name}
+            />
+          ))}
+        </div>
+      </PanelCard>
+    </>
+  );
+}
+
+function ArticlesWorkspace({
+  articleForm,
+  dashboard,
+  editingArticle,
+}: {
+  articleForm: {
+    id: string;
+    title: string;
+    slug: string;
+    tag: string;
+    summary: string;
+    publishedAt: string;
+    isPublished: boolean;
+    sortOrder: number | string;
+  };
+  dashboard: Awaited<ReturnType<typeof getAdminDashboardData>>;
+  editingArticle: Awaited<ReturnType<typeof getAdminDashboardData>>["articles"][number] | undefined;
+}) {
+  return (
+    <>
+      <div className="grid gap-6 2xl:grid-cols-[minmax(0,1.05fr)_340px]">
+        <PanelCard className="p-6 sm:p-8" id="articles">
+          <SectionHeader
+            eyebrow="Content workspace"
+            title={editingArticle ? "Yangilik maqolasini tahrirlash" : "Yangi maqola qo'shish"}
+            description="Blog va content marketing oqimi uchun sarlavha, tag, sana va summary shu yerda boshqariladi."
+          />
+
+          <form action={saveArticleAction} className="mt-8 space-y-6">
+            <input type="hidden" name="id" value={articleForm.id} />
+
+            <FormGroup title="Kontent ma'lumotlari" description="Asosiy metadata va summary.">
+              <div className="grid gap-4">
+                <Field label="Sarlavha">
+                  <TextInput defaultValue={articleForm.title} name="title" />
+                </Field>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <Field label="Slug">
+                    <TextInput defaultValue={articleForm.slug} name="slug" />
+                  </Field>
+                  <Field label="Tag">
+                    <TextInput defaultValue={articleForm.tag} name="tag" />
+                  </Field>
+                </div>
+                <Field label="Summary">
+                  <TextArea defaultValue={articleForm.summary} name="summary" rows={6} />
+                </Field>
+              </div>
+            </FormGroup>
+
+            <FormGroup title="Publish sozlamalari" description="Sana, tartib va ko'rinish holati.">
+              <div className="grid gap-4 md:grid-cols-2">
+                <Field label="Sana">
+                  <TextInput defaultValue={articleForm.publishedAt} name="publishedAt" type="date" />
+                </Field>
+                <Field label="Tartib">
+                  <TextInput defaultValue={articleForm.sortOrder} name="sortOrder" />
+                </Field>
+              </div>
+
+              <div className="mt-4">
+                <label className="flex items-start gap-3 rounded-[20px] border border-line bg-[#f8fbfd] px-4 py-4">
+                  <input className="mt-0.5 h-4 w-4" defaultChecked={articleForm.isPublished} name="isPublished" type="checkbox" />
+                  <span>
+                    <span className="block text-sm font-semibold text-foreground">Published</span>
+                    <span className="mt-1 block text-sm leading-6 text-muted">
+                      Bosh sahifadagi blog blokida ko'rinishini yoqadi.
+                    </span>
+                  </span>
+                </label>
+              </div>
+            </FormGroup>
+
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="submit"
+                className="inline-flex h-12 items-center justify-center rounded-[18px] bg-accent px-6 text-sm font-semibold text-white transition hover:bg-accent-strong"
+              >
+                {editingArticle ? "Yangilikni saqlash" : "Yangilik qo'shish"}
+              </button>
+              {editingArticle ? (
+                <Link
+                  href="/admin?tab=articles"
+                  className="inline-flex h-12 items-center justify-center rounded-[18px] border border-line bg-white px-6 text-sm font-semibold text-foreground transition hover:border-accent/35 hover:text-accent"
+                >
+                  Formani tozalash
+                </Link>
+              ) : null}
+            </div>
+          </form>
+        </PanelCard>
+
+        <div className="space-y-6">
+          <PanelCard className="p-6">
+            <SectionHeader
+              eyebrow="Preview"
+              title="Kontent preview"
+              description="Storefront blog blokidagi umumiy ko'rinish."
+            />
+            <div className="mt-5 rounded-[24px] border border-line bg-[#f7fbff] p-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
+                {articleForm.tag || "Yangilik"}
+              </p>
+              <h3 className="mt-3 font-display text-2xl font-semibold text-foreground">
+                {articleForm.title || "Sarlavha shu yerda ko'rinadi"}
+              </h3>
+              <p className="mt-3 text-sm leading-7 text-muted">
+                {articleForm.summary || "Summary shu yerda ko'rinadi."}
+              </p>
+              <p className="mt-4 text-sm text-muted">
+                {articleForm.publishedAt || new Date().toISOString().slice(0, 10)}
+              </p>
+            </div>
+          </PanelCard>
+
+          <PanelCard className="p-6">
+            <SectionHeader
+              eyebrow="Queue"
+              title="Kontent ritmi"
+              description="Published oqim bo'yicha tez ko'rsatkichlar."
+            />
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 2xl:grid-cols-1">
+              <MetricMini label="Jami maqola" value={dashboard.articles.length.toString()} />
+              <MetricMini
+                label="Published"
+                value={dashboard.articles.filter((item) => item.isPublished).length.toString()}
+              />
+            </div>
+          </PanelCard>
+        </div>
+      </div>
+
+      <PanelCard className="p-6 sm:p-8">
+        <SectionHeader
+          eyebrow="Mavjud yangiliklar"
+          title="Kontent ro'yxati"
+          description="Blog va news oqimini shu blokdan nazorat qiling."
+        />
+
+        <div className="mt-6 space-y-3">
+          {dashboard.articles.map((article) => (
+            <EntityRow
+              key={article.id}
+              actions={
+                <>
+                  <Link
+                    href={`/admin?tab=articles&editArticle=${article.id}#articles`}
+                    className="inline-flex h-10 items-center justify-center gap-2 rounded-[14px] border border-line bg-white px-4 text-sm font-semibold text-foreground transition hover:border-accent/35 hover:text-accent"
+                  >
+                    <EditIcon className="h-4 w-4" />
+                    Tahrirlash
+                  </Link>
+                  <form action={deleteArticleAction}>
+                    <input type="hidden" name="id" value={article.id} />
+                    <button
+                      type="submit"
+                      className="inline-flex h-10 items-center justify-center gap-2 rounded-[14px] bg-[#fff2ec] px-4 text-sm font-semibold text-support transition hover:bg-[#ffe5d8]"
+                    >
+                      <TrashIcon className="h-4 w-4" />
+                      O'chirish
+                    </button>
+                  </form>
+                </>
+              }
+              badges={[
+                {
+                  label: article.isPublished ? "Published" : "Draft",
+                  className: article.isPublished
+                    ? "bg-[#eefaf0] text-[#24643a]"
+                    : "bg-[#f2f4f7] text-muted",
+                },
+                { label: article.tag, className: "bg-[#eef6ff] text-accent" },
+              ]}
+              media={
+                <div className="flex h-16 w-16 items-center justify-center rounded-[18px] bg-[#eef6ff] text-accent">
+                  <NewspaperIcon className="h-6 w-6" />
+                </div>
+              }
+              meta={
+                <div>
+                  <p className="text-sm text-muted">Sana</p>
+                  <p className="mt-1 font-semibold text-foreground">{article.date}</p>
+                </div>
+              }
+              subtitle={article.summary ?? "Summary hali qo'shilmagan."}
+              title={article.title}
+            />
+          ))}
+        </div>
+      </PanelCard>
+    </>
+  );
+}
+
+function PromosWorkspace({
+  dashboard,
+  editingPromo,
+  promoForm,
+}: {
+  dashboard: Awaited<ReturnType<typeof getAdminDashboardData>>;
+  editingPromo: Awaited<ReturnType<typeof getAdminDashboardData>>["promoDeals"][number] | undefined;
+  promoForm: {
+    id: string;
+    eyebrow: string;
+    title: string;
+    description: string;
+    ctaLabel: string;
+    ctaHref: string;
+    backgroundFrom: string;
+    backgroundTo: string;
+    isActive: boolean;
+    sortOrder: number | string;
+  };
+}) {
+  return (
+    <>
+      <div className="grid gap-6 2xl:grid-cols-[minmax(0,1.02fr)_360px]">
+        <PanelCard className="p-6 sm:p-8" id="promos">
+          <SectionHeader
+            eyebrow="Promo workspace"
+            title={editingPromo ? "Promo blokni tahrirlash" : "Yangi promo qo'shish"}
+            description="Homepage banner va merchandising CTA bloklarini shu joydan boshqaring."
+          />
+
+          <form action={savePromoDealAction} className="mt-8 space-y-6">
+            <input type="hidden" name="id" value={promoForm.id} />
+
+            <FormGroup title="Promo ma'lumotlari" description="Eyebrow, title va tavsif.">
+              <div className="grid gap-4 md:grid-cols-2">
+                <Field label="Eyebrow">
+                  <TextInput defaultValue={promoForm.eyebrow} name="eyebrow" />
+                </Field>
+                <Field label="Sarlavha">
+                  <TextInput defaultValue={promoForm.title} name="title" />
+                </Field>
+              </div>
+              <div className="mt-4">
+                <Field label="Tavsif">
+                  <TextArea defaultValue={promoForm.description} name="description" rows={5} />
+                </Field>
+              </div>
+            </FormGroup>
+
+            <FormGroup title="CTA va visual" description="Button matni, link va gradient.">
+              <div className="grid gap-4 md:grid-cols-2">
+                <Field label="CTA label">
+                  <TextInput defaultValue={promoForm.ctaLabel} name="ctaLabel" />
+                </Field>
+                <Field label="CTA link">
+                  <TextInput defaultValue={promoForm.ctaHref} name="ctaHref" />
+                </Field>
+              </div>
+              <div className="mt-4 grid gap-4 md:grid-cols-3">
+                <Field label="Background from">
+                  <TextInput defaultValue={promoForm.backgroundFrom} name="backgroundFrom" />
+                </Field>
+                <Field label="Background to">
+                  <TextInput defaultValue={promoForm.backgroundTo} name="backgroundTo" />
+                </Field>
+                <Field label="Tartib">
+                  <TextInput defaultValue={promoForm.sortOrder} name="sortOrder" />
+                </Field>
+              </div>
+
+              <div className="mt-4">
+                <label className="flex items-start gap-3 rounded-[20px] border border-line bg-[#f8fbfd] px-4 py-4">
+                  <input className="mt-0.5 h-4 w-4" defaultChecked={promoForm.isActive} name="isActive" type="checkbox" />
+                  <span>
+                    <span className="block text-sm font-semibold text-foreground">Faol promo</span>
+                    <span className="mt-1 block text-sm leading-6 text-muted">
+                      Bosh sahifada ko'rinishini yoqadi.
+                    </span>
+                  </span>
+                </label>
+              </div>
+            </FormGroup>
+
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="submit"
+                className="inline-flex h-12 items-center justify-center rounded-[18px] bg-accent px-6 text-sm font-semibold text-white transition hover:bg-accent-strong"
+              >
+                {editingPromo ? "Promo blokni saqlash" : "Promo qo'shish"}
+              </button>
+              {editingPromo ? (
+                <Link
+                  href="/admin?tab=promos"
+                  className="inline-flex h-12 items-center justify-center rounded-[18px] border border-line bg-white px-6 text-sm font-semibold text-foreground transition hover:border-accent/35 hover:text-accent"
+                >
+                  Formani tozalash
+                </Link>
+              ) : null}
+            </div>
+          </form>
+        </PanelCard>
+
+        <div className="space-y-6">
+          <PanelCard className="p-6">
+            <SectionHeader
+              eyebrow="Preview"
+              title="Promo blok ko'rinishi"
+              description="Gradient va CTA bir qarashda."
+            />
+            <div
+              className="mt-5 rounded-[26px] border border-line p-5"
+              style={{
+                background: `linear-gradient(180deg, ${promoForm.backgroundFrom} 0%, ${promoForm.backgroundTo} 100%)`,
+              }}
+            >
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
+                {promoForm.eyebrow || "Aksiya"}
+              </p>
+              <h3 className="mt-3 font-display text-3xl font-semibold text-foreground">
+                {promoForm.title || "Promo sarlavhasi"}
+              </h3>
+              <p className="mt-3 text-sm leading-7 text-muted">
+                {promoForm.description || "Promo tavsifi shu yerda ko'rinadi."}
+              </p>
+              <p className="mt-5 text-sm font-semibold text-accent">
+                {promoForm.ctaLabel || "Ko'rish"}
+              </p>
+            </div>
+          </PanelCard>
+
+          <PanelCard className="p-6">
+            <SectionHeader
+              eyebrow="Promo ritmi"
+              title="Queue ko'rsatkichlari"
+              description="Homepage merchandising bo'yicha signal."
+            />
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 2xl:grid-cols-1">
+              <MetricMini label="Jami promo" value={dashboard.promoDeals.length.toString()} />
+              <MetricMini
+                label="Faol promo"
+                value={dashboard.promoDeals.filter((item) => item.isActive).length.toString()}
+              />
+            </div>
+          </PanelCard>
+        </div>
+      </div>
+
+      <PanelCard className="p-6 sm:p-8">
+        <SectionHeader
+          eyebrow="Promo ro'yxati"
+          title="Mavjud merchandising bloklar"
+          description="Gradient, CTA va holati bilan boyitilgan ro'yxat."
+        />
+
+        <div className="mt-6 grid gap-4 xl:grid-cols-2">
+          {dashboard.promoDeals.map((deal) => (
+            <div
+              key={deal.id}
+              className="rounded-[26px] border border-line p-5 shadow-[0_12px_30px_rgba(13,31,55,0.06)]"
+              style={{
+                background: `linear-gradient(180deg, ${deal.backgroundFrom} 0%, ${deal.backgroundTo} 100%)`,
+              }}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
+                    {deal.eyebrow}
+                  </p>
+                  <h3 className="mt-3 text-2xl font-semibold text-foreground">{deal.title}</h3>
+                </div>
+                <span
+                  className={cn(
+                    "rounded-full px-3 py-1 text-xs font-semibold",
+                    deal.isActive ? "bg-[#eefaf0] text-[#24643a]" : "bg-[#f2f4f7] text-muted",
+                  )}
+                >
+                  {deal.isActive ? "Faol" : "Pausa"}
+                </span>
+              </div>
+
+              <p className="mt-3 text-sm leading-7 text-muted">{deal.description}</p>
+              <div className="mt-5 flex flex-wrap gap-2">
+                <span className="rounded-full border border-line bg-white/70 px-3 py-2 text-xs font-semibold text-foreground">
+                  {deal.ctaLabel}
+                </span>
+                <span className="rounded-full border border-line bg-white/70 px-3 py-2 text-xs text-muted">
+                  {deal.ctaHref}
+                </span>
+              </div>
+
+              <div className="mt-5 flex flex-wrap gap-2">
+                <Link
+                  href={`/admin?tab=promos&editPromo=${deal.id}#promos`}
+                  className="inline-flex h-10 items-center justify-center gap-2 rounded-[14px] border border-line bg-white px-4 text-sm font-semibold text-foreground transition hover:border-accent/35 hover:text-accent"
+                >
+                  <EditIcon className="h-4 w-4" />
+                  Tahrirlash
+                </Link>
+                <form action={deletePromoDealAction}>
+                  <input type="hidden" name="id" value={deal.id} />
+                  <button
+                    type="submit"
+                    className="inline-flex h-10 items-center justify-center gap-2 rounded-[14px] bg-[#fff2ec] px-4 text-sm font-semibold text-support transition hover:bg-[#ffe5d8]"
+                  >
+                    <TrashIcon className="h-4 w-4" />
+                    O'chirish
+                  </button>
+                </form>
+              </div>
+            </div>
+          ))}
+        </div>
+      </PanelCard>
+    </>
+  );
+}
+
+function GlassCard({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <section
+      className={cn(
+        "rounded-[32px] border border-white/10 bg-[linear-gradient(180deg,rgba(14,28,46,0.96)0%,rgba(8,18,31,0.94)100%)] shadow-[0_30px_80px_rgba(0,0,0,0.28)] backdrop-blur-xl",
+        className,
+      )}
+    >
+      {children}
+    </section>
+  );
+}
+
+function PanelCard({
+  children,
+  className,
+  id,
+}: {
+  children: ReactNode;
+  className?: string;
+  id?: string;
+}) {
+  return (
+    <section
+      id={id}
+      className={cn(
+        "rounded-[32px] border border-line bg-white shadow-[0_18px_45px_rgba(13,31,55,0.08)]",
+        className,
+      )}
+    >
+      {children}
+    </section>
+  );
+}
+
+function AdminEyebrow({
+  children,
+  tone,
+}: {
+  children: ReactNode;
+  tone: "accent" | "light";
+}) {
+  return (
+    <p
+      className={cn(
+        "text-xs font-semibold uppercase tracking-[0.24em]",
+        tone === "accent" ? "text-accent" : "text-white/62",
+      )}
+    >
+      {children}
+    </p>
+  );
+}
+
+function MiniDarkStat({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="rounded-[20px] border border-white/10 bg-white/6 px-4 py-4">
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/52">{label}</p>
+      <p className="mt-3 text-2xl font-semibold text-white">{value}</p>
+    </div>
+  );
+}
+
+function SidebarSignal({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-3 rounded-[18px] border border-white/10 bg-white/6 px-4 py-3">
+      <span>{label}</span>
+      <span className="font-semibold text-white">{value}</span>
+    </div>
+  );
+}
+
+function StatusNotice({
+  className,
+  text,
+  tone,
+}: {
+  className?: string;
+  text: string;
+  tone: AdminTone;
+}) {
+  return (
+    <div
+      className={cn(
+        "rounded-[22px] border px-5 py-4 text-sm font-medium shadow-[0_12px_30px_rgba(13,31,55,0.06)]",
+        statusToneClass(tone),
+        className,
+      )}
+    >
+      {text}
+    </div>
+  );
+}
+
+function SectionHeader({
+  eyebrow,
+  title,
+  description,
+}: {
+  eyebrow: string;
+  title: string;
+  description?: string;
+}) {
+  return (
+    <div>
+      <AdminEyebrow tone="accent">{eyebrow}</AdminEyebrow>
+      <h3 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground">
+        {title}
+      </h3>
+      {description ? <p className="mt-3 text-sm leading-7 text-muted">{description}</p> : null}
+    </div>
+  );
+}
+
+function FormGroup({
+  children,
+  description,
+  title,
+}: {
+  children: ReactNode;
+  description: string;
+  title: string;
+}) {
+  return (
+    <div className="rounded-[26px] border border-line bg-[#fbfdff] p-5 sm:p-6">
+      <p className="text-base font-semibold text-foreground">{title}</p>
+      <p className="mt-2 text-sm leading-6 text-muted">{description}</p>
+      <div className="mt-5">{children}</div>
+    </div>
+  );
+}
+
+function Field({
+  children,
+  hint,
+  label,
+}: {
+  children: ReactNode;
+  hint?: string;
+  label: string;
+}) {
+  return (
+    <label className="block">
+      <span className="mb-2 block text-sm font-semibold text-foreground">{label}</span>
+      {children}
+      {hint ? <span className="mt-2 block text-xs text-muted">{hint}</span> : null}
+    </label>
+  );
+}
+
+function TextInput(props: InputHTMLAttributes<HTMLInputElement>) {
+  const { className, ...rest } = props;
+  return <input {...rest} className={cn(inputClassName, className)} />;
+}
+
+function SelectInput(props: SelectHTMLAttributes<HTMLSelectElement>) {
+  const { className, children, ...rest } = props;
+  return (
+    <select {...rest} className={cn(inputClassName, className)}>
+      {children}
+    </select>
+  );
+}
+
+function TextArea(props: TextareaHTMLAttributes<HTMLTextAreaElement>) {
+  const { className, ...rest } = props;
+  return <textarea {...rest} className={cn(textAreaClassName, className)} />;
+}
+
+function CompactListItem({
+  href,
+  meta,
+  subtitle,
+  title,
+}: {
+  href: string;
+  meta: string;
+  subtitle: string;
+  title: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className="flex items-start justify-between gap-3 rounded-[20px] border border-line bg-[#f8fbfd] px-4 py-4 transition hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_12px_30px_rgba(13,31,55,0.06)]"
+    >
+      <span className="min-w-0">
+        <span className="block truncate text-sm font-semibold text-foreground">{title}</span>
+        <span className="mt-1 block text-sm text-muted">{subtitle}</span>
+      </span>
+      <span className="shrink-0 rounded-full bg-white px-3 py-1 text-xs font-semibold text-accent">
+        {meta}
+      </span>
+    </Link>
+  );
+}
+
+function MetricMini({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="rounded-[18px] bg-[#f7fbff] px-4 py-4">
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">{label}</p>
+      <p className="mt-3 text-2xl font-semibold text-foreground">{value}</p>
+    </div>
+  );
+}
+
+function MediaThumb({
+  imageUrl,
+  label,
+  toneFrom,
+  toneTo,
+}: {
+  imageUrl?: string;
+  label: string;
+  toneFrom: string;
+  toneTo: string;
+}) {
+  if (imageUrl) {
+    return (
+      <img
+        src={imageUrl}
+        alt={label}
+        className="h-16 w-16 rounded-[18px] border border-line object-contain"
+      />
+    );
+  }
+
+  return (
+    <div
+      className="flex h-16 w-16 items-center justify-center rounded-[18px] border border-line text-lg font-semibold text-[#0a336c]"
+      style={{
+        background: `linear-gradient(135deg, ${toneFrom}, ${toneTo})`,
+      }}
+    >
+      {label.slice(0, 1).toUpperCase()}
+    </div>
+  );
+}
+
+function EntityRow({
+  actions,
+  badges,
+  media,
+  meta,
+  subtitle,
+  title,
+}: {
+  actions: ReactNode;
+  badges: Array<{ label: string; className: string } | null>;
+  media: ReactNode;
+  meta: ReactNode;
+  subtitle: string;
+  title: string;
+}) {
+  return (
+    <div className="rounded-[24px] border border-line bg-[#fbfdff] p-4 shadow-[0_12px_30px_rgba(13,31,55,0.04)]">
+      <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+        <div className="flex min-w-0 items-start gap-4">
+          {media}
+          <div className="min-w-0">
+            <p className="truncate text-lg font-semibold text-foreground">{title}</p>
+            <p className="mt-1 line-clamp-2 text-sm leading-6 text-muted">{subtitle}</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {badges.filter(Boolean).map((badge) => (
+                <span
+                  key={badge!.label}
+                  className={cn("rounded-full px-3 py-1 text-xs font-semibold", badge!.className)}
+                >
+                  {badge!.label}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-4 xl:items-end">
+          <div className="flex flex-wrap gap-6">{meta}</div>
+          <div className="flex flex-wrap justify-end gap-2">{actions}</div>
+        </div>
+      </div>
+    </div>
   );
 }
