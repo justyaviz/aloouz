@@ -225,7 +225,7 @@ export default async function OrderStatusPage({ searchParams }: OrderStatusPageP
                 Katalogga o'tish
               </Link>
               <a
-                href="tel:+998712033333"
+                href="tel:+998781220800"
                 className="inline-flex items-center justify-center rounded-[20px] bg-[#0f2340] px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-[#17345d]"
               >
                 Operatorga qo'ng'iroq

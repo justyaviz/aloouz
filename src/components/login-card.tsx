@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useFormStatus } from "react-dom";
 
 import { loginCustomerAction } from "@/app/login/actions";
-import { AppleIcon, CloseIcon, LockShieldIcon } from "@/components/icons";
+import { CloseIcon, LockShieldIcon } from "@/components/icons";
 
 type LoginCardProps = {
   onClose?: () => void;
@@ -120,31 +120,6 @@ export function LoginCard({ onClose, className }: LoginCardProps) {
         <SubmitButton />
       </form>
 
-      <div className="mt-6 flex items-center gap-4">
-        <span className="h-px flex-1 bg-line" />
-        <span className="text-sm text-muted">yoki</span>
-        <span className="h-px flex-1 bg-line" />
-      </div>
-
-      <div className="mt-5 space-y-3">
-        <button
-          type="button"
-          disabled
-          className="flex h-14 w-full items-center justify-center gap-3 rounded-[18px] bg-[#f4f6f8] px-4 text-base font-semibold text-foreground opacity-70"
-        >
-          <span className="text-[26px] font-semibold text-[#4285f4]">G</span>
-          Google orqali kirish
-        </button>
-        <button
-          type="button"
-          disabled
-          className="flex h-14 w-full items-center justify-center gap-3 rounded-[18px] bg-[#f4f6f8] px-4 text-base font-semibold text-foreground opacity-70"
-        >
-          <AppleIcon className="h-6 w-6" />
-          Apple orqali kirish
-        </button>
-      </div>
-
       <div className="mt-6 rounded-[22px] border border-[#dfeaf4] bg-[linear-gradient(180deg,#f7fbff_0%,#ffffff_100%)] p-4">
         <div className="flex items-start gap-3">
           <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[16px] bg-[#eef6ff] text-accent">
@@ -153,8 +128,7 @@ export function LoginCard({ onClose, className }: LoginCardProps) {
           <div>
             <p className="text-sm font-semibold text-foreground">Xavfsiz backend session</p>
             <p className="mt-1 text-sm leading-6 text-muted">
-              Telefon orqali kirish ishlaydi. Google va Apple oqimi keyingi backend bosqichida
-              yoqiladi.
+              Telefon orqali kirish ishlaydi va session server tomonda saqlanadi.
             </p>
           </div>
         </div>

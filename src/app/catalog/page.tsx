@@ -2,15 +2,14 @@
 import Link from "next/link";
 
 import {
-  CarIcon,
-  FridgeIcon,
-  HomeIcon,
-  LaptopIcon,
+  CartIcon,
+  ClipboardIcon,
+  CompareIcon,
+  GridIcon,
+  HeartIcon,
+  PackageIcon,
   PhoneIcon,
-  TargetIcon,
-  TrophyIcon,
-  TvIcon,
-  WasherIcon,
+  SearchIcon,
 } from "@/components/icons";
 import { ProductCard } from "@/components/product-card";
 import { SiteFooter } from "@/components/site-footer";
@@ -54,49 +53,44 @@ export const metadata = {
 
 const mobileCatalogSections = [
   {
-    href: "/catalog",
-    label: "Televizorlar, Hi-Fi va video",
-    icon: TvIcon,
-  },
-  {
     href: "/catalog?category=smartfonlar",
-    label: "Smartfonlar, telefonlar, planshetlar va gadjetlar",
+    label: "Barcha smartfonlar",
     icon: PhoneIcon,
   },
   {
-    href: "/catalog",
-    label: "Noutbuklar, monobloklar, o'yin pristavkalari",
-    icon: LaptopIcon,
+    href: "/catalog?category=iphone",
+    label: "iPhone va Apple qurilmalari",
+    icon: GridIcon,
+  },
+  {
+    href: "/catalog?brand=Samsung",
+    label: "Samsung Galaxy",
+    icon: CompareIcon,
+  },
+  {
+    href: "/catalog?brand=Xiaomi",
+    label: "Xiaomi va Redmi",
+    icon: SearchIcon,
+  },
+  {
+    href: "/catalog?brand=HONOR",
+    label: "HONOR smartfonlari",
+    icon: HeartIcon,
+  },
+  {
+    href: "/catalog?brand=OPPO",
+    label: "OPPO smartfonlari",
+    icon: CartIcon,
+  },
+  {
+    href: "/#new-arrivals",
+    label: "Yangi kelganlar",
+    icon: ClipboardIcon,
   },
   {
     href: "/catalog",
-    label: "Uy uchun texnikalar",
-    icon: WasherIcon,
-  },
-  {
-    href: "/catalog",
-    label: "Oshxona jihozlari",
-    icon: FridgeIcon,
-  },
-  {
-    href: "/catalog",
-    label: "Sport, sevimli mashg'ulotlar",
-    icon: TrophyIcon,
-  },
-  {
-    href: "/catalog",
-    label: "Hovli, bog', tomorqa",
-    icon: HomeIcon,
-  },
-  {
-    href: "/catalog",
-    label: "Bolalar uchun tovarlar",
-    icon: TargetIcon,
-  },
-  {
-    href: "/catalog",
-    label: "Avto va Moto",
-    icon: CarIcon,
+    label: "Aksiyadagi mahsulotlar",
+    icon: PackageIcon,
   },
 ];
 
@@ -147,9 +141,8 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
                 {selectedCategory ? selectedCategory.name : "Barcha mahsulotlar"}
               </h1>
               <p className="mt-4 max-w-3xl text-sm leading-7 text-muted">
-                aloo katalogi endi retail marketplace ritmida ishlaydi: chap tomonda filtrlar,
-                o'ng tomonda esa natijalar, sort chip'lari va mahsulot grid'i. Bu ommaga ko'rsatish
-                uchun ancha toza retail oqim beradi.
+                Katalog qidiruv, filtr va brend tanlashni soddalashtirib, kerakli smartfonni tez
+                topish uchun qulay ko'rinishga keltirildi.
               </p>
 
               <div className="no-scrollbar mt-6 flex gap-3 overflow-x-auto pb-1">
@@ -193,7 +186,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
                   12 oygacha muddatli to'lov har kartada ko'rinadi
                 </div>
                 <div className="rounded-[18px] bg-white px-4 py-4 text-sm text-foreground">
-                  IMEI va original qurilma messaging uchun joy tayyor
+                  Narx, qoldiq va asosiy ma'lumotlar bir joyda ko'rsatiladi
                 </div>
               </div>
             </div>
@@ -261,8 +254,8 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
                 Buyurtma va konsultatsiya uchun tezkor kanal
               </h2>
               <p className="mt-3 text-sm leading-7 text-white/72">
-                Aloo g'oyasidagi muloqot ruhi katalog ichida ham qoladi. Call-markaz, Telegram va
-                Instagram orqali mijozni bir klikda kerakli kanalga olib chiqish oqimi tayyor.
+                Call-markaz, Telegram va Instagram orqali mijozga tez javob berish uchun asosiy
+                aloqa kanallari shu bo'limda ham ko'rsatiladi.
               </p>
             </div>
           </aside>

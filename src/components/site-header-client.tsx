@@ -7,27 +7,21 @@ import { useEffect, useState } from "react";
 import type { AuthViewer } from "@/lib/customer-auth";
 
 import {
-  CarIcon,
   CartIcon,
   ChevronDownIcon,
   ClipboardIcon,
   CloseIcon,
   CompareIcon,
-  FridgeIcon,
+  GridIcon,
   HeartIcon,
-  HomeIcon,
-  LaptopIcon,
   LocationIcon,
   MenuIcon,
+  PackageIcon,
   PhoneIcon,
   ScanIcon,
   SearchIcon,
   ShareIcon,
-  TargetIcon,
-  TrophyIcon,
-  TvIcon,
   UserIcon,
-  WasherIcon,
 } from "@/components/icons";
 import { LoginCard } from "@/components/login-card";
 import { useStorefrontState } from "@/components/storefront-state-provider";
@@ -101,50 +95,45 @@ const catalogGroups = [
 
 const catalogSections = [
   {
-    href: "/catalog",
-    label: "Televizorlar, Hi-Fi va video",
-    icon: TvIcon,
-  },
-  {
     href: "/catalog?category=smartfonlar",
-    label: "Smartfonlar, telefonlar, planshetlar va gadjetlar",
+    label: "Barcha smartfonlar",
     icon: PhoneIcon,
     active: true,
   },
   {
-    href: "/catalog",
-    label: "Noutbuklar, monobloklar, o'yin pristavkalari",
-    icon: LaptopIcon,
+    href: "/catalog?category=iphone",
+    label: "iPhone va Apple qurilmalari",
+    icon: GridIcon,
+  },
+  {
+    href: "/catalog?brand=Samsung",
+    label: "Samsung Galaxy",
+    icon: CompareIcon,
+  },
+  {
+    href: "/catalog?brand=Xiaomi",
+    label: "Xiaomi va Redmi",
+    icon: SearchIcon,
+  },
+  {
+    href: "/catalog?brand=HONOR",
+    label: "HONOR smartfonlari",
+    icon: HeartIcon,
+  },
+  {
+    href: "/catalog?brand=OPPO",
+    label: "OPPO smartfonlari",
+    icon: CartIcon,
+  },
+  {
+    href: "/#new-arrivals",
+    label: "Yangi kelganlar",
+    icon: ClipboardIcon,
   },
   {
     href: "/catalog",
-    label: "Uy uchun texnikalar",
-    icon: WasherIcon,
-  },
-  {
-    href: "/catalog",
-    label: "Oshxona jihozlari",
-    icon: FridgeIcon,
-  },
-  {
-    href: "/catalog",
-    label: "Sport, sevimli mashg'ulotlar",
-    icon: TrophyIcon,
-  },
-  {
-    href: "/catalog",
-    label: "Hovli, bog', tomorqa",
-    icon: HomeIcon,
-  },
-  {
-    href: "/catalog",
-    label: "Bolalar uchun tovarlar",
-    icon: TargetIcon,
-  },
-  {
-    href: "/catalog",
-    label: "Avto va Moto",
-    icon: CarIcon,
+    label: "Aksiyadagi mahsulotlar",
+    icon: PackageIcon,
   },
 ];
 

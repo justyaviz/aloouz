@@ -37,13 +37,13 @@ const categoryCaptions = [
 const serviceCards = [
   {
     title: "90 daqiqalik yetkazish",
-    description: "Toshkent bo'ylab tezkor yetkazish va pickup oqimi bosh sahifadan ko'rinadi.",
+    description: "Toshkent bo'ylab tezkor yetkazish va do'kondan olib ketish imkoniyati mavjud.",
     icon: BoltIcon,
     anchor: "/#delivery",
   },
   {
     title: "12 oygacha to'lov",
-    description: "Narx, eski narx va oylik to'lov har kartada bir xil retail usulida chiqadi.",
+    description: "Narx, eski narx va oylik to'lov har mahsulot kartasida bir xil ko'rinishda chiqadi.",
     icon: ClockIcon,
     anchor: "/#installment",
   },
@@ -56,7 +56,7 @@ const serviceCards = [
   },
   {
     title: "Kontent va maslahat",
-    description: "alooBlog, tavsiya va tanlov qo'llanmalarini landing ichiga qo'shdik.",
+    description: "alooBlog ichida yangiliklar, tavsiyalar va foydali tanlov maqolalari jamlangan.",
     icon: NewspaperIcon,
     anchor: "/blog",
   },
@@ -347,7 +347,7 @@ export default async function Home() {
           <SectionHeading
             eyebrow="Ommabop kategoriyalar"
             title="Bir klikda kerakli bo'limga o'ting"
-            description="Retail-marketplace ritmini saqlab, kategoriyalarni ixcham va oson skan qilinadigan kartalarga ajratdik."
+            description="Kategoriyalar ixcham va oson ko'rinadigan kartalarga ajratildi."
             ctaLabel="Barcha katalog"
             ctaHref="/catalog"
           />
@@ -412,7 +412,7 @@ export default async function Home() {
           <SectionHeading
             eyebrow="alooBlog"
             title="Yangilik, maslahat va sotuv g'oyalarini bir joyga yig'dik"
-            description="Faqat mahsulot emas, balki tanlash bo'yicha foydali kontent ham ko'rinib turadi. Bu landingni ommaga taqdim etishda ancha boy ko'rsatadi."
+            description="Faqat mahsulot emas, balki tanlash bo'yicha foydali kontent ham shu sahifada ko'rinadi."
             ctaLabel="Barcha maqolalar"
             ctaHref="/blog"
           />
@@ -517,7 +517,7 @@ export default async function Home() {
                   Muddatli to'lov
                 </p>
                 <h2 className="mt-4 font-display text-4xl font-semibold tracking-tight text-white">
-                  Har kunlik savdo argumentlari landing ichida
+                  Muddatli to'lov ma'lumotlari har mahsulotda ko'rinadi
                 </h2>
                 <p className="mt-4 text-base leading-8 text-white/72">
                   6, 12 va 24 oy bo'lib to'lash summalari mahsulot kartalarida bir xil ko'rinishda
@@ -526,8 +526,8 @@ export default async function Home() {
 
                 <div className="mt-7 grid gap-3">
                   {[
-                    "Eski narx va yangi narx retail stilida ko'rsatiladi",
-                    "Katalog, detail va kun mahsuloti blokida bir xil format ishlaydi",
+                    "Eski narx va yangi narx bir xil formatda ko'rsatiladi",
+                    "Katalog, detail va kun mahsuloti blokida bir xil ko'rinish saqlanadi",
                     "SE-ONE sync narxi yangilansa storefront ham mos ravishda yangilanadi",
                   ].map((item) => (
                     <div
@@ -554,8 +554,8 @@ export default async function Home() {
         <section className="shell reveal-up reveal-up-delay-3 pt-9">
           <SectionHeading
             eyebrow="Promo bloklar"
-            title="Landing ichida yana bir retail qatlam"
-            description="Asosiy banner kichikroq qilindi, promo g'oyalar esa keyingi sectionlarga tarqatildi. Shunday qilib sahifa yumshoqroq oqadi."
+            title="Asosiy takliflar va foydali bo'limlar"
+            description="Asosiy banner ixchamlashtirildi, muhim takliflar esa alohida bloklarga joylandi."
           />
 
           <div className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 lg:grid lg:overflow-visible lg:grid-cols-3">
@@ -610,7 +610,7 @@ export default async function Home() {
           <SectionHeading
             eyebrow="Do'konlar"
             title="Filiallar kesimida ham ishonch uyg'otadigan blok"
-            description="Sync'dan kelgan mahsulotlar qaysi filialda borligini ko'rsatish uchun landing ichida ham alohida joy ajratildi."
+            description="Sync'dan kelgan mahsulotlar qaysi filialda borligi shu bo'limda ko'rsatiladi."
           />
 
           <div className="grid gap-4 lg:grid-cols-3">
@@ -663,12 +663,11 @@ export default async function Home() {
                 Biz haqimizda
               </p>
               <h2 className="mt-4 font-display text-4xl font-semibold tracking-tight text-foreground">
-                aloo ommaga taqdim etishga tayyor retail storefrontga aylanmoqda
+                aloo smartfon xaridi uchun qulay va sodda platformaga aylanmoqda
               </h2>
               <p className="mt-4 text-base leading-8 text-muted">
-                Hozir sayt bosh qismi retail-marketplace ritmiga yaqinlashtirildi: ixcham hero,
-                ishlaydigan qidiruv, kirish modali, savat va taqqoslash oqimlari, editorial blok va
-                premium footer bir zanjirga yig'ildi.
+                Bosh sahifa, qidiruv, kirish, savat, taqqoslash va alooBlog bo'limlari bir
+                oqimda ishlashi uchun bir tizimga yig'ildi.
               </p>
 
               <div className="mt-7 grid gap-3 sm:grid-cols-3">

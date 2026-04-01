@@ -60,8 +60,7 @@ export function SiteFooter() {
           />
 
           <p className="mt-4 text-sm leading-7 text-white/72">
-            public storefront uchun tayyorlangan premium mobil retail tajribasi va alooBlog
-            kontenti.
+            aloo mobil katalogi, alooBlog va asosiy xarid bo'limlari shu yerda jamlangan.
           </p>
 
           <div className="mt-5 grid grid-cols-2 gap-2">
@@ -128,8 +127,8 @@ export function SiteFooter() {
           />
 
           <p className="mt-4 max-w-sm text-sm leading-7 text-white/72">
-            aloo - smartfonlar bozori. Landing, katalog, alooBlog va xizmat oqimlari ommaga
-            ko'rsatishga tayyor professional retail ko'rinishiga keltirildi.
+            aloo - smartfonlar bozori. Katalog, alooBlog va asosiy xarid bo'limlari kundalik
+            foydalanish uchun bir joyga yig'ilgan.
           </p>
 
           <div className="mt-6 space-y-3 text-sm text-white/82">
