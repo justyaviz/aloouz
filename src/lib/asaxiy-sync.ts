@@ -1,5 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { load } from "cheerio";
+import { createHash } from "node:crypto";
 
 import type { ProductKind } from "@/data/store";
 import { prisma } from "@/lib/prisma";
@@ -262,6 +263,11 @@ function getPalette(brand: string) {
   return brandPaletteMap[brand.toLowerCase()] ?? { toneFrom: "#E9F4FF", toneTo: "#A8D6FF" };
 }
 
+function buildExternalSku(externalId: string) {
+  const hash = createHash("sha1").update(externalId).digest("hex").slice(0, 12).toUpperCase();
+  return `ASX-${hash}`;
+}
+
 function buildProductPayload(product: AsaxiyListingProduct): SyncPreparedProduct {
   const cleanName = normalizeProductName(product.name);
   const slug = slugify(cleanName);
@@ -272,7 +278,7 @@ function buildProductPayload(product: AsaxiyListingProduct): SyncPreparedProduct
     externalId: product.externalId,
     name: cleanName,
     slug,
-    sku: `ASX-${product.externalId.toUpperCase().replace(/[^A-Z0-9]/g, "_").slice(0, 40)}`,
+    sku: buildExternalSku(product.externalId),
     brand: product.brand,
     categorySlug: "smartfonlar",
     categoryName: "Smartfonlar",
@@ -529,7 +535,7 @@ async function ensureBrandRecord(client: Prisma.TransactionClient | typeof prism
 }
 
 async function syncProductGallery(
-  client: Prisma.TransactionClient,
+  client: Prisma.TransactionClient | typeof prisma,
   productId: string,
   productName: string,
   galleryImages: string[],
@@ -552,6 +558,133 @@ async function syncProductGallery(
   });
 }
 
+async function resolveProductSlug(
+  client: Prisma.TransactionClient | typeof prisma,
+  desiredSlug: string,
+  externalId: string,
+  existingProductId?: string,
+) {
+  const slugSuffix = externalId.toLowerCase().replace(/[^a-z0-9]/g, "").slice(-8) || "asaxiy";
+  let candidate = desiredSlug;
+  let attempt = 0;
+
+  while (attempt < 10) {
+    const existing = await client.product.findUnique({
+      where: { slug: candidate },
+      select: { id: true },
+    });
+
+    if (!existing || existing.id === existingProductId) {
+      return candidate;
+    }
+
+    attempt += 1;
+    candidate = `${desiredSlug}-${slugSuffix}${attempt > 1 ? `-${attempt}` : ""}`;
+  }
+
+  return `${desiredSlug}-${Date.now()}`;
+}
+
+function buildProductWriteData(
+  product: SyncPreparedProduct,
+  categoryId: string,
+  brandId: string,
+  slug: string,
+) {
+  return {
+    name: product.name,
+    slug,
+    sku: product.sku,
+    shortDescription: product.shortDescription,
+    description: product.description,
+    kind: product.kind,
+    price: product.price,
+    compareAtPrice: product.compareAtPrice ?? null,
+    monthlyPrice: product.monthlyPrice,
+    installment6: product.installment6 ?? null,
+    installment12: product.installment12 ?? product.monthlyPrice,
+    installment24: product.installment24 ?? null,
+    stock: product.stock,
+    stockLabel: product.stockLabel ?? null,
+    badge: product.badge,
+    rating: product.rating,
+    reviews: product.reviews,
+    heroLabel: product.heroLabel,
+    delivery: product.delivery,
+    highlights: product.highlights,
+    colors: product.colors,
+    specs: product.specs,
+    toneFrom: product.toneFrom,
+    toneTo: product.toneTo,
+    imageUrl: product.imageUrl ?? null,
+    sourceType: "ASAXIY_SYNC" as const,
+    sourceExternalId: product.externalId,
+    sourceUpdatedAt: new Date(),
+    sourcePayload: product.sourcePayload,
+    isActive: product.isActive,
+    isFeatured: product.isFeatured,
+    isNewArrival: product.isNewArrival,
+    isDayDeal: product.isDayDeal,
+    sortOrder: product.sortOrder,
+    categoryId,
+    brandId,
+  };
+}
+
+async function savePreparedProduct(
+  client: Prisma.TransactionClient | typeof prisma,
+  product: SyncPreparedProduct,
+  categoryId: string,
+  brandId: string,
+) {
+  const existingByExternal = await client.product.findUnique({
+    where: { sourceExternalId: product.externalId },
+    select: { id: true, slug: true },
+  });
+
+  if (existingByExternal) {
+    const resolvedSlug = await resolveProductSlug(
+      client,
+      product.slug,
+      product.externalId,
+      existingByExternal.id,
+    );
+
+    return client.product.update({
+      where: { id: existingByExternal.id },
+      data: buildProductWriteData(product, categoryId, brandId, resolvedSlug),
+      select: { id: true },
+    });
+  }
+
+  const existingBySlug = await client.product.findUnique({
+    where: { slug: product.slug },
+    select: { id: true, sourceExternalId: true },
+  });
+
+  if (existingBySlug && existingBySlug.sourceExternalId !== product.externalId) {
+    const resolvedSlug = await resolveProductSlug(client, product.slug, product.externalId);
+
+    return client.product.create({
+      data: buildProductWriteData(product, categoryId, brandId, resolvedSlug),
+      select: { id: true },
+    });
+  }
+
+  if (existingBySlug) {
+    return client.product.update({
+      where: { id: existingBySlug.id },
+      data: buildProductWriteData(product, categoryId, brandId, product.slug),
+      select: { id: true },
+    });
+  }
+
+  return client.product.create({
+    data: buildProductWriteData(product, categoryId, brandId, product.slug),
+    select: { id: true },
+  });
+}
+
 export async function syncAsaxiyCatalog(options?: { replaceCatalog?: boolean }) {
   await markSyncRunning();
 
@@ -568,121 +701,46 @@ export async function syncAsaxiyCatalog(options?: { replaceCatalog?: boolean }) 
 
     const keepIds = new Set<string>();
     let removedProducts = 0;
+    const categoryCache = new Map<string, string>();
+    const brandCache = new Map<string, string>();
 
-    await prisma.$transaction(async (tx) => {
-      if (options?.replaceCatalog !== false) {
-        const deleted = await tx.product.deleteMany({
-          where: {
-            sourceType: {
-              in: ["MANUAL", "SE_ONE_SYNC"],
-            },
+    if (options?.replaceCatalog !== false) {
+      const deleted = await prisma.product.deleteMany({
+        where: {
+          sourceType: {
+            in: ["MANUAL", "SE_ONE_SYNC"],
           },
-        });
+        },
+      });
 
-        removedProducts = deleted.count;
+      removedProducts += deleted.count;
+    }
+
+    for (const product of prepared) {
+      let categoryId = categoryCache.get(product.categorySlug);
+
+      if (!categoryId) {
+        const category = await ensureCategoryRecord(prisma, product.categorySlug, product.categoryName);
+        categoryId = category.id;
+        categoryCache.set(product.categorySlug, category.id);
       }
 
-      for (const product of prepared) {
-        const category = await ensureCategoryRecord(tx, product.categorySlug, product.categoryName);
-        const brand = await ensureBrandRecord(tx, product.brand);
+      let brandId = brandCache.get(product.brand);
 
-        const existing = await tx.product.findFirst({
-          where: {
-            OR: [{ sourceExternalId: product.externalId }, { slug: product.slug }],
-          },
-          select: { id: true },
-        });
-
-        const saved = existing
-          ? await tx.product.update({
-              where: { id: existing.id },
-              data: {
-                name: product.name,
-                slug: product.slug,
-                sku: product.sku,
-                shortDescription: product.shortDescription,
-                description: product.description,
-                kind: product.kind,
-                price: product.price,
-                compareAtPrice: product.compareAtPrice ?? null,
-                monthlyPrice: product.monthlyPrice,
-                installment6: product.installment6 ?? null,
-                installment12: product.installment12 ?? product.monthlyPrice,
-                installment24: product.installment24 ?? null,
-                stock: product.stock,
-                stockLabel: product.stockLabel ?? null,
-                badge: product.badge,
-                rating: product.rating,
-                reviews: product.reviews,
-                heroLabel: product.heroLabel,
-                delivery: product.delivery,
-                highlights: product.highlights,
-                colors: product.colors,
-                specs: product.specs,
-                toneFrom: product.toneFrom,
-                toneTo: product.toneTo,
-                imageUrl: product.imageUrl ?? null,
-                sourceType: "ASAXIY_SYNC",
-                sourceExternalId: product.externalId,
-                sourceUpdatedAt: new Date(),
-                sourcePayload: product.sourcePayload,
-                isActive: product.isActive,
-                isFeatured: product.isFeatured,
-                isNewArrival: product.isNewArrival,
-                isDayDeal: product.isDayDeal,
-                sortOrder: product.sortOrder,
-                categoryId: category.id,
-                brandId: brand.id,
-              },
-              select: { id: true },
-            })
-          : await tx.product.create({
-              data: {
-                name: product.name,
-                slug: product.slug,
-                sku: product.sku,
-                shortDescription: product.shortDescription,
-                description: product.description,
-                kind: product.kind,
-                price: product.price,
-                compareAtPrice: product.compareAtPrice ?? null,
-                monthlyPrice: product.monthlyPrice,
-                installment6: product.installment6 ?? null,
-                installment12: product.installment12 ?? product.monthlyPrice,
-                installment24: product.installment24 ?? null,
-                stock: product.stock,
-                stockLabel: product.stockLabel ?? null,
-                badge: product.badge,
-                rating: product.rating,
-                reviews: product.reviews,
-                heroLabel: product.heroLabel,
-                delivery: product.delivery,
-                highlights: product.highlights,
-                colors: product.colors,
-                specs: product.specs,
-                toneFrom: product.toneFrom,
-                toneTo: product.toneTo,
-                imageUrl: product.imageUrl ?? null,
-                sourceType: "ASAXIY_SYNC",
-                sourceExternalId: product.externalId,
-                sourceUpdatedAt: new Date(),
-                sourcePayload: product.sourcePayload,
-                isActive: product.isActive,
-                isFeatured: product.isFeatured,
-                isNewArrival: product.isNewArrival,
-                isDayDeal: product.isDayDeal,
-                sortOrder: product.sortOrder,
-                categoryId: category.id,
-                brandId: brand.id,
-              },
-              select: { id: true },
-            });
-
-        await syncProductGallery(tx, saved.id, product.name, product.galleryImages);
-        keepIds.add(saved.id);
+      if (!brandId) {
+        const brand = await ensureBrandRecord(prisma, product.brand);
+        brandId = brand.id;
+        brandCache.set(product.brand, brand.id);
       }
 
-      await tx.product.deleteMany({
+      const saved = await savePreparedProduct(prisma, product, categoryId, brandId);
+
+      await syncProductGallery(prisma, saved.id, product.name, product.galleryImages);
+      keepIds.add(saved.id);
+    }
+
+    if (keepIds.size > 0) {
+      const stale = await prisma.product.deleteMany({
         where: {
           sourceType: "ASAXIY_SYNC",
           id: {
@@ -690,7 +748,9 @@ export async function syncAsaxiyCatalog(options?: { replaceCatalog?: boolean }) 
           },
         },
       });
-    });
+
+      removedProducts += stale.count;
+    }
 
     const summary: AsaxiySyncSummary = {
       importedProducts: prepared.length,

@@ -16,6 +16,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { formatMonthly, formatSum } from "@/lib/format";
 import { getStorefrontSnapshot } from "@/lib/storefront";
+import type { Product } from "@/data/store";
 
 export const dynamic = "force-dynamic";
 
@@ -78,6 +79,37 @@ function sanitizePublicCopy(value: string | undefined, fallback: string) {
   }
 
   return copy;
+}
+
+const fallbackCategoryArt: Record<string, string> = {
+  "aqlli-soatlar": "https://assets.asaxiy.uz/product/main_image/desktop/5fe341384ffd9.jpg.webp",
+  quloqchinlar: "https://assets.asaxiy.uz/product/main_image/desktop/66fd42db59f30.jpg.webp",
+  planshetlar: "https://assets.asaxiy.uz/product/main_image/desktop/676bdf90d5a5b.jpg.webp",
+  klaviaturalar: "https://assets.asaxiy.uz/product/main_image/desktop/667936df8f134.jpg.webp",
+  kalonkalar: "https://assets.asaxiy.uz/product/main_image/desktop/6548a78510fb6.jpeg.webp",
+};
+
+function pickCategoryImage(products: Product[], categorySlug: string, heroImage?: string) {
+  const byBrand = (brands: string[]) =>
+    products.find(
+      (product) =>
+        product.imageUrl &&
+        brands.some((brand) => product.brand.toLowerCase() === brand.toLowerCase()),
+    )?.imageUrl;
+
+  if (categorySlug === "iphone") {
+    return byBrand(["Apple"]) ?? heroImage;
+  }
+
+  if (categorySlug === "android") {
+    return byBrand(["Samsung", "Xiaomi", "Redmi", "HONOR", "OPPO"]) ?? heroImage;
+  }
+
+  if (categorySlug === "smartfonlar") {
+    return byBrand(["HONOR", "Samsung", "Apple", "Xiaomi", "Redmi", "OPPO"]) ?? heroImage;
+  }
+
+  return fallbackCategoryArt[categorySlug] ?? heroImage;
 }
 
 export default async function Home() {
@@ -199,6 +231,12 @@ export default async function Home() {
         cheapest: branch.cheapest,
         brands: Array.from(branch.brands).slice(0, 3).join(", "),
       })) || [];
+  const categoryIllustrations = Object.fromEntries(
+    categories.slice(0, 8).map((category) => [
+      category.slug,
+      pickCategoryImage(products, category.slug, heroProduct.imageUrl),
+    ]),
+  ) as Record<string, string | undefined>;
 
   return (
     <>
@@ -309,7 +347,7 @@ export default async function Home() {
               <Link
                 key={category.slug}
                 href={`/catalog?category=${category.slug}`}
-                className="relative flex min-h-[92px] items-center justify-between gap-3 overflow-hidden rounded-[22px] border border-line bg-[#f7f9fc] px-4 py-4 transition hover:-translate-y-1 hover:bg-white hover:shadow-[0_14px_35px_rgba(13,31,55,0.08)] sm:min-h-[110px] sm:gap-4 sm:rounded-[24px] sm:px-5 sm:py-5"
+                className="relative flex min-h-[102px] items-center justify-between gap-3 overflow-hidden rounded-[22px] border border-line bg-[#f7f9fc] px-4 py-4 transition hover:-translate-y-1 hover:bg-white hover:shadow-[0_14px_35px_rgba(13,31,55,0.08)] sm:min-h-[116px] sm:gap-4 sm:rounded-[24px] sm:px-5 sm:py-5"
               >
                 <div
                   className="absolute -right-6 -top-3 h-20 w-20 opacity-[0.08]"
@@ -320,7 +358,7 @@ export default async function Home() {
                     backgroundSize: "contain",
                   }}
                 />
-                <div className="min-w-0">
+                <div className="min-w-0 pr-14 sm:pr-20">
                   <p className="text-base font-semibold leading-6 text-foreground sm:text-lg sm:leading-7">
                     {category.name}
                   </p>
@@ -329,11 +367,20 @@ export default async function Home() {
                   </p>
                 </div>
                 <div
-                  className="h-12 w-14 shrink-0 rounded-[16px] sm:h-16 sm:w-20 sm:rounded-[18px]"
+                  className="pointer-events-none absolute bottom-2.5 right-2.5 h-16 w-20 shrink-0 rounded-[18px] border border-white/70 shadow-[0_10px_24px_rgba(13,31,55,0.08)] sm:bottom-3 sm:right-3 sm:h-20 sm:w-24"
                   style={{
                     background: `linear-gradient(135deg, ${category.toneFrom}, ${category.toneTo})`,
                   }}
-                />
+                >
+                  {categoryIllustrations[category.slug] ? (
+                    <div
+                      className="h-full w-full bg-center bg-contain bg-no-repeat"
+                      style={{
+                        backgroundImage: `url('${categoryIllustrations[category.slug]}')`,
+                      }}
+                    />
+                  ) : null}
+                </div>
               </Link>
             ))}
           </div>

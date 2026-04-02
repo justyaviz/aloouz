@@ -94,14 +94,14 @@ function CabinetSection({
   children: ReactNode;
 }) {
   return (
-    <section className="rounded-[30px] border border-line bg-white p-5 shadow-[0_18px_45px_rgba(13,31,55,0.08)] sm:p-7">
-      <div className="flex flex-col gap-4 border-b border-line pb-5 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+    <section className="rounded-[26px] border border-line bg-white p-4 shadow-[0_18px_45px_rgba(13,31,55,0.08)] sm:rounded-[30px] sm:p-7">
+      <div className="flex flex-col gap-4 border-b border-line pb-4 sm:flex-row sm:items-center sm:justify-between sm:pb-5">
+        <h1 className="font-display text-[2rem] font-semibold tracking-tight text-foreground sm:text-4xl">
           {title}
         </h1>
         {actions}
       </div>
-      <div className="pt-6">{children}</div>
+      <div className="pt-5 sm:pt-6">{children}</div>
     </section>
   );
 }
@@ -118,14 +118,16 @@ function CabinetEmpty({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex min-h-[420px] flex-col items-center justify-center rounded-[26px] bg-[#fafbfd] px-6 py-10 text-center">
-      <span className="inline-flex h-20 w-20 items-center justify-center rounded-[28px] bg-[#fff3ef] text-support shadow-[0_18px_40px_rgba(242,104,26,0.12)]">
-        <Icon className="h-8 w-8" />
+    <div className="flex min-h-[300px] flex-col items-center justify-center rounded-[24px] bg-[#fafbfd] px-5 py-8 text-center sm:min-h-[420px] sm:rounded-[26px] sm:px-6 sm:py-10">
+      <span className="inline-flex h-16 w-16 items-center justify-center rounded-[22px] bg-[#fff3ef] text-support shadow-[0_18px_40px_rgba(242,104,26,0.12)] sm:h-20 sm:w-20 sm:rounded-[28px]">
+        <Icon className="h-7 w-7 sm:h-8 sm:w-8" />
       </span>
-      <h2 className="mt-6 font-display text-3xl font-semibold tracking-tight text-foreground">
+      <h2 className="mt-5 font-display text-[1.9rem] font-semibold tracking-tight text-foreground sm:mt-6 sm:text-3xl">
         {title}
       </h2>
-      <p className="mt-4 max-w-[520px] text-base leading-8 text-muted">{description}</p>
+      <p className="mt-3 max-w-[520px] text-[15px] leading-7 text-muted sm:mt-4 sm:text-base sm:leading-8">
+        {description}
+      </p>
       {action ? <div className="mt-8">{action}</div> : null}
     </div>
   );
@@ -201,9 +203,42 @@ export function CustomerCabinet({ viewer, data }: CustomerCabinetProps) {
   const tabHref = (tab: CabinetTab) => `/profile?tab=${tab}`;
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[280px_minmax(0,1fr)]">
-      <aside className="rounded-[30px] border border-line bg-white p-3 shadow-[0_18px_45px_rgba(13,31,55,0.08)]">
-        <div className="no-scrollbar flex gap-2 overflow-x-auto pb-2 xl:block xl:overflow-visible xl:pb-0">
+    <div className="grid gap-4 xl:grid-cols-[280px_minmax(0,1fr)] xl:gap-6">
+      <div className="xl:hidden">
+        <div className="overflow-hidden rounded-[28px] bg-[linear-gradient(145deg,#0c346e_0%,#1686e3_58%,#dfefff_100%)] p-4 text-white shadow-[0_18px_40px_rgba(14,58,118,0.22)]">
+          <div className="flex items-center gap-4">
+            <div className="inline-flex h-16 w-16 items-center justify-center rounded-[22px] bg-white/16 text-xl font-semibold backdrop-blur-sm">
+              {initials}
+            </div>
+            <div className="min-w-0">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/75">
+                Shaxsiy kabinet
+              </p>
+              <p className="mt-1 line-clamp-1 font-display text-[1.45rem] font-semibold tracking-tight">
+                {[viewer.firstName, viewer.lastName].filter(Boolean).join(" ")}
+              </p>
+              <p className="mt-1 text-sm text-white/82">{viewer.displayPhone}</p>
+            </div>
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            <div className="rounded-[18px] border border-white/14 bg-white/12 px-4 py-3 backdrop-blur-sm">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/70">
+                Buyurtmalar
+              </p>
+              <p className="mt-1 text-xl font-semibold">{data.orders.length}</p>
+            </div>
+            <div className="rounded-[18px] border border-white/14 bg-white/12 px-4 py-3 backdrop-blur-sm">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/70">
+                Manzillar
+              </p>
+              <p className="mt-1 text-xl font-semibold">{data.addresses.length}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside className="rounded-[28px] border border-line bg-white p-3 shadow-[0_18px_45px_rgba(13,31,55,0.08)] xl:rounded-[30px]">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:block">
           {tabItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.key;
@@ -213,7 +248,7 @@ export function CustomerCabinet({ viewer, data }: CustomerCabinetProps) {
                 key={item.key}
                 href={tabHref(item.key)}
                 className={cn(
-                  "flex min-w-[180px] items-center gap-3 rounded-[20px] px-4 py-4 text-sm font-semibold transition xl:min-w-0",
+                  "flex min-w-0 items-center gap-3 rounded-[20px] px-4 py-4 text-sm font-semibold transition xl:min-w-0",
                   isActive
                     ? "bg-[#fff4ef] text-support"
                     : "text-foreground hover:bg-[#f7f9fc]",
@@ -221,7 +256,7 @@ export function CustomerCabinet({ viewer, data }: CustomerCabinetProps) {
               >
                 <span
                   className={cn(
-                    "inline-flex h-10 w-10 items-center justify-center rounded-[14px] border",
+                    "inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] border",
                     isActive
                       ? "border-support/20 bg-white text-support"
                       : "border-line bg-white text-muted",
@@ -229,7 +264,7 @@ export function CustomerCabinet({ viewer, data }: CustomerCabinetProps) {
                 >
                   <Icon className="h-5 w-5" />
                 </span>
-                <span>{item.label}</span>
+                <span className="leading-5">{item.label}</span>
               </Link>
             );
           })}
@@ -238,9 +273,9 @@ export function CustomerCabinet({ viewer, data }: CustomerCabinetProps) {
             <input type="hidden" name="redirectTo" value="/login" />
             <button
               type="submit"
-              className="flex min-w-[180px] items-center gap-3 rounded-[20px] px-4 py-4 text-sm font-semibold text-support transition hover:bg-[#fff4ef] xl:min-w-0"
+              className="flex min-w-0 items-center gap-3 rounded-[20px] px-4 py-4 text-sm font-semibold text-support transition hover:bg-[#fff4ef] xl:min-w-0"
             >
-              <span className="inline-flex h-10 w-10 items-center justify-center rounded-[14px] border border-support/15 bg-white text-support">
+              <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] border border-support/15 bg-white text-support">
                 <CloseIcon className="h-5 w-5" />
               </span>
               <span>Chiqish</span>
