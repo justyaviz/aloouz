@@ -4,58 +4,50 @@ import Link from "next/link";
 import { AddToCartButton } from "@/components/add-to-cart-button";
 import { CountdownTimer } from "@/components/countdown-timer";
 import { HeroCarousel } from "@/components/hero-carousel";
-import {
-  ArrowRightIcon,
-  LocationIcon,
-  TrendUpIcon,
-} from "@/components/icons";
+import { ArrowRightIcon, LocationIcon, TrendUpIcon } from "@/components/icons";
 import { ProductCard } from "@/components/product-card";
 import { ProductVisual } from "@/components/product-visual";
 import { SectionHeading } from "@/components/section-heading";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import type { Product } from "@/data/store";
 import { formatMonthly, formatSum } from "@/lib/format";
 import { getCategoryArtwork } from "@/lib/product-art";
 import { getStorefrontSnapshot } from "@/lib/storefront";
-import type { Product } from "@/data/store";
 
 export const dynamic = "force-dynamic";
 
 const categoryCaptions = [
   "Apple ekotizimi",
-  "Premium kameralar",
-  "Samsung va Xiaomi",
-  "Fitness va ulanish",
-  "Audio va call",
+  "Premium kamera",
+  "Android flagmanlar",
+  "Fitness va aloqa",
+  "Audio qurilmalar",
   "Ish va o'qish",
-  "Klaviatura va setup",
-  "Simsiz karnaylar",
+  "Setup va gaming",
+  "Uy uchun audio",
 ];
 
-function parseHexColor(value: string) {
-  const hex = value.trim().replace("#", "");
-
-  if (hex.length !== 6 || /[^0-9a-f]/i.test(hex)) {
-    return null;
-  }
-
-  return {
-    r: Number.parseInt(hex.slice(0, 2), 16),
-    g: Number.parseInt(hex.slice(2, 4), 16),
-    b: Number.parseInt(hex.slice(4, 6), 16),
-  };
-}
-
-function isDarkColor(value: string) {
-  const rgb = parseHexColor(value);
-
-  if (!rgb) {
-    return false;
-  }
-
-  const luminance = 0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b;
-  return luminance < 150;
-}
+const brandShowcase = [
+  {
+    brand: "Apple",
+    accent: "linear-gradient(145deg,#fff4fb 0%,#f4f8ff 100%)",
+    eyebrow: "Premium lineup",
+    description: "iPhone modellari, Apple aksessuarlari va sof vizual til bir joyda.",
+  },
+  {
+    brand: "Samsung",
+    accent: "linear-gradient(145deg,#eef5ff 0%,#f7fbff 100%)",
+    eyebrow: "Galaxy tanlovi",
+    description: "Galaxy A va S seriyalari uchun balanslangan narx, xotira va kamera tanlovi.",
+  },
+  {
+    brand: "HONOR",
+    accent: "linear-gradient(145deg,#fff3ed 0%,#fffaf7 100%)",
+    eyebrow: "Trend modeli",
+    description: "HONOR liniyasidagi faol modellarni bir ko'rishda topish osonlashdi.",
+  },
+];
 
 const internalCopyPatterns = [
   /admin panel/i,
@@ -103,13 +95,13 @@ export default async function Home() {
     return (
       <>
         <SiteHeader />
-        <main className="shell py-20">
-          <div className="rounded-[28px] border border-line bg-white p-10 text-center shadow-[0_12px_30px_rgba(13,31,55,0.06)]">
-            <p className="font-display text-3xl font-semibold text-foreground">
+        <main className="shell py-24">
+          <div className="rounded-[32px] border border-line bg-white p-12 text-center shadow-[0_18px_40px_rgba(13,31,55,0.08)]">
+            <p className="font-display text-4xl font-semibold tracking-tight text-foreground">
               Mahsulotlar hali tayyor emas
             </p>
-            <p className="mt-4 text-base text-muted">
-              Yaqin orada yangi smartfonlar va aksiyalar shu sahifada ko'rsatiladi.
+            <p className="mt-4 text-base leading-8 text-muted">
+              Yaqin orada yangi smartfonlar, aksiyalar va katalog shu yerda ko'rsatiladi.
             </p>
           </div>
         </main>
@@ -119,18 +111,14 @@ export default async function Home() {
   }
 
   const visiblePromoDeals = promoDeals.slice(0, 3);
-  const newItems = products.filter((product) => product.isNewArrival).slice(0, 4);
-  const visibleNewItems = newItems.length > 0 ? newItems : products.slice(0, 4);
+  const visibleNewItems = products
+    .filter((product) => product.isNewArrival)
+    .slice(0, 8);
+  const curatedNewItems = visibleNewItems.length > 0 ? visibleNewItems : products.slice(0, 8);
+  const featureArticle = articles[0];
+  const sideArticles = articles.slice(1, 4);
   const spotlightProducts = products
     .filter((product) => product.slug !== heroProduct.slug && product.slug !== productOfDay.slug)
-    .slice(0, 4);
-  const installmentProducts = products
-    .filter(
-      (product) =>
-        product.slug !== heroProduct.slug &&
-        product.slug !== productOfDay.slug &&
-        (product.installment24 || product.installment12),
-    )
     .slice(0, 4);
 
   const heroSlides = products.slice(0, 3).map((product, index) => {
@@ -144,20 +132,19 @@ export default async function Home() {
       id: product.slug,
       brand: product.brand,
       categorySlug: product.categorySlug,
-      eyebrow: relatedPromo?.eyebrow ?? "Texno hayotga ulanish!",
+      eyebrow: relatedPromo?.eyebrow ?? "Texno hayotga ulanish",
       title:
         index === 0 && heroDiscount > 0
           ? `${product.name} uchun -${heroDiscount}% gacha`
           : product.name,
-      description:
-        sanitizePublicCopy(
-          relatedPromo?.description,
-          `${product.name} uchun qulay narx, muddatli to'lov va tezkor yetkazib berish bir joyda.`,
-        ),
+      description: sanitizePublicCopy(
+        relatedPromo?.description,
+        `${product.name} uchun qulay narx, muddatli to'lov va original qurilma kafolati bir joyda.`,
+      ),
       primaryHref: `/product/${product.slug}`,
       primaryLabel: "Mahsulotni ko'rish",
-      secondaryHref: relatedPromo?.ctaHref ?? "/catalog?category=smartfonlar",
-      secondaryLabel: relatedPromo?.ctaLabel ?? "Barcha smartfonlar",
+      secondaryHref: "/catalog",
+      secondaryLabel: "Katalogga o'tish",
       accentLabel: heroDiscount > 0 ? `-${heroDiscount}% aksiya` : product.badge,
       price: product.price,
       monthlyPrice: product.installment12 ?? product.monthlyPrice,
@@ -170,9 +157,6 @@ export default async function Home() {
       toneTo: product.toneTo,
     };
   });
-
-  const featureArticle = articles[0];
-  const sideArticles = articles.slice(1, 4);
 
   const branchMap = new Map<
     string,
@@ -207,6 +191,7 @@ export default async function Home() {
         cheapest: branch.cheapest,
         brands: Array.from(branch.brands).slice(0, 3).join(", "),
       })) || [];
+
   const categoryIllustrations = Object.fromEntries(
     categories.slice(0, 8).map((category) => [
       category.slug,
@@ -214,38 +199,64 @@ export default async function Home() {
     ]),
   ) as Record<string, string | undefined>;
 
+  const brandHighlights = brandShowcase
+    .map((item) => {
+      const product = products.find((candidate) =>
+        candidate.brand.toLowerCase().includes(item.brand.toLowerCase()),
+      );
+
+      if (!product) {
+        return null;
+      }
+
+      return { ...item, product };
+    })
+    .filter((item): item is NonNullable<typeof item> => item !== null);
+
+  const serviceStats = [
+    {
+      id: "delivery",
+      label: "Tez yetkazish",
+      value: "90 daqiqa",
+      description: "Toshkent bo'ylab tanlangan modellarni tez yetkazish oqimi.",
+    },
+    {
+      id: "installment",
+      label: "Muddatli to'lov",
+      value: "12 oy",
+      description: "Asosiy narx va 12 oylik to'lov bir xil blokda ko'rsatiladi.",
+    },
+    {
+      id: "about",
+      label: "Original qurilmalar",
+      value: "IMEI",
+      description: "Faqat original, real stock va filial bo'yicha mavjud modellar.",
+    },
+  ];
+
   return (
     <>
       <SiteHeader />
 
-      <main className="page-enter pb-16">
-        <section className="shell pt-4 sm:pt-5">
-          <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_286px] xl:items-stretch">
+      <main className="page-enter pb-20">
+        <section className="shell pt-5 sm:pt-6">
+          <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_290px] xl:items-stretch">
             <HeroCarousel slides={heroSlides} />
 
-            <aside className="reveal-up reveal-up-delay-1 rounded-[26px] border border-line bg-white p-4 shadow-[0_16px_38px_rgba(13,31,55,0.08)] sm:rounded-[30px] sm:p-5 xl:h-full xl:max-h-[334px] xl:overflow-hidden xl:p-4">
-              <div className="flex items-end justify-between gap-4">
+            <aside className="reveal-up reveal-up-delay-1 rounded-[30px] border border-line bg-white p-5 shadow-[0_22px_48px_rgba(13,31,55,0.08)] xl:h-full">
+              <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-sm font-semibold text-foreground sm:text-xs sm:uppercase sm:tracking-[0.24em] sm:text-accent">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-accent">
                     Kun mahsulotlari
                   </p>
-                  <h2 className="mt-1 font-display text-[1.2rem] font-semibold tracking-tight text-foreground sm:mt-2 sm:text-[1.55rem] xl:text-[1rem]">
+                  <h2 className="mt-2 font-display text-[1.6rem] font-semibold tracking-[-0.04em] text-foreground">
                     Kun taklifi
                   </h2>
                 </div>
-                <CountdownTimer compact className="shrink-0 sm:hidden" />
+                <CountdownTimer compact className="shrink-0" />
               </div>
 
-              <CountdownTimer className="mt-3 hidden sm:block xl:hidden" />
-              <CountdownTimer compact className="mt-2 hidden xl:block" />
-
-              <div
-                className="mt-3 rounded-[20px] border border-line p-3 sm:rounded-[22px] sm:p-3.5 xl:mt-2 xl:p-2.5"
-                style={{
-                  background:
-                    "linear-gradient(180deg, rgba(244,249,255,1) 0%, rgba(255,255,255,1) 100%)",
-                }}
-              >
+              <div className="mt-4 rounded-[24px] border border-[#e5edf6] bg-[linear-gradient(180deg,#f5faff_0%,#ffffff_100%)] p-3">
                 <ProductVisual
                   size="deal"
                   kind={productOfDay.kind}
@@ -273,37 +284,37 @@ export default async function Home() {
                     %
                   </span>
                 ) : null}
-                <span className="rounded-full bg-support px-3 py-1 text-xs font-semibold text-white">
+                <span className="rounded-full bg-[#fff1ea] px-3 py-1 text-xs font-semibold text-support">
                   Chegirma
                 </span>
               </div>
 
               <Link
                 href={`/product/${productOfDay.slug}`}
-                className="line-clamp-2 mt-3.5 block text-[15px] font-semibold leading-6 text-foreground sm:text-base sm:leading-7 xl:mt-2.5 xl:text-[0.95rem] xl:leading-6"
+                className="mt-3 block line-clamp-2 font-display text-[1.1rem] font-semibold leading-7 tracking-tight text-foreground transition hover:text-accent"
               >
                 {productOfDay.name}
               </Link>
 
-              <div className="mt-3 inline-flex rounded-[12px] border border-accent px-3 py-1.5 text-sm font-semibold text-accent xl:mt-2 xl:text-[13px]">
+              <div className="mt-4 inline-flex rounded-full border border-accent/18 bg-[#f5f9ff] px-4 py-2 text-sm font-semibold text-accent">
                 {formatMonthly(productOfDay.installment12 ?? productOfDay.monthlyPrice)}
               </div>
 
               {productOfDay.oldPrice ? (
-                <p className="mt-3 text-sm text-muted line-through xl:mt-2 xl:text-[13px]">
+                <p className="mt-4 text-sm text-muted line-through">
                   {formatSum(productOfDay.oldPrice)}
                 </p>
               ) : null}
 
-              <div className="mt-1 flex items-end justify-between gap-4 xl:mt-0.5">
+              <div className="mt-1 flex items-end justify-between gap-4">
                 <div>
-                  <p className="text-[1.55rem] font-semibold tracking-tight text-foreground xl:text-[1rem]">
+                  <p className="text-[1.8rem] font-semibold tracking-tight text-foreground">
                     {formatSum(productOfDay.price)}
                   </p>
-                  <p className="mt-1 text-[12px] text-muted xl:hidden">
+                  <p className="mt-1 text-[12px] text-muted">
                     {productOfDay.stockLabel ||
                       productOfDay.branchName ||
-                      `${productOfDay.stock} dona`}
+                      `${productOfDay.stock} dona mavjud`}
                   </p>
                 </div>
                 <AddToCartButton productSlug={productOfDay.slug} mode="icon" />
@@ -312,24 +323,44 @@ export default async function Home() {
           </div>
         </section>
 
-        <section className="shell reveal-up reveal-up-delay-1 pt-9">
+        <section className="shell reveal-up reveal-up-delay-1 pt-5">
+          <div className="grid gap-3 rounded-[30px] border border-line bg-white p-4 shadow-[0_16px_34px_rgba(13,31,55,0.06)] lg:grid-cols-3 lg:p-5">
+            {serviceStats.map((item) => (
+              <article
+                key={item.id}
+                id={item.id}
+                className="rounded-[22px] border border-[#e8eef5] bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)] px-5 py-4"
+              >
+                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-accent">
+                  {item.label}
+                </p>
+                <p className="mt-2 font-display text-[1.7rem] font-semibold tracking-[-0.04em] text-foreground">
+                  {item.value}
+                </p>
+                <p className="mt-2 text-sm leading-7 text-muted">{item.description}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="shell reveal-up reveal-up-delay-1 pt-10">
           <SectionHeading
             eyebrow="Ommabop kategoriyalar"
-            title="Bir klikda kerakli bo'limga o'ting"
-            description="Asosiy bo'limlar tez topilishi uchun icon, rang va vizual assetlar bir xil tizimga keltirildi."
-            ctaLabel="Barcha katalog"
+            title="Siz qidiradigan bo'limlar shu yerda"
+            description="Har bir bo'lim katta vizual, toza fon va kamroq matn bilan qayta yig'ildi."
+            ctaLabel="Katalog"
             ctaHref="/catalog"
           />
 
-          <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
             {categories.slice(0, 8).map((category, index) => (
               <Link
                 key={category.slug}
                 href={`/catalog?category=${category.slug}`}
-                className="relative flex min-h-[108px] items-center justify-between gap-3 overflow-hidden rounded-[22px] border border-[#dde6f0] bg-white px-4 py-4 transition hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(13,31,55,0.08)] sm:min-h-[120px] sm:gap-4 sm:rounded-[24px] sm:px-5 sm:py-5"
+                className="group relative overflow-hidden rounded-[28px] border border-[#dfe7f1] bg-white px-5 py-5 shadow-[0_14px_32px_rgba(13,31,55,0.05)] transition hover:-translate-y-1 hover:shadow-[0_22px_44px_rgba(13,31,55,0.08)]"
               >
                 <div
-                  className="absolute -right-6 -top-3 h-20 w-20 opacity-[0.08]"
+                  className="absolute -right-8 -top-4 h-24 w-24 opacity-[0.07]"
                   style={{
                     backgroundImage: "url('/brand/aloo-mark-dark.png')",
                     backgroundPosition: "center",
@@ -337,24 +368,24 @@ export default async function Home() {
                     backgroundSize: "contain",
                   }}
                 />
-                <div className="min-w-0 pr-14 sm:pr-20">
-                  <p className="text-base font-semibold leading-6 text-foreground sm:text-lg sm:leading-7">
+                <div className="relative z-10 min-h-[120px] pr-20">
+                  <p className="text-lg font-semibold tracking-tight text-foreground">
                     {category.name}
                   </p>
-                  <p className="mt-1 text-[12px] text-muted sm:text-sm">
+                  <p className="mt-2 text-sm leading-6 text-muted">
                     {categoryCaptions[index] ?? category.description}
                   </p>
                 </div>
-                <div className="pointer-events-none absolute bottom-1 right-1 h-[88px] w-[112px] shrink-0 sm:bottom-2 sm:right-2 sm:h-[100px] sm:w-[128px]">
+                <div className="pointer-events-none absolute bottom-3 right-3 h-[108px] w-[120px]">
                   <div
-                    className="absolute inset-5 rounded-full opacity-80 blur-2xl"
+                    className="absolute inset-4 rounded-full blur-2xl opacity-80"
                     style={{
                       background: `radial-gradient(circle, ${category.toneTo} 0%, transparent 72%)`,
                     }}
                   />
                   {categoryIllustrations[category.slug] ? (
                     <div
-                      className="relative h-full w-full bg-center bg-contain bg-no-repeat"
+                      className="relative h-full w-full bg-contain bg-bottom bg-no-repeat transition duration-300 group-hover:scale-105"
                       style={{
                         backgroundImage: `url('${categoryIllustrations[category.slug]}')`,
                       }}
@@ -366,85 +397,181 @@ export default async function Home() {
           </div>
         </section>
 
-        <section id="new-arrivals" className="shell reveal-up reveal-up-delay-2 pt-9">
+        <section id="new-arrivals" className="shell reveal-up reveal-up-delay-2 pt-10">
           <SectionHeading
-            eyebrow="Yangiliklar"
-            title="Yangi kelgan smartfonlar va tez sotilayotgan modellar"
-            description="Har kartada toza vizual, kattaroq mahsulot rasmi va tez tushuniladigan narx bloklari ko'rsatiladi."
-            ctaLabel="Katalogga o'tish"
-            ctaHref="/catalog"
+            eyebrow="Yangi kelganlar"
+            title="Kattaroq rasm va aniqroq narx bilan mahsulot kartalari"
+            description="Kartalar qisqartirildi, rasmlar kattalashtirildi va xarid oqimi tezroq ko'rinadigan bo'ldi."
+            ctaLabel="Barcha smartfonlar"
+            ctaHref="/catalog?category=smartfonlar"
           />
 
-          <div className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 md:grid md:overflow-visible xl:grid-cols-4">
-            {visibleNewItems.map((product) => (
-              <div
-                key={product.id ?? product.slug}
-                className="min-w-[280px] snap-start md:min-w-0"
-              >
-                <ProductCard product={product} />
-              </div>
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {curatedNewItems.slice(0, 4).map((product) => (
+              <ProductCard key={product.id ?? product.slug} product={product} />
             ))}
           </div>
         </section>
 
-        <section id="editorial" className="shell reveal-up reveal-up-delay-2 pt-9">
+        {brandHighlights.length > 0 ? (
+          <section id="about" className="shell reveal-up reveal-up-delay-2 pt-10">
+            <SectionHeading
+              eyebrow="Brend tanlovi"
+              title="Asosiy brendlar uchun alohida premium bloklar"
+              description="Brendlar aralashib ketmasligi uchun asosiy yo'nalishlar mustaqil showcase bloklarda ko'rsatildi."
+            />
+
+            <div className="grid gap-4 xl:grid-cols-3">
+              {brandHighlights.map((item) => (
+                <Link
+                  key={item.brand}
+                  href={`/catalog?brand=${encodeURIComponent(item.brand)}`}
+                  className="group overflow-hidden rounded-[30px] border border-line bg-white shadow-[0_18px_40px_rgba(13,31,55,0.06)] transition hover:-translate-y-1 hover:shadow-[0_24px_52px_rgba(13,31,55,0.1)]"
+                >
+                  <div className="border-b border-line px-6 pb-5 pt-6" style={{ background: item.accent }}>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-accent">
+                      {item.eyebrow}
+                    </p>
+                    <div className="mt-3 flex items-start justify-between gap-4">
+                      <div className="min-w-0">
+                        <h3 className="font-display text-[2rem] font-semibold tracking-[-0.05em] text-foreground">
+                          {item.brand}
+                        </h3>
+                        <p className="mt-2 text-sm leading-7 text-muted">{item.description}</p>
+                      </div>
+                      <span className="rounded-full border border-accent/12 bg-white/80 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
+                        {item.product.heroLabel}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-4">
+                    <ProductVisual
+                      size="compact"
+                      kind={item.product.kind}
+                      label={item.product.heroLabel}
+                      toneFrom={item.product.toneFrom}
+                      toneTo={item.product.toneTo}
+                      imageUrl={item.product.imageUrl}
+                      imageAlt={item.product.name}
+                      productName={item.product.name}
+                      brand={item.product.brand}
+                      categorySlug={item.product.categorySlug}
+                    />
+
+                    <div className="mt-4 flex items-center justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="line-clamp-2 font-display text-[1.05rem] font-semibold leading-6 tracking-tight text-foreground transition group-hover:text-accent">
+                          {item.product.name}
+                        </p>
+                        <p className="mt-2 text-sm font-semibold text-foreground">
+                          {formatSum(item.product.price)}
+                        </p>
+                      </div>
+                      <span className="inline-flex items-center gap-2 text-sm font-semibold text-accent">
+                        Ko'rish
+                        <ArrowRightIcon className="h-4 w-4" />
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        <section className="shell reveal-up reveal-up-delay-3 pt-10">
+          <SectionHeading
+            eyebrow="Trenddagi modellar"
+            title="Ko'p ko'rilayotgan smartfonlar"
+            description="Ommabop modellar uchun narx, oyma-oy to'lov va mavjud filial bir qatorda ko'rsatiladi."
+            ctaLabel="Katalog"
+            ctaHref="/catalog"
+          />
+
+          <div className="grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
+            <article className="overflow-hidden rounded-[32px] bg-[linear-gradient(135deg,#0d2341_0%,#113a6d_46%,#0f67c6_100%)] p-6 text-white shadow-[0_24px_56px_rgba(8,29,56,0.18)] sm:p-8">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-white/65">
+                Smart tanlov
+              </p>
+              <h2 className="mt-4 max-w-lg font-display text-[2.4rem] font-semibold tracking-[-0.05em] text-white">
+                Premium xarid oqimini soddalashtiradigan storefront
+              </h2>
+              <p className="mt-4 max-w-lg text-sm leading-8 text-white/78">
+                Brend, narx, aylik to'lov va stock bir ko'rishda tushunarli bo'lishi uchun sahifa qayta yig'ildi.
+              </p>
+
+              <div className="mt-7 grid gap-3 sm:grid-cols-3">
+                <div className="rounded-[22px] border border-white/10 bg-white/10 px-4 py-4">
+                  <p className="text-[11px] uppercase tracking-[0.18em] text-white/60">Mahsulot</p>
+                  <p className="mt-2 text-2xl font-semibold">{products.length}+</p>
+                </div>
+                <div className="rounded-[22px] border border-white/10 bg-white/10 px-4 py-4">
+                  <p className="text-[11px] uppercase tracking-[0.18em] text-white/60">Brend</p>
+                  <p className="mt-2 text-2xl font-semibold">{brands.length}+</p>
+                </div>
+                <div className="rounded-[22px] border border-white/10 bg-white/10 px-4 py-4">
+                  <p className="text-[11px] uppercase tracking-[0.18em] text-white/60">Yetkazish</p>
+                  <p className="mt-2 text-2xl font-semibold">90 min</p>
+                </div>
+              </div>
+            </article>
+
+            <div className="space-y-3">
+              {spotlightProducts.map((product, index) => (
+                <Link
+                  key={product.slug}
+                  href={`/product/${product.slug}`}
+                  className="flex items-center justify-between gap-4 rounded-[26px] border border-line bg-white px-5 py-5 shadow-[0_14px_34px_rgba(13,31,55,0.05)] transition hover:-translate-y-0.5 hover:border-accent/25"
+                >
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted">
+                      0{index + 1}
+                    </p>
+                    <p className="mt-2 line-clamp-1 font-display text-[1.12rem] font-semibold tracking-tight text-foreground">
+                      {product.name}
+                    </p>
+                    <p className="mt-2 text-sm text-muted">
+                      12 oy: {formatMonthly(product.installment12 ?? product.monthlyPrice)}
+                    </p>
+                  </div>
+                  <span className="shrink-0 text-base font-semibold text-accent">
+                    {formatSum(product.price)}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="shell reveal-up reveal-up-delay-3 pt-10">
           <SectionHeading
             eyebrow="alooBlog"
-            title="Yangilik, maslahat va sotuv g'oyalarini bir joyga yig'dik"
-            description="Mahsulot tanlash, aksiyalar va texno yangiliklar bir xil uslubda alooBlog ichida jamlanadi."
-            ctaLabel="Barcha maqolalar"
+            title="Blog bo'limi ham storefront bilan bir xil uslubga o'tdi"
+            description="Yangiliklar va maslahatlar alohida, lekin sayt bilan bir xil premium visual tizimda ko'rsatiladi."
+            ctaLabel="alooBlog"
             ctaHref="/blog"
           />
 
           <div className="grid gap-4 xl:grid-cols-[1.08fr_0.92fr]">
-            <article className="relative overflow-hidden rounded-[32px] border border-line bg-[linear-gradient(145deg,#11305b_0%,#177ddc_56%,#dfefff_100%)] p-6 text-white shadow-[0_18px_42px_rgba(10,44,96,0.14)] sm:p-8">
-              <div
-                className="absolute -right-10 bottom-0 h-44 w-44 opacity-[0.14]"
-                style={{
-                  backgroundImage: "url('/brand/aloo-mark-light.png')",
-                  backgroundPosition: "center",
-                  backgroundRepeat: "no-repeat",
-                  backgroundSize: "contain",
-                }}
-              />
-              <div className="relative max-w-[480px]">
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-white/70">
-                  {featureArticle?.tag ?? "Editorial"}
-                </p>
-                <h2 className="mt-4 font-display text-4xl font-semibold tracking-tight text-white sm:text-[2.8rem]">
-                  {featureArticle?.title ?? "2026-yil uchun eng yaxshi smartfon tanlovi"}
-                </h2>
-                <p className="mt-4 text-base leading-8 text-white/82">
-                  {featureArticle?.summary ??
-                    "Aksiyalar, premium modellar va xarid ssenariylari bo'yicha foydali kontent saytning o'zida chiqadi."}
-                </p>
-
-                <div className="mt-8 grid gap-3 sm:grid-cols-3">
-                  {[
-                    { label: "Ko'rilgan", value: "1.2k+" },
-                    { label: "Maqola", value: `${articles.length}+` },
-                    { label: "Kategoriya", value: "Guide" },
-                  ].map((item) => (
-                    <div
-                      key={item.label}
-                      className="rounded-[20px] border border-white/15 bg-white/10 px-4 py-4"
-                    >
-                      <p className="text-xs uppercase tracking-[0.2em] text-white/64">
-                        {item.label}
-                      </p>
-                      <p className="mt-2 text-xl font-semibold text-white">{item.value}</p>
-                    </div>
-                  ))}
-                </div>
-
-                <Link
-                  href="/blog"
-                  className="mt-8 inline-flex items-center gap-2 rounded-[18px] bg-white px-5 py-3 text-sm font-semibold text-accent transition hover:bg-[#eef6ff]"
-                >
-                  alooBlogga o'tish
-                  <ArrowRightIcon className="h-4 w-4" />
-                </Link>
-              </div>
+            <article className="overflow-hidden rounded-[32px] bg-[linear-gradient(145deg,#0f2b52_0%,#0f67c6_58%,#dbeeff_100%)] p-8 text-white shadow-[0_22px_54px_rgba(10,44,96,0.16)]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/68">
+                {featureArticle?.tag ?? "Editorial"}
+              </p>
+              <h2 className="mt-4 max-w-[520px] font-display text-[2.5rem] font-semibold tracking-[-0.05em] text-white">
+                {featureArticle?.title ?? "2026-yil uchun eng yaxshi smartfon tanlovi"}
+              </h2>
+              <p className="mt-4 max-w-[520px] text-sm leading-8 text-white/78">
+                {featureArticle?.summary ??
+                  "Smartfon tanlash, aksiyalar va xarid bo'yicha foydali kontent alooBlog ichida yig'iladi."}
+              </p>
+              <Link
+                href="/blog"
+                className="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-accent transition hover:bg-[#eef6ff]"
+              >
+                O'qishni boshlash
+                <ArrowRightIcon className="h-4 w-4" />
+              </Link>
             </article>
 
             <div className="grid gap-4">
@@ -455,10 +582,10 @@ export default async function Home() {
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">
                         {article.tag}
                       </p>
-                      <h3 className="mt-3 font-display text-2xl font-semibold text-foreground">
+                      <h3 className="mt-3 font-display text-[1.5rem] font-semibold tracking-tight text-foreground">
                         {article.title}
                       </h3>
                     </div>
@@ -479,245 +606,82 @@ export default async function Home() {
           </div>
         </section>
 
-        <section id="installment" className="shell reveal-up reveal-up-delay-3 pt-9">
-          <div className="grid gap-4 xl:grid-cols-[0.88fr_1.12fr]">
-            <article className="relative overflow-hidden rounded-[32px] bg-[linear-gradient(180deg,#10203a_0%,#153763_100%)] p-6 text-white shadow-[0_18px_40px_rgba(10,21,36,0.18)] sm:p-8">
-              <div
-                className="absolute right-0 top-0 h-40 w-40 opacity-[0.12]"
-                style={{
-                  backgroundImage: "url('/brand/aloo-mark-light.png')",
-                  backgroundPosition: "center",
-                  backgroundRepeat: "no-repeat",
-                  backgroundSize: "contain",
-                }}
-              />
-              <div className="relative">
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-white/65">
-                  Muddatli to'lov
-                </p>
-                <h2 className="mt-4 font-display text-4xl font-semibold tracking-tight text-white">
-                  Muddatli to'lov ma'lumotlari har mahsulotda ko'rinadi
-                </h2>
-                <p className="mt-4 text-base leading-8 text-white/72">
-                  6, 12 va 24 oy bo'lib to'lash summalari mahsulot kartalarida bir xil ko'rinishda
-                  chiqadi. Bu foydalanuvchi birinchi ko'rishda narxni tushunishini tezlashtiradi.
-                </p>
+        <section id="stores" className="shell reveal-up reveal-up-delay-3 pt-10">
+          <SectionHeading
+            eyebrow="Filiallar"
+            title="Qaysi filialda borligi ham aniq ko'rinadi"
+            description="Sync kelgach stock va narx bo'yicha foydali filial kartalari shu bo'limda ko'rsatiladi."
+          />
 
-                <div className="mt-7 grid gap-3">
-                  {[
-                    "Eski narx va yangi narx bir xil formatda ko'rsatiladi",
-                    "Katalog, detail va kun mahsuloti blokida bir xil ko'rinish saqlanadi",
-                      "Live sync narxi yangilansa storefront ham mos ravishda yangilanadi",
-                  ].map((item) => (
-                    <div
-                      key={item}
-                      className="rounded-[20px] border border-white/10 bg-white/8 px-4 py-4 text-sm leading-7 text-white/82"
-                    >
-                      {item}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </article>
-
-            <div className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 md:grid md:overflow-visible md:grid-cols-2">
-              {installmentProducts.map((product) => (
-                <div key={product.slug} className="min-w-[280px] snap-start md:min-w-0">
-                  <ProductCard product={product} />
-                </div>
+          <div className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
+            <div className="grid gap-4 md:grid-cols-3">
+              {(branchCards.length > 0
+                ? branchCards
+                : [
+                    {
+                      name: "Toshkent markaz",
+                      products: products.length,
+                      cheapest: Math.min(...products.map((product) => product.price)),
+                      brands: brands.slice(0, 3).join(", "),
+                    },
+                  ]
+              ).map((branch) => (
+                <article
+                  key={branch.name}
+                  className="rounded-[28px] border border-line bg-white p-6 shadow-[0_14px_32px_rgba(13,31,55,0.05)]"
+                >
+                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-[18px] bg-[#eef5ff] text-accent">
+                    <LocationIcon className="h-5 w-5" />
+                  </span>
+                  <h3 className="mt-4 font-display text-[1.55rem] font-semibold tracking-tight text-foreground">
+                    {branch.name}
+                  </h3>
+                  <p className="mt-3 text-sm leading-7 text-muted">
+                    {branch.products} ta model mavjud. Narxlar {formatSum(branch.cheapest)} dan boshlanadi.
+                  </p>
+                  <p className="mt-3 text-sm font-medium text-foreground">{branch.brands}</p>
+                </article>
               ))}
             </div>
-          </div>
-        </section>
 
-        <section className="shell reveal-up reveal-up-delay-3 pt-9">
-          <SectionHeading
-            eyebrow="Promo bloklar"
-            title="Asosiy takliflar va foydali bo'limlar"
-            description="Asosiy banner ixchamlashtirildi, muhim takliflar esa alohida bloklarga joylandi."
-          />
-
-          <div className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 lg:grid lg:overflow-visible lg:grid-cols-3">
-            {visiblePromoDeals.map((promo) => {
-              const hasDarkTone =
-                isDarkColor(promo.backgroundFrom) || isDarkColor(promo.backgroundTo);
-
-              return (
-                <Link
-                  key={promo.id ?? promo.title}
-                  href={promo.ctaHref}
-                  className="min-w-[282px] snap-start rounded-[28px] border border-line p-6 shadow-[0_12px_30px_rgba(13,31,55,0.06)] transition hover:-translate-y-1 lg:min-w-0"
-                  style={{
-                    background: `linear-gradient(180deg, ${promo.backgroundFrom} 0%, ${promo.backgroundTo} 100%)`,
-                  }}
-                >
-                  <p
-                    className={`text-xs font-semibold uppercase tracking-[0.24em] ${
-                      hasDarkTone ? "text-white/72" : "text-accent"
-                    }`}
-                  >
-                    {promo.eyebrow}
-                  </p>
-                  <h3
-                    className={`mt-4 font-display text-3xl font-semibold ${
-                      hasDarkTone ? "text-white" : "text-foreground"
-                    }`}
-                  >
-                    {promo.title}
-                  </h3>
-                  <p
-                    className={`mt-3 text-sm leading-7 ${
-                      hasDarkTone ? "text-white/76" : "text-muted"
-                    }`}
-                  >
-                    {sanitizePublicCopy(
-                      promo.description,
-                      "Qulay narx, tezkor yetkazish va original qurilmalar bir joyda jamlandi.",
-                    )}
-                  </p>
-                  <p
-                    className={`mt-5 text-sm font-semibold ${
-                      hasDarkTone ? "text-white" : "text-accent"
-                    }`}
-                  >
-                    {promo.ctaLabel}
-                  </p>
-                </Link>
-              );
-            })}
-          </div>
-        </section>
-
-        <section id="stores" className="shell reveal-up reveal-up-delay-3 pt-9">
-          <SectionHeading
-            eyebrow="Do'konlar"
-            title="Filiallar kesimida ham ishonch uyg'otadigan blok"
-            description="Sync'dan kelgan mahsulotlar qaysi filialda borligi shu bo'limda ko'rsatiladi."
-          />
-
-          <div className="grid gap-4 lg:grid-cols-3">
-            {(branchCards.length > 0
-              ? branchCards
-              : [
-                  {
-                    name: "Toshkent markaz",
-                    products: products.length,
-                    cheapest: Math.min(...products.map((product) => product.price)),
-                    brands: brands.slice(0, 3).join(", "),
-                  },
-                ]
-            ).map((branch) => (
-              <article
-                key={branch.name}
-                className="rounded-[28px] border border-line bg-white p-6 shadow-[0_12px_30px_rgba(13,31,55,0.06)]"
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <div className="inline-flex h-12 w-12 items-center justify-center rounded-[18px] bg-[#fff2ec] text-support">
-                    <LocationIcon className="h-5 w-5" />
-                  </div>
-                  <span className="rounded-full bg-[#eef6ff] px-3 py-1 text-[11px] font-semibold text-accent">
-                    {branch.products} ta model
-                  </span>
-                </div>
-                <h3 className="mt-4 font-display text-3xl font-semibold text-foreground">
-                  {branch.name}
-                </h3>
-                <p className="mt-3 text-sm leading-7 text-muted">
-                  Eng qulay narxlardan biri {formatSum(branch.cheapest)} dan boshlanadi. Asosiy
-                  brendlar: {branch.brands}.
-                </p>
-                <Link
-                  href="/catalog"
-                  className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-accent"
-                >
-                  Mahsulotlarni ko'rish
-                  <ArrowRightIcon className="h-4 w-4" />
-                </Link>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section id="about" className="shell reveal-up reveal-up-delay-3 pt-9">
-          <div className="grid gap-4 xl:grid-cols-[0.96fr_1.04fr]">
-            <article className="rounded-[32px] bg-[linear-gradient(180deg,#ffffff_0%,#eef6ff_100%)] p-6 shadow-[0_12px_30px_rgba(13,31,55,0.06)] sm:p-8">
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
-                Biz haqimizda
-              </p>
-              <h2 className="mt-4 font-display text-4xl font-semibold tracking-tight text-foreground">
-                aloo smartfon xaridi uchun qulay va sodda platformaga aylanmoqda
-              </h2>
-              <p className="mt-4 text-base leading-8 text-muted">
-                Bosh sahifa, qidiruv, kirish, savat, taqqoslash va alooBlog bo'limlari bir
-                oqimda ishlashi uchun bir tizimga yig'ildi.
-              </p>
-
-              <div className="mt-7 grid gap-3 sm:grid-cols-3">
-                {[
-                  { label: "Mahsulot", value: `${products.length}+` },
-                  { label: "Brend", value: `${brands.length}+` },
-                  { label: "Maqola", value: `${articles.length}+` },
-                ].map((item) => (
-                  <div key={item.label} className="rounded-[22px] bg-white px-4 py-5">
-                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted">
-                      {item.label}
-                    </p>
-                    <p className="mt-2 text-3xl font-semibold text-foreground">{item.value}</p>
-                  </div>
-                ))}
-              </div>
-            </article>
-
-            <article className="rounded-[32px] border border-line bg-white p-6 shadow-[0_12px_30px_rgba(13,31,55,0.06)] sm:p-8">
+            <article className="rounded-[32px] bg-[linear-gradient(180deg,#ffffff_0%,#eef6ff_100%)] p-7 shadow-[0_16px_38px_rgba(13,31,55,0.06)]">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
-                    Trenddagi modellar
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-accent">
+                    Qo'llab-quvvatlash
                   </p>
-                  <h2 className="mt-4 font-display text-4xl font-semibold tracking-tight text-foreground">
-                    Ko'p ko'rilayotgan smartfonlar
+                  <h2 className="mt-3 font-display text-[2rem] font-semibold tracking-[-0.05em] text-foreground">
+                    Xarid bo'yicha yordam kerakmi?
                   </h2>
                 </div>
-                <span className="inline-flex h-12 w-12 items-center justify-center rounded-[18px] bg-[#f4f8ff] text-accent">
+                <span className="inline-flex h-12 w-12 items-center justify-center rounded-[18px] bg-white text-accent shadow-[0_10px_24px_rgba(13,31,55,0.06)]">
                   <TrendUpIcon className="h-5 w-5" />
                 </span>
               </div>
 
-              <div className="mt-6 space-y-3">
-                {spotlightProducts.map((product, index) => (
-                  <Link
-                    key={product.slug}
-                    href={`/product/${product.slug}`}
-                    className="flex items-center justify-between gap-4 rounded-[22px] border border-line bg-[#fbfdff] px-4 py-4 transition hover:border-accent/25 hover:bg-white"
-                  >
-                    <div className="min-w-0">
-                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">
-                        0{index + 1}
-                      </p>
-                      <p className="mt-1 line-clamp-1 text-base font-semibold text-foreground">
-                        {product.name}
-                      </p>
-                      <p className="mt-1 text-sm text-muted">
-                        12 oy: {formatMonthly(product.installment12 ?? product.monthlyPrice)}
-                      </p>
-                    </div>
-                    <span className="text-sm font-semibold text-accent">
-                      {formatSum(product.price)}
-                    </span>
-                  </Link>
-                ))}
-              </div>
+              <p className="mt-4 text-sm leading-8 text-muted">
+                Call-markaz, ijtimoiy tarmoqlar va alooBlog orqali foydalanuvchini bitta visual oqimda olib boradigan platforma tayyorlandi.
+              </p>
 
-              <div className="mt-6 flex flex-wrap gap-2">
-                {brands.slice(0, 6).map((brand) => (
-                  <Link
-                    key={brand}
-                    href={`/catalog?brand=${encodeURIComponent(brand)}`}
-                    className="rounded-full border border-line bg-white px-4 py-2 text-sm font-medium text-foreground transition hover:border-accent/30 hover:text-accent"
-                  >
-                    {brand}
-                  </Link>
-                ))}
+              <div className="mt-6 grid gap-3">
+                <a
+                  href="tel:+998781220800"
+                  className="rounded-[22px] border border-line bg-white px-5 py-4 text-sm font-semibold text-foreground shadow-[0_10px_24px_rgba(13,31,55,0.05)] transition hover:border-accent/25 hover:text-accent"
+                >
+                  Call markaz: +998 78 122 08 00
+                </a>
+                <Link
+                  href="/catalog"
+                  className="rounded-[22px] border border-line bg-white px-5 py-4 text-sm font-semibold text-foreground shadow-[0_10px_24px_rgba(13,31,55,0.05)] transition hover:border-accent/25 hover:text-accent"
+                >
+                  Katalogni ko'rish
+                </Link>
+                <Link
+                  href="/profile"
+                  className="rounded-[22px] border border-line bg-white px-5 py-4 text-sm font-semibold text-foreground shadow-[0_10px_24px_rgba(13,31,55,0.05)] transition hover:border-accent/25 hover:text-accent"
+                >
+                  Shaxsiy kabinet
+                </Link>
               </div>
             </article>
           </div>

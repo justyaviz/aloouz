@@ -64,10 +64,11 @@ export function HeroCarousel({ slides }: { slides: HeroCarouselSlide[] }) {
   };
 
   return (
-    <div className="reveal-up relative overflow-hidden rounded-[26px] border border-white/12 bg-[linear-gradient(125deg,#0b3a72_0%,#1487e3_50%,#0b2c59_100%)] p-3 text-white shadow-[0_22px_54px_rgba(10,44,96,0.18)] sm:rounded-[28px] sm:p-4">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.24),transparent_30%)]" />
+    <div className="reveal-up relative overflow-hidden rounded-[30px] border border-white/12 bg-[linear-gradient(130deg,#081d38_0%,#0f67c6_48%,#1a8ef0_100%)] p-4 text-white shadow-[0_28px_65px_rgba(8,29,56,0.22)] sm:rounded-[34px] sm:p-5">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.22),transparent_32%)]" />
+      <div className="absolute inset-y-0 right-[34%] w-px bg-white/10" />
       <div
-        className="absolute -right-10 top-6 h-36 w-36 opacity-[0.1]"
+        className="absolute -right-10 top-4 h-40 w-40 opacity-[0.1]"
         style={{
           backgroundImage: "url('/brand/aloo-mark-light.png')",
           backgroundPosition: "center",
@@ -106,7 +107,7 @@ export function HeroCarousel({ slides }: { slides: HeroCarouselSlide[] }) {
         </>
       ) : null}
 
-      <div className="relative min-h-[12rem] sm:min-h-[15.5rem] lg:min-h-[15.9rem]">
+      <div className="relative min-h-[13rem] sm:min-h-[16.4rem] lg:min-h-[17.2rem]">
         {slides.map((slide, index) => (
           <div
             key={slide.id}
@@ -115,46 +116,46 @@ export function HeroCarousel({ slides }: { slides: HeroCarouselSlide[] }) {
               index === activeIndex ? "opacity-100" : "pointer-events-none opacity-0",
             )}
           >
-            <div className="grid h-full gap-4 lg:grid-cols-[0.96fr_1.04fr] lg:items-center">
-              <div className="relative z-10 flex flex-col justify-center">
-                <div className="flex flex-wrap items-center gap-3">
-                  <span className="rounded-full bg-white/12 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em]">
+            <div className="grid h-full gap-5 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
+              <div className="relative z-10 flex flex-col justify-center px-1">
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <span className="rounded-full border border-white/14 bg-white/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em]">
                     aloo
                   </span>
                   {slide.badge ? (
-                    <span className="rounded-full bg-white/18 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-white">
+                    <span className="rounded-full border border-white/12 bg-white/18 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-white">
                       {slide.badge}
                     </span>
                   ) : null}
                 </div>
 
-                <p className="mt-2.5 text-[11px] font-semibold uppercase tracking-[0.24em] text-white/70">
+                <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.26em] text-white/66">
                   {slide.eyebrow}
                 </p>
-                <h1 className="mt-2 max-w-xl font-display text-[1.55rem] font-semibold leading-[1.04] tracking-tight sm:text-[1.9rem] lg:text-[2.15rem]">
+                <h1 className="mt-2.5 max-w-xl font-display text-[1.65rem] font-semibold leading-[1.02] tracking-[-0.05em] sm:text-[2.05rem] lg:text-[2.45rem]">
                   {slide.title}
                 </h1>
-                <p className="mt-2 max-w-md text-[13px] leading-6 text-white/84 sm:text-sm">
+                <p className="mt-3 max-w-md text-[13px] leading-6 text-white/80 sm:text-[14px] sm:leading-7">
                   {slide.description}
                 </p>
 
-                <div className="mt-3.5 flex flex-col gap-3 sm:flex-row">
+                <div className="mt-5 flex flex-col gap-3 sm:flex-row">
                   <Link
                     href={slide.primaryHref}
-                    className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[16px] bg-support px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_rgba(255,107,43,0.28)] transition hover:bg-[#f05a1c]"
+                    className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[18px] bg-support px-5 py-3.5 text-sm font-semibold text-white shadow-[0_14px_30px_rgba(255,107,43,0.28)] transition hover:bg-[#f05a1c]"
                   >
                     {slide.primaryLabel}
                   </Link>
                   <Link
                     href={slide.secondaryHref}
-                    className="hidden items-center justify-center whitespace-nowrap rounded-[16px] border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/16 sm:inline-flex"
+                    className="hidden items-center justify-center whitespace-nowrap rounded-[18px] border border-white/20 bg-white/10 px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-white/16 sm:inline-flex"
                   >
                     {slide.secondaryLabel}
                   </Link>
                 </div>
 
-                <div className="mt-3.5 hidden gap-2 sm:grid sm:grid-cols-3">
-                  <div className="rounded-[18px] border border-white/16 bg-white/10 px-4 py-3">
+                <div className="mt-5 hidden gap-2.5 sm:grid sm:grid-cols-3">
+                  <div className="rounded-[20px] border border-white/14 bg-white/10 px-4 py-3.5 backdrop-blur-sm">
                     <p className="text-[11px] uppercase tracking-[0.2em] text-white/68">
                       Narx
                     </p>
@@ -162,7 +163,7 @@ export function HeroCarousel({ slides }: { slides: HeroCarouselSlide[] }) {
                       {slide.price ? formatSum(slide.price) : slide.accentLabel ?? "Aksiya"}
                     </p>
                   </div>
-                  <div className="rounded-[18px] border border-white/16 bg-white/10 px-4 py-3">
+                  <div className="rounded-[20px] border border-white/14 bg-white/10 px-4 py-3.5 backdrop-blur-sm">
                     <p className="text-[11px] uppercase tracking-[0.2em] text-white/68">
                       12 oy
                     </p>
@@ -170,7 +171,7 @@ export function HeroCarousel({ slides }: { slides: HeroCarouselSlide[] }) {
                       {slide.monthlyPrice ? formatMonthly(slide.monthlyPrice) : "Qulay to'lov"}
                     </p>
                   </div>
-                  <div className="rounded-[18px] border border-white/16 bg-white/10 px-4 py-3">
+                  <div className="rounded-[20px] border border-white/14 bg-white/10 px-4 py-3.5 backdrop-blur-sm">
                     <p className="text-[11px] uppercase tracking-[0.2em] text-white/68">
                       Yetkazish
                     </p>
@@ -199,7 +200,7 @@ export function HeroCarousel({ slides }: { slides: HeroCarouselSlide[] }) {
       </div>
 
       {slides.length > 1 ? (
-        <div className="relative z-10 mt-2.5 flex justify-center gap-2">
+        <div className="relative z-10 mt-3 flex justify-center gap-2">
           {slides.map((slide, index) => (
             <button
               key={slide.id}
