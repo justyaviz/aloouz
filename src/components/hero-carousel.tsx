@@ -64,11 +64,11 @@ export function HeroCarousel({ slides }: { slides: HeroCarouselSlide[] }) {
   };
 
   return (
-    <div className="reveal-up relative overflow-hidden rounded-[30px] border border-[#1d4d80] bg-[linear-gradient(132deg,#08172c_0%,#0d2b50_24%,#1387e6_68%,#71c7ff_100%)] p-4 text-white shadow-[0_30px_60px_rgba(5,19,37,0.2)] sm:rounded-[34px] sm:p-5">
+    <div className="reveal-up relative overflow-hidden rounded-[28px] border border-[#1d4d80] bg-[linear-gradient(138deg,#07111f_0%,#0d2b50_34%,#1387e6_78%,#8bd3ff_100%)] p-3 text-white shadow-[0_26px_52px_rgba(5,19,37,0.18)] sm:rounded-[30px] sm:p-3.5">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.22),transparent_34%)]" />
       <div className="absolute inset-y-0 right-[34%] hidden w-px bg-white/14 lg:block" />
       <div
-        className="absolute -right-10 top-4 h-40 w-40 opacity-[0.08]"
+        className="absolute -right-10 top-4 h-32 w-32 opacity-[0.08]"
         style={{
           backgroundImage: "url('/brand/aloo-mark-light.png')",
           backgroundPosition: "center",
@@ -77,7 +77,7 @@ export function HeroCarousel({ slides }: { slides: HeroCarouselSlide[] }) {
         }}
       />
       <div
-        className="absolute -left-8 bottom-4 h-24 w-24 opacity-[0.08]"
+        className="absolute -left-8 bottom-4 h-20 w-20 opacity-[0.08]"
         style={{
           backgroundImage: "url('/brand/aloo-mark-light.png')",
           backgroundPosition: "center",
@@ -85,15 +85,15 @@ export function HeroCarousel({ slides }: { slides: HeroCarouselSlide[] }) {
           backgroundSize: "contain",
         }}
       />
-      <div className="absolute left-6 top-6 h-24 w-24 rounded-full bg-white/20 blur-2xl" />
-      <div className="absolute bottom-8 right-8 h-28 w-28 rounded-full bg-black/18 blur-3xl" />
+      <div className="absolute left-6 top-6 h-20 w-20 rounded-full bg-white/18 blur-2xl" />
+      <div className="absolute bottom-8 right-8 h-24 w-24 rounded-full bg-black/18 blur-3xl" />
 
       {slides.length > 1 ? (
         <>
           <button
             type="button"
             onClick={goPrevious}
-            className="absolute left-4 top-1/2 z-20 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/18 bg-white/90 text-[#0b2952] shadow-[0_10px_24px_rgba(10,24,44,0.14)] lg:inline-flex"
+            className="absolute left-3 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/18 bg-white/90 text-[#0b2952] shadow-[0_10px_24px_rgba(10,24,44,0.14)] lg:inline-flex"
             aria-label="Oldingi banner"
           >
             <ArrowLeftIcon className="h-5 w-5" />
@@ -101,7 +101,7 @@ export function HeroCarousel({ slides }: { slides: HeroCarouselSlide[] }) {
           <button
             type="button"
             onClick={goNext}
-            className="absolute right-4 top-1/2 z-20 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/18 bg-white/90 text-[#0b2952] shadow-[0_10px_24px_rgba(10,24,44,0.14)] lg:inline-flex"
+            className="absolute right-3 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/18 bg-white/90 text-[#0b2952] shadow-[0_10px_24px_rgba(10,24,44,0.14)] lg:inline-flex"
             aria-label="Keyingi banner"
           >
             <ArrowRightIcon className="h-5 w-5" />
@@ -109,7 +109,7 @@ export function HeroCarousel({ slides }: { slides: HeroCarouselSlide[] }) {
         </>
       ) : null}
 
-      <div className="relative min-h-[13rem] sm:min-h-[16.4rem] lg:min-h-[17.2rem]">
+      <div className="relative min-h-[11rem] sm:min-h-[12.6rem] lg:min-h-[13.4rem]">
         {slides.map((slide, index) => (
           <div
             key={slide.id}
@@ -118,67 +118,65 @@ export function HeroCarousel({ slides }: { slides: HeroCarouselSlide[] }) {
               index === activeIndex ? "opacity-100" : "pointer-events-none opacity-0",
             )}
           >
-            <div className="grid h-full gap-5 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
+            <div className="grid h-full gap-4 lg:grid-cols-[0.98fr_1.02fr] lg:items-center">
               <div className="relative z-10 flex flex-col justify-center px-1">
                 <div className="flex flex-wrap items-center gap-2.5">
-                  <span className="rounded-full border border-white/14 bg-white/12 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-white">
+                  <span className="rounded-full border border-white/14 bg-white/12 px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.22em] text-white">
                     aloo
                   </span>
                   {slide.badge ? (
-                    <span className="rounded-full border border-white/14 bg-[#07111f]/16 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/92">
+                    <span className="rounded-full border border-white/14 bg-[#07111f]/16 px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.22em] text-white/92">
                       {slide.badge}
                     </span>
                   ) : null}
                 </div>
 
-                <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.26em] text-white/66">
+                <p className="mt-2.5 text-[10px] font-semibold uppercase tracking-[0.24em] text-white/66">
                   {slide.eyebrow}
                 </p>
-                <h1 className="mt-2.5 max-w-xl font-display text-[1.65rem] font-semibold leading-[1.02] tracking-[-0.05em] text-white sm:text-[2.05rem] lg:text-[2.45rem]">
+                <h1 className="mt-2 max-w-xl font-display text-[1.42rem] font-semibold leading-[1.02] tracking-[-0.05em] text-white sm:text-[1.7rem] lg:text-[2rem]">
                   {slide.title}
                 </h1>
-                <p className="mt-3 max-w-md text-[13px] leading-6 text-white/80 sm:text-[14px] sm:leading-7">
+                <p className="mt-2.5 max-w-md text-[12px] leading-5 text-white/78 sm:text-[13px] sm:leading-6">
                   {slide.description}
                 </p>
 
-                <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+                <div className="mt-4 flex flex-col gap-2.5 sm:flex-row">
                   <Link
                     href={slide.primaryHref}
-                    className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[18px] bg-white px-5 py-3.5 text-sm font-semibold text-[#0b2952] shadow-[0_14px_30px_rgba(5,19,37,0.18)] transition hover:bg-[#ecf6ff]"
+                    className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[16px] bg-[#07111f] px-4 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_rgba(5,19,37,0.18)] transition hover:bg-[#102947]"
                   >
                     {slide.primaryLabel}
                   </Link>
                   <Link
                     href={slide.secondaryHref}
-                    className="hidden items-center justify-center whitespace-nowrap rounded-[18px] border border-white/18 bg-white/10 px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-white/14 sm:inline-flex"
+                    className="hidden items-center justify-center whitespace-nowrap rounded-[16px] border border-white/14 bg-white/88 px-4 py-3 text-sm font-semibold text-[#0b2952] transition hover:bg-white sm:inline-flex"
                   >
                     {slide.secondaryLabel}
                   </Link>
                 </div>
 
-                <div className="mt-5 hidden gap-2.5 sm:grid sm:grid-cols-3">
-                  <div className="rounded-[20px] border border-white/12 bg-white/10 px-4 py-3.5 backdrop-blur-sm">
-                    <p className="text-[11px] uppercase tracking-[0.2em] text-white/60">Narx</p>
-                    <p className="mt-1.5 text-sm font-semibold text-white sm:text-base">
+                <div className="mt-4 hidden flex-wrap gap-2 sm:flex">
+                  <div className="rounded-[16px] border border-white/12 bg-white/10 px-3.5 py-2.5 backdrop-blur-sm">
+                    <p className="text-[10px] uppercase tracking-[0.18em] text-white/60">Narx</p>
+                    <p className="mt-1 text-sm font-semibold text-white">
                       {slide.price ? formatSum(slide.price) : slide.accentLabel ?? "Aksiya"}
                     </p>
                   </div>
-                  <div className="rounded-[20px] border border-white/12 bg-white/10 px-4 py-3.5 backdrop-blur-sm">
-                    <p className="text-[11px] uppercase tracking-[0.2em] text-white/60">12 oy</p>
-                    <p className="mt-1.5 text-sm font-semibold text-white sm:text-base">
+                  <div className="rounded-[16px] border border-white/12 bg-white/10 px-3.5 py-2.5 backdrop-blur-sm">
+                    <p className="text-[10px] uppercase tracking-[0.18em] text-white/60">12 oy</p>
+                    <p className="mt-1 text-sm font-semibold text-white">
                       {slide.monthlyPrice ? formatMonthly(slide.monthlyPrice) : "Qulay to'lov"}
                     </p>
                   </div>
-                  <div className="rounded-[20px] border border-white/12 bg-white/10 px-4 py-3.5 backdrop-blur-sm">
-                    <p className="text-[11px] uppercase tracking-[0.2em] text-white/60">
-                      Yetkazish
-                    </p>
-                    <p className="mt-1.5 text-sm font-semibold text-white sm:text-base">90 min</p>
+                  <div className="rounded-[16px] border border-white/12 bg-white/10 px-3.5 py-2.5 backdrop-blur-sm">
+                    <p className="text-[10px] uppercase tracking-[0.18em] text-white/60">Yetkazish</p>
+                    <p className="mt-1 text-sm font-semibold text-white">90 min</p>
                   </div>
                 </div>
               </div>
 
-              <div className="relative z-10 lg:pl-2">
+              <div className="relative z-10 lg:pl-1">
                 <ProductVisual
                   size="hero"
                   kind={slide.kind}
@@ -198,7 +196,7 @@ export function HeroCarousel({ slides }: { slides: HeroCarouselSlide[] }) {
       </div>
 
       {slides.length > 1 ? (
-        <div className="relative z-10 mt-3 flex justify-center gap-2">
+        <div className="relative z-10 mt-2.5 flex justify-center gap-2">
           {slides.map((slide, index) => (
             <button
               key={slide.id}
