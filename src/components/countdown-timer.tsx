@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
 function getTimeLeft() {
   const now = new Date();
@@ -38,14 +38,38 @@ export function CountdownTimer({ className, compact = false }: CountdownTimerPro
     };
   }, []);
 
+  if (compact) {
+    const groups = [timeLeft.hours, timeLeft.minutes, timeLeft.seconds];
+
+    return (
+      <div className={className}>
+        <div className="flex items-center gap-1.5">
+          {groups.map((group, groupIndex) => (
+            <Fragment key={`${group}-${groupIndex}`}>
+              {group.split("").map((digit, digitIndex) => (
+                <div
+                  key={`${groupIndex}-${digitIndex}`}
+                  className="flex h-11 w-11 items-center justify-center rounded-[12px] border border-[#dfe6ef] bg-[#f5f7fa] text-[1.05rem] font-semibold tracking-[0.08em] text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]"
+                >
+                  {digit}
+                </div>
+              ))}
+              {groupIndex < groups.length - 1 ? (
+                <span className="px-0.5 text-[1.1rem] font-semibold text-[#97a6b6]">:</span>
+              ) : null}
+            </Fragment>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={className}>
-      {!compact ? (
-        <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-muted">
-          Kun yakunigacha
-        </p>
-      ) : null}
-      <div className={compact ? "flex gap-1" : "flex gap-1.5"}>
+      <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-muted">
+        Kun yakunigacha
+      </p>
+      <div className="flex gap-1.5">
         {[
           { label: "soat", value: timeLeft.hours },
           { label: "daq", value: timeLeft.minutes },
@@ -53,20 +77,12 @@ export function CountdownTimer({ className, compact = false }: CountdownTimerPro
         ].map((item) => (
           <div
             key={item.label}
-            className={`text-center ${
-              compact
-                ? "min-w-[38px] rounded-[10px] border border-[#e0e7f0] bg-[#f4f6f8] px-2 py-1.5"
-                : "min-w-[54px] rounded-[14px] border border-[#dce7f2] bg-[#f4f8fb] px-3 py-2"
-            }`}
+            className="min-w-[54px] rounded-[14px] border border-[#dce7f2] bg-[#f4f8fb] px-3 py-2 text-center"
           >
-            <p className={`${compact ? "text-base" : "text-lg"} font-semibold tracking-[0.08em] text-foreground`}>
-              {item.value}
+            <p className="text-lg font-semibold tracking-[0.08em] text-foreground">{item.value}</p>
+            <p className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.18em] text-muted">
+              {item.label}
             </p>
-            {!compact ? (
-              <p className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.18em] text-muted">
-                {item.label}
-              </p>
-            ) : null}
           </div>
         ))}
       </div>

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { AddToCartButton } from "@/components/add-to-cart-button";
 import { CountdownTimer } from "@/components/countdown-timer";
 import { HeroCarousel } from "@/components/hero-carousel";
-import { ArrowRightIcon, LocationIcon, TrendUpIcon } from "@/components/icons";
+import { ArrowLeftIcon, ArrowRightIcon, LocationIcon, TrendUpIcon } from "@/components/icons";
 import { ProductCard } from "@/components/product-card";
 import { ProductVisual } from "@/components/product-visual";
 import { SectionHeading } from "@/components/section-heading";
@@ -245,98 +245,112 @@ export default async function Home() {
 
       <main className="page-enter pb-20">
         <section className="shell pt-5 sm:pt-6">
-          <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_270px] xl:items-stretch">
+          <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_320px] xl:items-stretch">
             <HeroCarousel slides={heroSlides} />
 
-            <aside className="reveal-up reveal-up-delay-1 rounded-[26px] border border-[#d9e5f2] bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)] p-4 shadow-[0_18px_38px_rgba(13,31,55,0.08)] xl:h-full">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-accent">
-                    Kun mahsulotlari
-                  </p>
-                  <h2 className="mt-1.5 font-display text-[1.28rem] font-semibold tracking-[-0.04em] text-foreground">
-                    Kun taklifi
-                  </h2>
+            <aside className="reveal-up reveal-up-delay-1 flex rounded-[28px] border border-[#d9e5f2] bg-white p-5 shadow-[0_18px_38px_rgba(13,31,55,0.08)] xl:min-h-[18.6rem]">
+              <div className="flex w-full flex-col">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-accent">
+                      Kun mahsulotlari
+                    </p>
+                    <h2 className="mt-1.5 font-display text-[1.42rem] font-semibold tracking-[-0.04em] text-foreground">
+                      Kun taklifi
+                    </h2>
+                  </div>
+                  <CountdownTimer compact className="shrink-0" />
                 </div>
-                <CountdownTimer compact className="shrink-0" />
-              </div>
 
-              <div className="mt-3 rounded-[20px] border border-[#e5edf6] bg-[linear-gradient(180deg,#f5faff_0%,#ffffff_100%)] p-2.5">
-                <ProductVisual
-                  size="deal"
-                  kind={productOfDay.kind}
-                  label={productOfDay.heroLabel}
-                  toneFrom={productOfDay.toneFrom}
-                  toneTo={productOfDay.toneTo}
-                  imageUrl={productOfDay.imageUrl}
-                  imageAlt={productOfDay.name}
-                  productName={productOfDay.name}
-                  brand={productOfDay.brand}
-                  categorySlug={productOfDay.categorySlug}
-                />
-              </div>
+                <div className="mt-4 h-px w-full bg-[#e3eaf2]" />
 
-              <div className="mt-3 flex flex-wrap gap-2">
-                {productOfDay.oldPrice ? (
-                  <span className="rounded-full bg-[#ffec66] px-2.5 py-1 text-[11px] font-semibold text-foreground">
-                    -{Math.max(
-                      1,
-                      Math.round(
-                        ((productOfDay.oldPrice - productOfDay.price) / productOfDay.oldPrice) *
-                          100,
-                      ),
-                    )}
-                    %
+                <div className="mt-4 rounded-[22px] border border-[#e5edf6] bg-[linear-gradient(180deg,#f5faff_0%,#ffffff_100%)] p-3">
+                  <ProductVisual
+                    size="deal"
+                    kind={productOfDay.kind}
+                    label={productOfDay.heroLabel}
+                    toneFrom={productOfDay.toneFrom}
+                    toneTo={productOfDay.toneTo}
+                    imageUrl={productOfDay.imageUrl}
+                    imageAlt={productOfDay.name}
+                    productName={productOfDay.name}
+                    brand={productOfDay.brand}
+                    categorySlug={productOfDay.categorySlug}
+                  />
+                </div>
+
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {productOfDay.oldPrice ? (
+                    <span className="rounded-full bg-[#ffdf42] px-3 py-1 text-[11px] font-semibold text-foreground">
+                      -{Math.max(
+                        1,
+                        Math.round(
+                          ((productOfDay.oldPrice - productOfDay.price) / productOfDay.oldPrice) *
+                            100,
+                        ),
+                      )}
+                      %
+                    </span>
+                  ) : null}
+                  <span className="rounded-full bg-[#e93f18] px-3 py-1 text-[11px] font-semibold text-white">
+                    Chegirma
                   </span>
-                ) : null}
-                <span className="rounded-full bg-[#07111f] px-2.5 py-1 text-[11px] font-semibold text-white">
-                  Chegirma
-                </span>
-              </div>
-
-              <Link
-                href={`/product/${productOfDay.slug}`}
-                className="mt-3 block line-clamp-2 font-display text-[1rem] font-semibold leading-6 tracking-tight text-foreground transition hover:text-accent"
-              >
-                {productOfDay.name}
-              </Link>
-
-              <div className="mt-3 inline-flex rounded-full border border-accent/18 bg-[#f5f9ff] px-3.5 py-1.5 text-[13px] font-semibold text-accent">
-                {formatMonthly(productOfDay.installment12 ?? productOfDay.monthlyPrice)}
-              </div>
-
-              {productOfDay.oldPrice ? (
-                <p className="mt-3 text-sm text-muted line-through">
-                  {formatSum(productOfDay.oldPrice)}
-                </p>
-              ) : null}
-
-              <div className="mt-1 flex items-end justify-between gap-4">
-                <div>
-                  <p className="text-[1.55rem] font-semibold tracking-tight text-foreground">
-                    {formatSum(productOfDay.price)}
-                  </p>
-                  <p className="mt-1 text-[11px] text-muted">
-                    {productOfDay.stockLabel ||
-                      productOfDay.branchName ||
-                      `${productOfDay.stock} dona mavjud`}
-                  </p>
                 </div>
-                <AddToCartButton productSlug={productOfDay.slug} mode="icon" />
+
+                <Link
+                  href={`/product/${productOfDay.slug}`}
+                  className="mt-3 block line-clamp-2 font-display text-[1rem] font-semibold leading-7 tracking-tight text-foreground transition hover:text-accent"
+                >
+                  {productOfDay.name}
+                </Link>
+
+                <div className="mt-3 inline-flex w-fit rounded-[12px] border border-[#2d5d9d] bg-white px-4 py-1.5 text-[13px] font-semibold text-[#204f8d]">
+                  {formatMonthly(productOfDay.installment12 ?? productOfDay.monthlyPrice)}
+                </div>
+
+                {productOfDay.oldPrice ? (
+                  <p className="mt-3 text-[15px] text-muted line-through">
+                    {formatSum(productOfDay.oldPrice)}
+                  </p>
+                ) : null}
+
+                <div className="mt-1 flex items-end justify-between gap-4">
+                  <div>
+                    <p className="text-[2rem] font-semibold leading-none tracking-tight text-foreground">
+                      {formatSum(productOfDay.price)}
+                    </p>
+                    <p className="mt-2 text-[12px] text-muted">
+                      {productOfDay.stockLabel ||
+                        productOfDay.branchName ||
+                        `${productOfDay.stock} dona mavjud`}
+                    </p>
+                  </div>
+                  <AddToCartButton productSlug={productOfDay.slug} mode="icon" />
+                </div>
+
+                <div className="mt-auto flex items-center justify-center gap-3 pt-5">
+                  <button
+                    type="button"
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#e1e8f0] bg-white text-muted shadow-[0_8px_20px_rgba(13,31,55,0.06)]"
+                    aria-label="Oldingi kun mahsuloti"
+                  >
+                    <ArrowLeftIcon className="h-4 w-4" />
+                  </button>
+                  <div className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-[#e95d2a]" />
+                    <span className="h-2 w-2 rounded-full bg-[#d6dde7]" />
+                    <span className="h-2 w-2 rounded-full bg-[#d6dde7]" />
+                  </div>
+                  <button
+                    type="button"
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#e1e8f0] bg-white text-muted shadow-[0_8px_20px_rgba(13,31,55,0.06)]"
+                    aria-label="Keyingi kun mahsuloti"
+                  >
+                    <ArrowRightIcon className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
             </aside>
-          </div>
-
-          <div className="reveal-up reveal-up-delay-1 mt-3 overflow-hidden rounded-[18px] border border-[#1b1b1b] bg-[#0a0a0a] shadow-[0_14px_32px_rgba(13,31,55,0.08)]">
-            <div className="relative">
-              <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#f2c400_0_16px,#111111_16px_32px)] opacity-95" />
-              <div className="relative flex flex-wrap items-center justify-center gap-x-6 gap-y-2 px-4 py-2.5 text-center text-[11px] font-semibold uppercase tracking-[0.28em] text-white sm:text-[12px]">
-                <span className="rounded-full bg-black/75 px-3 py-1 text-[#ffd84c]">Sale</span>
-                <span className="rounded-full bg-black/75 px-3 py-1">Chegirma</span>
-                <span className="rounded-full bg-black/75 px-3 py-1 text-[#ffd84c]">Original</span>
-                <span className="rounded-full bg-black/75 px-3 py-1">Muddatli to'lov</span>
-              </div>
-            </div>
           </div>
         </section>
 
