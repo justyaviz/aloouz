@@ -46,20 +46,20 @@ export function SiteFooter() {
   return (
     <footer
       id="contact"
-      className="mt-auto border-t border-line bg-[#f7f9fc] pb-[calc(env(safe-area-inset-bottom)+5.5rem)] text-foreground md:pb-0"
+      className="mt-auto border-t border-[#153864] bg-[linear-gradient(180deg,#07111f_0%,#0f2f5c_100%)] pb-[calc(env(safe-area-inset-bottom)+5.5rem)] text-white md:pb-0"
     >
       <div className="shell py-8 md:hidden">
-        <div className="rounded-[28px] border border-line bg-white p-5 shadow-[0_14px_34px_rgba(13,31,55,0.05)]">
+        <div className="rounded-[28px] border border-white/10 bg-white/6 p-5 backdrop-blur-sm">
           <SiteLogo
             href="/"
-            variant="dark"
+            variant="light"
             width={136}
             showTagline
             className="inline-flex flex-col gap-1.5"
-            taglineClassName="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted"
+            taglineClassName="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/68"
           />
 
-          <p className="mt-4 text-sm leading-7 text-muted">
+          <p className="mt-4 text-sm leading-7 text-white/72">
             aloo mobil katalogi, alooBlog va asosiy xarid bo'limlari shu yerda jamlangan.
           </p>
 
@@ -67,35 +67,35 @@ export function SiteFooter() {
             {paymentMethods.slice(0, 4).map((item) => (
               <div
                 key={item}
-                className="rounded-[18px] border border-line bg-[#f8fafc] px-4 py-3 text-center text-sm font-semibold text-foreground"
+                className="rounded-[18px] border border-white/10 bg-white/8 px-4 py-3 text-center text-sm font-semibold text-white/90"
               >
                 {item}
               </div>
             ))}
           </div>
 
-          <div className="mt-5 space-y-2 text-sm text-muted">
-            <a href={callCenterHref} className="inline-flex items-center gap-2 transition hover:text-accent">
-              <PhoneIcon className="h-4 w-4 text-accent" />
+          <div className="mt-5 space-y-2 text-sm text-white/76">
+            <a href={callCenterHref} className="inline-flex items-center gap-2 transition hover:text-white">
+              <PhoneIcon className="h-4 w-4 text-white/60" />
               {callCenterLabel}
             </a>
             <a
               href={mapsHref}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 transition hover:text-accent"
+              className="inline-flex items-center gap-2 transition hover:text-white"
             >
-              <LocationIcon className="h-4 w-4 text-accent" />
+              <LocationIcon className="h-4 w-4 text-white/60" />
               Toshkent viloyati
             </a>
             <p className="inline-flex items-center gap-2">
-              <ClockIcon className="h-4 w-4 text-accent" />
+              <ClockIcon className="h-4 w-4 text-white/60" />
               Har kuni: 09:00 - 21:00
             </p>
           </div>
 
           <div className="mt-5">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/52">
               Biz ijtimoiy tarmoqlarda
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
@@ -105,7 +105,7 @@ export function SiteFooter() {
                   href={item.href}
                   target="_blank"
                   rel="noreferrer"
-                  className="rounded-full border border-line bg-white px-3 py-2 text-[12px] font-medium text-foreground transition hover:border-accent/25 hover:text-accent"
+                  className="rounded-full border border-white/10 bg-white/8 px-3 py-2 text-[12px] font-medium text-white/88 transition hover:bg-white/14 hover:text-white"
                 >
                   {item.label}
                 </a>
@@ -119,43 +119,43 @@ export function SiteFooter() {
         <div>
           <SiteLogo
             href="/"
-            variant="dark"
+            variant="light"
             width={170}
             showTagline
             className="inline-flex flex-col gap-1.5"
-            taglineClassName="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted"
+            taglineClassName="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/68"
           />
 
-          <p className="mt-4 max-w-sm text-sm leading-7 text-muted">
+          <p className="mt-4 max-w-sm text-sm leading-7 text-white/72">
             aloo - smartfonlar bozori. Katalog, alooBlog va asosiy xarid bo'limlari kundalik
             foydalanish uchun bir joyga yig'ilgan.
           </p>
 
-          <div className="mt-6 space-y-3 text-sm text-muted">
+          <div className="mt-6 space-y-3 text-sm text-white/82">
             <a
               href={callCenterHref}
-              className="inline-flex items-center gap-2 transition hover:text-accent"
+              className="inline-flex items-center gap-2 transition hover:text-white"
             >
-              <PhoneIcon className="h-4 w-4 text-accent" />
+              <PhoneIcon className="h-4 w-4 text-white/62" />
               {callCenterLabel}
             </a>
             <a
               href={mapsHref}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 transition hover:text-accent"
+              className="inline-flex items-center gap-2 transition hover:text-white"
             >
-              <LocationIcon className="h-4 w-4 text-accent" />
+              <LocationIcon className="h-4 w-4 text-white/62" />
               Toshkent viloyati
             </a>
             <p className="inline-flex items-center gap-2">
-              <ClockIcon className="h-4 w-4 text-accent" />
+              <ClockIcon className="h-4 w-4 text-white/62" />
               Har kuni: 09:00 - 21:00
             </p>
           </div>
 
           <div className="mt-6">
-            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted">
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-white/56">
               Biz ijtimoiy tarmoqlarda
             </p>
             <div className="mt-4 flex max-w-md flex-wrap gap-2">
@@ -165,7 +165,7 @@ export function SiteFooter() {
                   href={item.href}
                   target="_blank"
                   rel="noreferrer"
-                  className="rounded-full border border-line bg-white px-3 py-2 text-[13px] font-medium text-foreground transition hover:border-accent/25 hover:text-accent"
+                  className="rounded-full border border-white/10 bg-white/8 px-3 py-2 text-[13px] font-medium text-white/88 transition hover:bg-white/14 hover:text-white"
                 >
                   {item.label}
                 </a>
@@ -175,14 +175,14 @@ export function SiteFooter() {
         </div>
 
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted">
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-white/56">
             To'lov usullari
           </p>
           <div className="mt-4 grid grid-cols-2 gap-3">
             {paymentMethods.map((item) => (
               <div
                 key={item}
-                className="rounded-[18px] border border-line bg-white px-4 py-4 text-center text-sm font-semibold text-foreground"
+                className="rounded-[18px] border border-white/10 bg-[#183457] px-4 py-4 text-center text-sm font-semibold text-white"
               >
                 {item}
               </div>
@@ -191,7 +191,7 @@ export function SiteFooter() {
         </div>
 
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted">
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-white/56">
             Ma'lumot
           </p>
           <div className="mt-4 space-y-3 text-sm">
@@ -199,7 +199,7 @@ export function SiteFooter() {
               <Link
                 key={item.label}
                 href={item.href}
-                className="block text-muted transition hover:text-accent"
+                className="block text-white/82 transition hover:text-white"
               >
                 {item.label}
               </Link>
@@ -208,7 +208,7 @@ export function SiteFooter() {
         </div>
 
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted">
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-white/56">
             Xizmatlar
           </p>
           <div className="mt-4 space-y-3 text-sm">
@@ -216,7 +216,7 @@ export function SiteFooter() {
               <Link
                 key={item.label}
                 href={item.href}
-                className="block text-muted transition hover:text-accent"
+                className="block text-white/82 transition hover:text-white"
               >
                 {item.label}
               </Link>
@@ -225,7 +225,7 @@ export function SiteFooter() {
         </div>
 
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted">
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-white/56">
             Mijozlar uchun
           </p>
           <div className="mt-4 space-y-3 text-sm">
@@ -233,7 +233,7 @@ export function SiteFooter() {
               <Link
                 key={item.label}
                 href={item.href}
-                className="block text-muted transition hover:text-accent"
+                className="block text-white/82 transition hover:text-white"
               >
                 {item.label}
               </Link>
@@ -245,7 +245,7 @@ export function SiteFooter() {
               <Link
                 key={category.slug}
                 href={`/catalog?category=${category.slug}`}
-                className="rounded-full border border-line bg-white px-3 py-2 text-[13px] text-foreground"
+                className="rounded-full border border-white/10 bg-white/8 px-3 py-2 text-[13px] text-white/86"
               >
                 {category.name}
               </Link>
@@ -254,8 +254,8 @@ export function SiteFooter() {
         </div>
       </div>
 
-      <div className="border-t border-line">
-        <div className="shell flex flex-col gap-2 py-4 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
+      <div className="border-t border-white/10">
+        <div className="shell flex flex-col gap-2 py-4 text-sm text-white/58 sm:flex-row sm:items-center sm:justify-between">
           <p>&copy; 2026 aloo. Barcha huquqlar himoyalangan.</p>
           <p>Smartfonlar bozori va texno hayotga ulanish uchun yagona manzil.</p>
         </div>

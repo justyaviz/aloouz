@@ -70,7 +70,7 @@ export function CartView({ products }: { products: Product[] }) {
             <button
               type="button"
               onClick={clearCart}
-              className="inline-flex items-center justify-center rounded-2xl bg-support px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-[#e45d07]"
+              className="inline-flex items-center justify-center rounded-2xl bg-accent px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-accent-strong"
             >
               Savatni tozalash
             </button>
@@ -120,7 +120,7 @@ export function CartView({ products }: { products: Product[] }) {
                 <button
                   type="button"
                   onClick={() => removeFromCart(product.slug)}
-                  className="inline-flex items-center gap-2 rounded-2xl border border-line bg-white px-4 py-3 text-sm font-semibold text-foreground transition hover:border-support/35 hover:text-support"
+                  className="inline-flex items-center gap-2 rounded-2xl border border-line bg-white px-4 py-3 text-sm font-semibold text-foreground transition hover:border-accent/35 hover:text-accent"
                 >
                   <TrashIcon className="h-4 w-4" />
                   Olib tashlash

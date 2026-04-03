@@ -119,7 +119,7 @@ function CabinetEmpty({
 }) {
   return (
     <div className="flex min-h-[300px] flex-col items-center justify-center rounded-[24px] bg-[#fafbfd] px-5 py-8 text-center sm:min-h-[420px] sm:rounded-[26px] sm:px-6 sm:py-10">
-      <span className="inline-flex h-16 w-16 items-center justify-center rounded-[22px] bg-[#fff3ef] text-support shadow-[0_18px_40px_rgba(242,104,26,0.12)] sm:h-20 sm:w-20 sm:rounded-[28px]">
+      <span className="inline-flex h-16 w-16 items-center justify-center rounded-[22px] bg-[#edf6ff] text-accent shadow-[0_18px_40px_rgba(22,144,245,0.12)] sm:h-20 sm:w-20 sm:rounded-[28px]">
         <Icon className="h-7 w-7 sm:h-8 sm:w-8" />
       </span>
       <h2 className="mt-5 font-display text-[1.9rem] font-semibold tracking-tight text-foreground sm:mt-6 sm:text-3xl">
@@ -136,7 +136,7 @@ function CabinetEmpty({
 function OrderStatusBadge({ order }: { order: CustomerCabinetOrder }) {
   const toneClass =
     order.statusGroup === "cancelled"
-      ? "bg-[#fff2ef] text-support"
+      ? "bg-[#edf6ff] text-accent"
       : order.statusGroup === "fulfilled"
         ? "bg-[#eefaf1] text-[#2d7a46]"
         : "bg-[#eef5ff] text-accent";
@@ -250,7 +250,7 @@ export function CustomerCabinet({ viewer, data }: CustomerCabinetProps) {
                 className={cn(
                   "flex min-w-0 items-center gap-3 rounded-[20px] px-4 py-4 text-sm font-semibold transition xl:min-w-0",
                   isActive
-                    ? "bg-[#fff4ef] text-support"
+                    ? "bg-[#edf6ff] text-accent"
                     : "text-foreground hover:bg-[#f7f9fc]",
                 )}
               >
@@ -258,7 +258,7 @@ export function CustomerCabinet({ viewer, data }: CustomerCabinetProps) {
                   className={cn(
                     "inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] border",
                     isActive
-                      ? "border-support/20 bg-white text-support"
+                      ? "border-accent/20 bg-white text-accent"
                       : "border-line bg-white text-muted",
                   )}
                 >
@@ -273,9 +273,9 @@ export function CustomerCabinet({ viewer, data }: CustomerCabinetProps) {
             <input type="hidden" name="redirectTo" value="/login" />
             <button
               type="submit"
-              className="flex min-w-0 items-center gap-3 rounded-[20px] px-4 py-4 text-sm font-semibold text-support transition hover:bg-[#fff4ef] xl:min-w-0"
+              className="flex min-w-0 items-center gap-3 rounded-[20px] px-4 py-4 text-sm font-semibold text-accent transition hover:bg-[#edf6ff] xl:min-w-0"
             >
-              <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] border border-support/15 bg-white text-support">
+              <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] border border-accent/15 bg-white text-accent">
                 <CloseIcon className="h-5 w-5" />
               </span>
               <span>Chiqish</span>
@@ -298,7 +298,7 @@ export function CustomerCabinet({ viewer, data }: CustomerCabinetProps) {
                   </p>
                   <p className="mt-1 text-sm text-muted">{viewer.displayPhone}</p>
                   <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-foreground shadow-sm">
-                    <EditIcon className="h-4 w-4 text-support" />
+                    <EditIcon className="h-4 w-4 text-accent" />
                     Profil ma&apos;lumotlarini yangilang
                   </div>
                 </div>
@@ -407,7 +407,7 @@ export function CustomerCabinet({ viewer, data }: CustomerCabinetProps) {
               </div>
 
               {profileState.error ? (
-                <p className="rounded-[18px] bg-[#fff2ec] px-4 py-3 text-sm text-support">
+                <p className="rounded-[18px] bg-[#edf6ff] px-4 py-3 text-sm text-accent">
                   {profileState.error}
                 </p>
               ) : null}
@@ -420,7 +420,7 @@ export function CustomerCabinet({ viewer, data }: CustomerCabinetProps) {
               <div className="flex flex-col gap-3 sm:flex-row">
                 <button
                   type="submit"
-                  className="inline-flex h-14 items-center justify-center rounded-[20px] bg-support px-8 text-base font-semibold text-white transition hover:bg-[#e45d07]"
+                  className="inline-flex h-14 items-center justify-center rounded-[20px] bg-accent px-8 text-base font-semibold text-white transition hover:bg-accent-strong"
                 >
                   Saqlash
                 </button>
@@ -442,7 +442,7 @@ export function CustomerCabinet({ viewer, data }: CustomerCabinetProps) {
               <button
                 type="button"
                 onClick={() => setShowAddressForm((current) => !current)}
-                className="inline-flex h-12 items-center justify-center rounded-[18px] border border-support/35 px-5 text-sm font-semibold text-support transition hover:bg-[#fff4ef]"
+                className="inline-flex h-12 items-center justify-center rounded-[18px] border border-accent/35 px-5 text-sm font-semibold text-accent transition hover:bg-[#edf6ff]"
               >
                 {showAddressForm ? "Yopish" : "Manzil qo&apos;shish"}
               </button>
@@ -533,13 +533,13 @@ export function CustomerCabinet({ viewer, data }: CustomerCabinetProps) {
                     <input
                       type="checkbox"
                       name="isPrimary"
-                      className="h-5 w-5 rounded border-line text-support"
+                      className="h-5 w-5 rounded border-line text-accent"
                     />
                     Asosiy manzil sifatida saqlash
                   </label>
 
                   {addressState.error ? (
-                    <p className="mt-4 rounded-[18px] bg-[#fff2ec] px-4 py-3 text-sm text-support">
+                    <p className="mt-4 rounded-[18px] bg-[#edf6ff] px-4 py-3 text-sm text-accent">
                       {addressState.error}
                     </p>
                   ) : null}
@@ -552,7 +552,7 @@ export function CustomerCabinet({ viewer, data }: CustomerCabinetProps) {
                   <div className="mt-5 flex flex-col gap-3 sm:flex-row">
                     <button
                       type="submit"
-                      className="inline-flex h-14 items-center justify-center rounded-[20px] bg-support px-8 text-base font-semibold text-white transition hover:bg-[#e45d07]"
+                      className="inline-flex h-14 items-center justify-center rounded-[20px] bg-accent px-8 text-base font-semibold text-white transition hover:bg-accent-strong"
                     >
                       Manzilni saqlash
                     </button>
@@ -576,7 +576,7 @@ export function CustomerCabinet({ viewer, data }: CustomerCabinetProps) {
                     <button
                       type="button"
                       onClick={() => setShowAddressForm(true)}
-                      className="inline-flex h-14 items-center justify-center rounded-[20px] bg-support px-8 text-base font-semibold text-white transition hover:bg-[#e45d07]"
+                      className="inline-flex h-14 items-center justify-center rounded-[20px] bg-accent px-8 text-base font-semibold text-white transition hover:bg-accent-strong"
                     >
                       Manzil qo&apos;shish
                     </button>
@@ -642,7 +642,7 @@ export function CustomerCabinet({ viewer, data }: CustomerCabinetProps) {
                           <input type="hidden" name="addressId" value={address.id} />
                           <button
                             type="submit"
-                            className="inline-flex h-11 items-center justify-center rounded-[16px] border border-support/20 bg-[#fff4ef] px-4 text-sm font-semibold text-support transition hover:bg-[#ffe8de]"
+                            className="inline-flex h-11 items-center justify-center rounded-[16px] border border-accent/20 bg-[#edf6ff] px-4 text-sm font-semibold text-accent transition hover:bg-[#dff1ff]"
                           >
                             O&apos;chirish
                           </button>
@@ -674,7 +674,7 @@ export function CustomerCabinet({ viewer, data }: CustomerCabinetProps) {
                   className={cn(
                     "inline-flex h-12 items-center justify-center rounded-[16px] px-5 text-sm font-semibold transition",
                     orderFilter === filter.key
-                      ? "bg-[#fff4ef] text-support"
+                      ? "bg-[#edf6ff] text-accent"
                       : "text-foreground hover:bg-[#f7f9fc]",
                   )}
                 >
@@ -810,7 +810,7 @@ export function CustomerCabinet({ viewer, data }: CustomerCabinetProps) {
                   className={cn(
                     "inline-flex h-12 items-center justify-center rounded-[16px] px-5 text-sm font-semibold transition",
                     commentTab === item.key
-                      ? "bg-[#fff4ef] text-support"
+                      ? "bg-[#edf6ff] text-accent"
                       : "text-foreground hover:bg-[#f7f9fc]",
                   )}
                 >
@@ -920,7 +920,7 @@ export function CustomerCabinet({ viewer, data }: CustomerCabinetProps) {
               </article>
 
               <article className="rounded-[24px] border border-line bg-[#fbfdff] p-5">
-                <span className="inline-flex h-12 w-12 items-center justify-center rounded-[18px] bg-[#fff4ef] text-support">
+                <span className="inline-flex h-12 w-12 items-center justify-center rounded-[18px] bg-[#edf6ff] text-accent">
                   <ClipboardIcon className="h-5 w-5" />
                 </span>
                 <p className="mt-4 text-lg font-semibold text-foreground">Bildirishnomalar</p>

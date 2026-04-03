@@ -20,7 +20,7 @@ export function SectionHeading({
   return (
     <div className="mb-6 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
       <div className="max-w-3xl">
-        <p className="inline-flex rounded-full border border-accent/12 bg-[#eef5ff] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">
+        <p className="inline-flex rounded-full border border-[#cfe1f4] bg-white px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-accent shadow-[0_10px_20px_rgba(13,31,55,0.04)]">
           {eyebrow}
         </p>
         <h2 className="mt-4 font-display text-[2rem] font-semibold tracking-[-0.04em] text-foreground sm:text-[2.5rem] sm:leading-[1.02]">
@@ -33,7 +33,7 @@ export function SectionHeading({
       {ctaLabel && ctaHref ? (
         <Link
           href={ctaHref}
-          className="inline-flex items-center justify-center gap-2 rounded-full border border-[#dbe5f0] bg-white px-5 py-3 text-sm font-semibold text-foreground shadow-[0_12px_28px_rgba(13,31,55,0.06)] transition hover:-translate-y-0.5 hover:border-accent/30 hover:text-accent"
+          className="inline-flex items-center justify-center gap-2 rounded-full border border-[#cfe1f4] bg-white px-5 py-3 text-sm font-semibold text-[#0b2952] shadow-[0_12px_28px_rgba(13,31,55,0.06)] transition hover:-translate-y-0.5 hover:border-accent/30 hover:bg-[#edf6ff] hover:text-accent"
         >
           <ArrowRightIcon className="h-4 w-4" />
           {ctaLabel}

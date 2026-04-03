@@ -126,7 +126,7 @@ export function ProductCommentsSection({
         </div>
 
         {state.error ? (
-          <p className="mt-4 rounded-[16px] bg-[#fff2ec] px-4 py-3 text-sm text-support">
+          <p className="mt-4 rounded-[16px] bg-[#edf6ff] px-4 py-3 text-sm text-accent">
             {state.error}
           </p>
         ) : null}

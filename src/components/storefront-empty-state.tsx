@@ -28,7 +28,7 @@ export function StorefrontEmptyState({
   return (
     <section className="min-h-[58vh] rounded-[32px] border border-transparent bg-[#f7f8fb] px-5 py-10 shadow-none sm:border-line sm:bg-white sm:px-10 sm:py-12 sm:shadow-[0_18px_45px_rgba(13,31,55,0.08)]">
       <div className="mx-auto flex h-full max-w-[640px] flex-col items-center justify-center text-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-[22px] bg-[#fff3ef] text-support shadow-[0_16px_35px_rgba(254,102,0,0.1)] sm:h-20 sm:w-20 sm:rounded-[28px]">
+        <div className="flex h-16 w-16 items-center justify-center rounded-[22px] bg-[#edf6ff] text-accent shadow-[0_16px_35px_rgba(22,144,245,0.12)] sm:h-20 sm:w-20 sm:rounded-[28px]">
           <Icon className="h-7 w-7 sm:h-8 sm:w-8" />
         </div>
 
@@ -46,7 +46,7 @@ export function StorefrontEmptyState({
         <div className="mt-8 flex w-full max-w-[380px] flex-col justify-center gap-3 sm:max-w-none sm:flex-row">
           <Link
             href={primaryHref}
-            className="inline-flex min-h-14 w-full items-center justify-center rounded-[20px] bg-support px-6 py-4 text-base font-semibold text-white transition hover:bg-[#e45d07] sm:min-w-[200px] sm:w-auto sm:text-sm"
+            className="inline-flex min-h-14 w-full items-center justify-center rounded-[20px] bg-accent px-6 py-4 text-base font-semibold text-white transition hover:bg-accent-strong sm:min-w-[200px] sm:w-auto sm:text-sm"
           >
             {primaryLabel}
           </Link>

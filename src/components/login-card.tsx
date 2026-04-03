@@ -49,7 +49,7 @@ function RequestButton({ hasChallenge }: { hasChallenge: boolean }) {
     <button
       type="submit"
       disabled={pending}
-      className="inline-flex h-14 w-full items-center justify-center gap-2 rounded-[20px] bg-support px-6 text-base font-semibold text-white transition hover:bg-[#e45d07] disabled:cursor-wait disabled:opacity-70"
+      className="inline-flex h-14 w-full items-center justify-center gap-2 rounded-[20px] bg-accent px-6 text-base font-semibold text-white transition hover:bg-accent-strong disabled:cursor-wait disabled:opacity-70"
     >
       <TelegramIcon className="h-5 w-5" />
       {pending
@@ -217,13 +217,13 @@ export function LoginCard({ onClose, className, redirectTo: redirectOverride }: 
       </div>
 
       {requestState.error ? (
-        <p className="mt-5 rounded-[18px] bg-[#fff2ec] px-4 py-3 text-sm leading-6 text-support">
+        <p className="mt-5 rounded-[18px] bg-[#edf6ff] px-4 py-3 text-sm leading-6 text-accent">
           {requestState.error}
         </p>
       ) : null}
 
       {verifyState.error ? (
-        <p className="mt-5 rounded-[18px] bg-[#fff2ec] px-4 py-3 text-sm leading-6 text-support">
+        <p className="mt-5 rounded-[18px] bg-[#edf6ff] px-4 py-3 text-sm leading-6 text-accent">
           {verifyState.error}
         </p>
       ) : null}

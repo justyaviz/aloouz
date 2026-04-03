@@ -156,11 +156,11 @@ function Shortcut({ href, label, icon: Icon, count, onClick }: ShortcutProps) {
     "group relative flex min-w-0 flex-col items-center gap-2 rounded-[20px] px-2 py-2 text-center transition hover:-translate-y-0.5";
   const content = (
     <>
-      <span className="flex h-11 w-11 items-center justify-center rounded-[16px] border border-[#e0e7ef] bg-[#fbfcfe] text-[#28415f] shadow-[0_8px_18px_rgba(13,31,55,0.05)] transition group-hover:border-support group-hover:bg-support group-hover:text-white">
+      <span className="flex h-11 w-11 items-center justify-center rounded-[16px] border border-[#d8e5f4] bg-white text-accent shadow-[0_8px_18px_rgba(13,31,55,0.05)] transition group-hover:border-accent group-hover:bg-accent group-hover:text-white">
         <Icon className="h-5 w-5" />
       </span>
       {count && count > 0 ? (
-        <span className="absolute right-1 top-0 inline-flex min-w-5 items-center justify-center rounded-full bg-support px-1.5 py-1 text-[10px] font-bold leading-none text-white shadow-[0_8px_18px_rgba(242,104,26,0.24)]">
+        <span className="absolute right-1 top-0 inline-flex min-w-5 items-center justify-center rounded-full bg-accent px-1.5 py-1 text-[10px] font-bold leading-none text-white shadow-[0_8px_18px_rgba(22,144,245,0.24)]">
           {count}
         </span>
       ) : null}
@@ -199,7 +199,7 @@ function DesktopCatalogMenu({ onClose }: { onClose: () => void }) {
                 className={cn(
                   "flex items-start gap-3 rounded-[22px] px-4 py-4 transition",
                   section.active
-                    ? "bg-[#fff4ef] text-foreground"
+                    ? "bg-[#edf6ff] text-foreground"
                     : "hover:bg-[#f6faff] text-foreground",
                 )}
               >
@@ -207,7 +207,7 @@ function DesktopCatalogMenu({ onClose }: { onClose: () => void }) {
                   className={cn(
                     "mt-0.5 inline-flex h-10 w-10 items-center justify-center rounded-[14px] border",
                     section.active
-                      ? "border-support/20 bg-white text-support"
+                      ? "border-accent/20 bg-white text-accent"
                       : "border-line bg-white text-accent",
                   )}
                 >
@@ -335,7 +335,7 @@ function MobileCatalogDrawer({
                 onClick={onClose}
                 className="flex items-start gap-3 rounded-[22px] border border-[#e6ebf1] bg-white px-4 py-4 shadow-[0_8px_18px_rgba(13,31,55,0.04)]"
               >
-                <span className="mt-0.5 inline-flex h-10 w-10 items-center justify-center rounded-[14px] bg-[#fff4ef] text-support">
+                <span className="mt-0.5 inline-flex h-10 w-10 items-center justify-center rounded-[14px] bg-[#edf6ff] text-accent">
                   <Icon className="h-4 w-4" />
                 </span>
                 <span className="text-sm font-semibold leading-6 text-foreground">{section.label}</span>
@@ -432,7 +432,7 @@ export function SiteHeaderClient({ viewer }: { viewer: AuthViewer | null }) {
                   className={cn(
                   "transition hover:text-foreground",
                     item.pill &&
-                      "rounded-full bg-[#f4f7fb] px-3 py-1.5 font-semibold text-foreground hover:text-foreground",
+                      "rounded-full bg-[#0f2f5c] px-3 py-1.5 font-semibold text-white hover:text-white",
                   )}
                 >
                   {item.label}
@@ -499,8 +499,8 @@ export function SiteHeaderClient({ viewer }: { viewer: AuthViewer | null }) {
                 type="button"
                 onClick={() => setCatalogMenuOpen((current) => !current)}
                 className={cn(
-                  "inline-flex h-12 items-center justify-center gap-2 rounded-[18px] px-6 text-sm font-semibold text-white shadow-[0_14px_28px_rgba(255,92,31,0.22)] transition",
-                  catalogMenuOpen ? "bg-[#e65a20]" : "bg-catalog hover:bg-[#e65a20]",
+                    "inline-flex h-12 items-center justify-center gap-2 rounded-[18px] px-6 text-sm font-semibold text-white shadow-[0_14px_28px_rgba(22,144,245,0.22)] transition",
+                  catalogMenuOpen ? "bg-[#0e79d2]" : "bg-catalog hover:bg-[#0e79d2]",
                 )}
               >
                 <MenuIcon className="h-5 w-5" />
@@ -517,7 +517,7 @@ export function SiteHeaderClient({ viewer }: { viewer: AuthViewer | null }) {
                 />
                 <button
                   type="submit"
-                  className="inline-flex h-full items-center justify-center gap-2 bg-support px-6 text-sm font-semibold text-white transition hover:bg-[#e45d07]"
+                  className="inline-flex h-full items-center justify-center gap-2 bg-accent px-6 text-sm font-semibold text-white transition hover:bg-accent-strong"
                 >
                   <SearchIcon className="h-4 w-4" />
                 </button>
@@ -552,7 +552,7 @@ export function SiteHeaderClient({ viewer }: { viewer: AuthViewer | null }) {
                   className={cn(
                     "inline-flex h-10 items-center rounded-full px-5 text-sm font-medium transition",
                       chip.active
-                        ? "bg-support text-white shadow-[0_14px_28px_rgba(255,92,31,0.18)]"
+                        ? "bg-accent text-white shadow-[0_14px_28px_rgba(22,144,245,0.2)]"
                         : "border border-[#dde6f0] bg-white text-foreground hover:border-accent/35 hover:bg-[#f9fbff] hover:text-accent",
                   )}
                 >

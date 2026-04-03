@@ -31,21 +31,22 @@ const categoryCaptions = [
 const brandShowcase = [
   {
     brand: "Apple",
-    accent: "linear-gradient(145deg,#fff4fb 0%,#f4f8ff 100%)",
+    accent: "linear-gradient(145deg,#07111f 0%,#0f2f5c 58%,#1f65bf 100%)",
     eyebrow: "Premium lineup",
-    description: "iPhone modellari, Apple aksessuarlari va sof vizual til bir joyda.",
+    description: "iPhone tanlovi uchun minimal, aniq va premium vitrina aloo ruhida yig'ildi.",
+    dark: true,
   },
   {
     brand: "Samsung",
-    accent: "linear-gradient(145deg,#eef5ff 0%,#f7fbff 100%)",
+    accent: "linear-gradient(145deg,#e9f4ff 0%,#f8fbff 100%)",
     eyebrow: "Galaxy tanlovi",
-    description: "Galaxy A va S seriyalari uchun balanslangan narx, xotira va kamera tanlovi.",
+    description: "Galaxy A va S seriyalari uchun aniq konfiguratsiya, qulay to'lov va tez topish oqimi.",
   },
   {
     brand: "HONOR",
-    accent: "linear-gradient(145deg,#fff3ed 0%,#fffaf7 100%)",
+    accent: "linear-gradient(145deg,#f7fbff 0%,#e8f3ff 100%)",
     eyebrow: "Trend modeli",
-    description: "HONOR liniyasidagi faol modellarni bir ko'rishda topish osonlashdi.",
+    description: "HONOR liniyasidagi faol modellar, aksiyalar va tezkor tanlov bloklari bir joyda.",
   },
 ];
 
@@ -72,6 +73,10 @@ function sanitizePublicCopy(value: string | undefined, fallback: string) {
   }
 
   return copy;
+}
+
+function cn(...values: Array<string | false | null | undefined>) {
+  return values.filter(Boolean).join(" ");
 }
 
 function pickCategoryImage(_products: Product[], categorySlug: string, heroImage?: string) {
@@ -284,7 +289,7 @@ export default async function Home() {
                     %
                   </span>
                 ) : null}
-                <span className="rounded-full bg-[#fff1ea] px-3 py-1 text-xs font-semibold text-support">
+                <span className="rounded-full bg-[#07111f] px-3 py-1 text-xs font-semibold text-white">
                   Chegirma
                 </span>
               </div>
@@ -324,20 +329,20 @@ export default async function Home() {
         </section>
 
         <section className="shell reveal-up reveal-up-delay-1 pt-5">
-          <div className="grid gap-3 rounded-[30px] border border-line bg-white p-4 shadow-[0_16px_34px_rgba(13,31,55,0.06)] lg:grid-cols-3 lg:p-5">
+          <div className="grid gap-3 overflow-hidden rounded-[30px] border border-[#183f6a] bg-[linear-gradient(132deg,#07111f_0%,#0f2f5c_42%,#1690f5_100%)] p-4 shadow-[0_20px_42px_rgba(7,17,31,0.14)] lg:grid-cols-3 lg:p-5">
             {serviceStats.map((item) => (
               <article
                 key={item.id}
                 id={item.id}
-                className="rounded-[22px] border border-[#e8eef5] bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)] px-5 py-4"
+                className="rounded-[22px] border border-white/12 bg-white/10 px-5 py-4 backdrop-blur-sm"
               >
-                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-accent">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/62">
                   {item.label}
                 </p>
-                <p className="mt-2 font-display text-[1.7rem] font-semibold tracking-[-0.04em] text-foreground">
+                <p className="mt-2 font-display text-[1.7rem] font-semibold tracking-[-0.04em] text-white">
                   {item.value}
                 </p>
-                <p className="mt-2 text-sm leading-7 text-muted">{item.description}</p>
+                <p className="mt-2 text-sm leading-7 text-white/78">{item.description}</p>
               </article>
             ))}
           </div>
@@ -346,8 +351,8 @@ export default async function Home() {
         <section className="shell reveal-up reveal-up-delay-1 pt-10">
           <SectionHeading
             eyebrow="Ommabop kategoriyalar"
-            title="Siz qidiradigan bo'limlar shu yerda"
-            description="Har bir bo'lim katta vizual, toza fon va kamroq matn bilan qayta yig'ildi."
+            title="Brendbook ruhidagi asosiy bo'limlar"
+            description="Kategoriya bloklari aloo mark, toza tipografiya va sokin ko'k aksentlar bilan qayta yig'ildi."
             ctaLabel="Katalog"
             ctaHref="/catalog"
           />
@@ -400,8 +405,8 @@ export default async function Home() {
         <section id="new-arrivals" className="shell reveal-up reveal-up-delay-2 pt-10">
           <SectionHeading
             eyebrow="Yangi kelganlar"
-            title="Kattaroq rasm va aniqroq narx bilan mahsulot kartalari"
-            description="Kartalar qisqartirildi, rasmlar kattalashtirildi va xarid oqimi tezroq ko'rinadigan bo'ldi."
+            title="Kattaroq rasm, toza karta va aniq narx"
+            description="Mahsulot kartalari endi ortiqcha shovqinsiz, brendbookga mos sokin fon va aniq CTA bilan chiqadi."
             ctaLabel="Barcha smartfonlar"
             ctaHref="/catalog?category=smartfonlar"
           />
@@ -415,11 +420,11 @@ export default async function Home() {
 
         {brandHighlights.length > 0 ? (
           <section id="about" className="shell reveal-up reveal-up-delay-2 pt-10">
-            <SectionHeading
-              eyebrow="Brend tanlovi"
-              title="Har bir asosiy brend uchun alohida vitrina"
-              description="Uzum, Yandex va Asaxiy uslubiga yaqinroq marketplace ritmi uchun brendlar alohida oq kartalarda berildi."
-            />
+          <SectionHeading
+            eyebrow="Brend tanlovi"
+            title="Har bir asosiy brend uchun alohida vitrina"
+            description="Asosiy brendlar aloo brendbookidagi ko'k-qora-oq ritm bilan alohida vitrinalarga ajratildi."
+          />
 
             <div className="grid gap-4 xl:grid-cols-3">
               {brandHighlights.map((item) => (
@@ -429,17 +434,36 @@ export default async function Home() {
                   className="group overflow-hidden rounded-[30px] border border-line bg-white shadow-[0_18px_40px_rgba(13,31,55,0.06)] transition hover:-translate-y-1 hover:shadow-[0_24px_52px_rgba(13,31,55,0.1)]"
                 >
                   <div className="border-b border-line px-6 pb-5 pt-6" style={{ background: item.accent }}>
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-accent">
+                    <p
+                      className={cn(
+                        "text-[11px] font-semibold uppercase tracking-[0.24em]",
+                        item.dark ? "text-white/62" : "text-accent",
+                      )}
+                    >
                       {item.eyebrow}
                     </p>
                     <div className="mt-3 flex items-start justify-between gap-4">
                       <div className="min-w-0">
-                        <h3 className="font-display text-[2rem] font-semibold tracking-[-0.05em] text-foreground">
+                        <h3
+                          className={cn(
+                            "font-display text-[2rem] font-semibold tracking-[-0.05em]",
+                            item.dark ? "text-white" : "text-foreground",
+                          )}
+                        >
                           {item.brand}
                         </h3>
-                        <p className="mt-2 text-sm leading-7 text-muted">{item.description}</p>
+                        <p className={cn("mt-2 text-sm leading-7", item.dark ? "text-white/76" : "text-muted")}>
+                          {item.description}
+                        </p>
                       </div>
-                      <span className="rounded-full border border-accent/12 bg-white/80 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
+                      <span
+                        className={cn(
+                          "rounded-full px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em]",
+                          item.dark
+                            ? "border border-white/12 bg-white/12 text-white"
+                            : "border border-accent/12 bg-white/80 text-accent",
+                        )}
+                      >
                         {item.product.heroLabel}
                       </span>
                     </div>
@@ -484,35 +508,35 @@ export default async function Home() {
           <SectionHeading
             eyebrow="Trenddagi modellar"
             title="Ko'p ko'rilayotgan smartfonlar"
-            description="Ommabop modellar uchun narx, oyma-oy to'lov va mavjud filial bir qatorda ko'rsatiladi."
+            description="Ommabop modellar uchun narx, oyma-oy to'lov va filial bo'yicha mavjudlik bir qatorda ko'rsatiladi."
             ctaLabel="Katalog"
             ctaHref="/catalog"
           />
 
           <div className="grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
-            <article className="overflow-hidden rounded-[32px] border border-line bg-white p-6 shadow-[0_18px_42px_rgba(13,31,55,0.06)] sm:p-8">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-accent">
+            <article className="overflow-hidden rounded-[32px] border border-[#173d67] bg-[linear-gradient(138deg,#07111f_0%,#0f2f5c_50%,#1387e6_100%)] p-6 text-white shadow-[0_22px_48px_rgba(7,17,31,0.16)] sm:p-8">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-white/62">
                 Smart tanlov
               </p>
-              <h2 className="mt-4 max-w-lg font-display text-[2.35rem] font-semibold tracking-[-0.05em] text-foreground">
-                Xaridni tezlashtiradigan marketplace oqimi
+              <h2 className="mt-4 max-w-lg font-display text-[2.35rem] font-semibold tracking-[-0.05em] text-white">
+                aloo bilan tanlash, solishtirish va xarid qilish tezroq
               </h2>
-              <p className="mt-4 max-w-lg text-sm leading-8 text-muted">
-                Qidiruv, kategoriya, mahsulot kartasi va savat bir xil market ritmida ishlashi uchun bosh sahifa soddalashtirildi.
+              <p className="mt-4 max-w-lg text-sm leading-8 text-white/78">
+                Katalog oqimi, mahsulot kartalari va savat endi bitta vizual tizimda ishlaydi. Maqsad - foydalanuvchi smartfonni kamroq bosqichda topib, tezroq qaror qilishi.
               </p>
 
               <div className="mt-7 grid gap-3 sm:grid-cols-3">
-                <div className="rounded-[22px] border border-line bg-[#f8fbff] px-4 py-4">
-                  <p className="text-[11px] uppercase tracking-[0.18em] text-muted">Mahsulot</p>
-                  <p className="mt-2 text-2xl font-semibold text-foreground">{products.length}+</p>
+                <div className="rounded-[22px] border border-white/12 bg-white/10 px-4 py-4 backdrop-blur-sm">
+                  <p className="text-[11px] uppercase tracking-[0.18em] text-white/58">Mahsulot</p>
+                  <p className="mt-2 text-2xl font-semibold text-white">{products.length}+</p>
                 </div>
-                <div className="rounded-[22px] border border-line bg-[#fff8f4] px-4 py-4">
-                  <p className="text-[11px] uppercase tracking-[0.18em] text-muted">Brend</p>
-                  <p className="mt-2 text-2xl font-semibold text-foreground">{brands.length}+</p>
+                <div className="rounded-[22px] border border-white/12 bg-white/10 px-4 py-4 backdrop-blur-sm">
+                  <p className="text-[11px] uppercase tracking-[0.18em] text-white/58">Brend</p>
+                  <p className="mt-2 text-2xl font-semibold text-white">{brands.length}+</p>
                 </div>
-                <div className="rounded-[22px] border border-line bg-[#f6fbf6] px-4 py-4">
-                  <p className="text-[11px] uppercase tracking-[0.18em] text-muted">Yetkazish</p>
-                  <p className="mt-2 text-2xl font-semibold text-foreground">90 min</p>
+                <div className="rounded-[22px] border border-white/12 bg-white/10 px-4 py-4 backdrop-blur-sm">
+                  <p className="text-[11px] uppercase tracking-[0.18em] text-white/58">Yetkazish</p>
+                  <p className="mt-2 text-2xl font-semibold text-white">90 min</p>
                 </div>
               </div>
             </article>
@@ -547,27 +571,27 @@ export default async function Home() {
         <section className="shell reveal-up reveal-up-delay-3 pt-10">
           <SectionHeading
             eyebrow="alooBlog"
-            title="Blog bo'limi ham storefront bilan bir xil uslubga o'tdi"
-            description="Yangiliklar va maslahatlar alohida, lekin sayt bilan bir xil premium visual tizimda ko'rsatiladi."
+            title="Yangiliklar va maslahatlar ham aloo uslubida"
+            description="alooBlog bo'limi ham storefront bilan bir xil ko'k-qora-oq vizual tizimda ko'rsatiladi."
             ctaLabel="alooBlog"
             ctaHref="/blog"
           />
 
           <div className="grid gap-4 xl:grid-cols-[1.08fr_0.92fr]">
-            <article className="overflow-hidden rounded-[32px] border border-line bg-white p-8 shadow-[0_18px_42px_rgba(13,31,55,0.06)]">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-accent">
+            <article className="overflow-hidden rounded-[32px] border border-[#173d67] bg-[linear-gradient(140deg,#07111f_0%,#0f2f5c_55%,#1690f5_100%)] p-8 text-white shadow-[0_18px_42px_rgba(13,31,55,0.12)]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/62">
                 {featureArticle?.tag ?? "Editorial"}
               </p>
-              <h2 className="mt-4 max-w-[520px] font-display text-[2.5rem] font-semibold tracking-[-0.05em] text-foreground">
+              <h2 className="mt-4 max-w-[520px] font-display text-[2.5rem] font-semibold tracking-[-0.05em] text-white">
                 {featureArticle?.title ?? "2026-yil uchun eng yaxshi smartfon tanlovi"}
               </h2>
-              <p className="mt-4 max-w-[520px] text-sm leading-8 text-muted">
+              <p className="mt-4 max-w-[520px] text-sm leading-8 text-white/78">
                 {featureArticle?.summary ??
                   "Smartfon tanlash, aksiyalar va xarid bo'yicha foydali kontent alooBlog ichida yig'iladi."}
               </p>
               <Link
                 href="/blog"
-                className="mt-8 inline-flex items-center gap-2 rounded-full bg-support px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#e45d07]"
+                className="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-[#0b2952] transition hover:bg-[#edf6ff]"
               >
                 O'qishni boshlash
                 <ArrowRightIcon className="h-4 w-4" />
@@ -610,7 +634,7 @@ export default async function Home() {
           <SectionHeading
             eyebrow="Filiallar"
             title="Qaysi filialda borligi ham aniq ko'rinadi"
-            description="Sync kelgach stock va narx bo'yicha foydali filial kartalari shu bo'limda ko'rsatiladi."
+            description="Stock va narx bo'yicha eng foydali filial ma'lumoti shu bo'limda ko'rsatiladi."
           />
 
           <div className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
@@ -644,41 +668,41 @@ export default async function Home() {
               ))}
             </div>
 
-            <article className="rounded-[32px] bg-[linear-gradient(180deg,#ffffff_0%,#eef6ff_100%)] p-7 shadow-[0_16px_38px_rgba(13,31,55,0.06)]">
+            <article className="rounded-[32px] border border-[#173d67] bg-[linear-gradient(138deg,#07111f_0%,#0f2f5c_58%,#1690f5_100%)] p-7 text-white shadow-[0_16px_38px_rgba(13,31,55,0.14)]">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-accent">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/62">
                     Qo'llab-quvvatlash
                   </p>
-                  <h2 className="mt-3 font-display text-[2rem] font-semibold tracking-[-0.05em] text-foreground">
+                  <h2 className="mt-3 font-display text-[2rem] font-semibold tracking-[-0.05em] text-white">
                     Xarid bo'yicha yordam kerakmi?
                   </h2>
                 </div>
-                <span className="inline-flex h-12 w-12 items-center justify-center rounded-[18px] bg-white text-accent shadow-[0_10px_24px_rgba(13,31,55,0.06)]">
+                <span className="inline-flex h-12 w-12 items-center justify-center rounded-[18px] bg-white/14 text-white shadow-[0_10px_24px_rgba(13,31,55,0.06)]">
                   <TrendUpIcon className="h-5 w-5" />
                 </span>
               </div>
 
-              <p className="mt-4 text-sm leading-8 text-muted">
+              <p className="mt-4 text-sm leading-8 text-white/78">
                 Call-markaz, ijtimoiy tarmoqlar va alooBlog orqali foydalanuvchini bitta visual oqimda olib boradigan platforma tayyorlandi.
               </p>
 
               <div className="mt-6 grid gap-3">
                 <a
                   href="tel:+998781220800"
-                  className="rounded-[22px] border border-line bg-white px-5 py-4 text-sm font-semibold text-foreground shadow-[0_10px_24px_rgba(13,31,55,0.05)] transition hover:border-accent/25 hover:text-accent"
+                  className="rounded-[22px] border border-white/12 bg-white/10 px-5 py-4 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(13,31,55,0.05)] transition hover:bg-white/14"
                 >
                   Call markaz: +998 78 122 08 00
                 </a>
                 <Link
                   href="/catalog"
-                  className="rounded-[22px] border border-line bg-white px-5 py-4 text-sm font-semibold text-foreground shadow-[0_10px_24px_rgba(13,31,55,0.05)] transition hover:border-accent/25 hover:text-accent"
+                  className="rounded-[22px] border border-white/12 bg-white/10 px-5 py-4 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(13,31,55,0.05)] transition hover:bg-white/14"
                 >
                   Katalogni ko'rish
                 </Link>
                 <Link
                   href="/profile"
-                  className="rounded-[22px] border border-line bg-white px-5 py-4 text-sm font-semibold text-foreground shadow-[0_10px_24px_rgba(13,31,55,0.05)] transition hover:border-accent/25 hover:text-accent"
+                  className="rounded-[22px] border border-white/12 bg-white/10 px-5 py-4 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(13,31,55,0.05)] transition hover:bg-white/14"
                 >
                   Shaxsiy kabinet
                 </Link>

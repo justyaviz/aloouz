@@ -33,7 +33,7 @@ export function MobileBottomNav() {
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] md:hidden">
       <a
         href="tel:+998781220800"
-        className="pointer-events-auto absolute bottom-[calc(env(safe-area-inset-bottom)+4.7rem)] right-4 inline-flex h-14 w-14 items-center justify-center rounded-full bg-support text-white shadow-[0_20px_38px_rgba(255,92,31,0.3)] transition active:scale-95"
+        className="pointer-events-auto absolute bottom-[calc(env(safe-area-inset-bottom)+4.7rem)] right-4 inline-flex h-14 w-14 items-center justify-center rounded-full bg-accent text-white shadow-[0_20px_38px_rgba(22,144,245,0.28)] transition active:scale-95"
         aria-label="Call markazga qo'ng'iroq qilish"
       >
         <PhoneIcon className="h-6 w-6" />
@@ -52,13 +52,13 @@ export function MobileBottomNav() {
               aria-label={item.label}
               className={`relative flex h-14 w-14 items-center justify-center rounded-[20px] transition ${
                 isActive
-                  ? "bg-[#f3f4f6] text-support shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_8px_20px_rgba(13,31,55,0.06)]"
+                  ? "bg-[#edf6ff] text-accent shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_8px_20px_rgba(13,31,55,0.06)]"
                   : "text-[#59677b]"
               }`}
             >
               <Icon className="h-5 w-5" />
               {count > 0 ? (
-                <span className="absolute right-1.5 top-1.5 inline-flex min-w-5 items-center justify-center rounded-full bg-support px-1.5 py-1 text-[10px] font-bold leading-none text-white">
+                <span className="absolute right-1.5 top-1.5 inline-flex min-w-5 items-center justify-center rounded-full bg-accent px-1.5 py-1 text-[10px] font-bold leading-none text-white">
                   {count}
                 </span>
               ) : null}

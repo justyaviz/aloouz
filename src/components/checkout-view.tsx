@@ -29,7 +29,7 @@ function SubmitButton() {
   return (
     <button
       type="submit"
-      className="inline-flex h-14 w-full items-center justify-center rounded-[20px] bg-support px-6 text-base font-semibold text-white transition hover:bg-[#e45d07]"
+      className="inline-flex h-14 w-full items-center justify-center rounded-[20px] bg-accent px-6 text-base font-semibold text-white transition hover:bg-accent-strong"
     >
       Buyurtmani yuborish
     </button>
@@ -163,7 +163,7 @@ export function CheckoutView({ products, viewer, singleProductSlug }: CheckoutVi
           </label>
 
           {state.error ? (
-            <p className="rounded-[18px] bg-[#fff2ec] px-4 py-3 text-sm leading-6 text-support">
+            <p className="rounded-[18px] bg-[#edf6ff] px-4 py-3 text-sm leading-6 text-accent">
               {state.error}
             </p>
           ) : null}

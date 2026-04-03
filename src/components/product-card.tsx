@@ -31,7 +31,7 @@ export function ProductCard({ product }: ProductCardProps) {
             {product.badge}
           </span>
           {discount ? (
-            <span className="rounded-full bg-[#fff1ea] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-support sm:text-[11px]">
+            <span className="rounded-full bg-[#07111f] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-white sm:text-[11px]">
               -{discount}%
             </span>
           ) : null}
