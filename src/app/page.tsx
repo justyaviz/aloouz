@@ -326,6 +326,18 @@ export default async function Home() {
               </div>
             </aside>
           </div>
+
+          <div className="reveal-up reveal-up-delay-1 mt-3 overflow-hidden rounded-[18px] border border-[#1b1b1b] bg-[#0a0a0a] shadow-[0_14px_32px_rgba(13,31,55,0.08)]">
+            <div className="relative">
+              <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#f2c400_0_16px,#111111_16px_32px)] opacity-95" />
+              <div className="relative flex flex-wrap items-center justify-center gap-x-6 gap-y-2 px-4 py-2.5 text-center text-[11px] font-semibold uppercase tracking-[0.28em] text-white sm:text-[12px]">
+                <span className="rounded-full bg-black/75 px-3 py-1 text-[#ffd84c]">Sale</span>
+                <span className="rounded-full bg-black/75 px-3 py-1">Chegirma</span>
+                <span className="rounded-full bg-black/75 px-3 py-1 text-[#ffd84c]">Original</span>
+                <span className="rounded-full bg-black/75 px-3 py-1">Muddatli to'lov</span>
+              </div>
+            </div>
+          </div>
         </section>
 
         <section className="shell reveal-up reveal-up-delay-1 pt-5">
