@@ -12,6 +12,11 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "tmp_*",
+    "*.bin",
+    "*.html",
+    "cookies*.txt",
+    "_*.html",
   ]),
 ]);
 

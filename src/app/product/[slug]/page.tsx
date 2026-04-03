@@ -106,6 +106,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 toneTo={product.toneTo}
                 imageUrl={product.imageUrl}
                 imageAlt={product.name}
+                productName={product.name}
+                brand={product.brand}
+                categorySlug={product.categorySlug}
               />
             </div>
 

@@ -131,6 +131,9 @@ export function CompareView({ products }: { products: Product[] }) {
                   toneTo={product.toneTo}
                   imageUrl={product.imageUrl}
                   imageAlt={product.name}
+                  productName={product.name}
+                  brand={product.brand}
+                  categorySlug={product.categorySlug}
                 />
               </div>
 

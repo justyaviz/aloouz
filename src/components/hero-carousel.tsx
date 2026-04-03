@@ -11,6 +11,8 @@ import { ProductVisual } from "./product-visual";
 
 type HeroCarouselSlide = {
   id: string;
+  brand?: string;
+  categorySlug?: string;
   eyebrow: string;
   title: string;
   description: string;
@@ -186,6 +188,9 @@ export function HeroCarousel({ slides }: { slides: HeroCarouselSlide[] }) {
                   toneTo={slide.toneTo}
                   imageUrl={slide.imageUrl}
                   imageAlt={slide.imageAlt}
+                  productName={slide.title}
+                  brand={slide.brand}
+                  categorySlug={slide.categorySlug}
                 />
               </div>
             </div>

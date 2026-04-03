@@ -156,7 +156,7 @@ function Shortcut({ href, label, icon: Icon, count, onClick }: ShortcutProps) {
     "group relative flex min-w-0 flex-col items-center gap-2 rounded-[20px] px-2 py-2 text-center transition hover:-translate-y-0.5";
   const content = (
     <>
-      <span className="flex h-11 w-11 items-center justify-center rounded-[16px] border border-[#dce8f3] bg-[#f5f9fd] text-[#0a336c] shadow-sm transition group-hover:bg-accent group-hover:text-white">
+      <span className="flex h-11 w-11 items-center justify-center rounded-[16px] border border-[#d9e4f0] bg-white text-[#123b72] shadow-[0_10px_22px_rgba(13,31,55,0.08)] transition group-hover:border-accent group-hover:bg-accent group-hover:text-white">
         <Icon className="h-5 w-5" />
       </span>
       {count && count > 0 ? (
@@ -164,7 +164,7 @@ function Shortcut({ href, label, icon: Icon, count, onClick }: ShortcutProps) {
           {count}
         </span>
       ) : null}
-      <span className="text-[12px] font-medium leading-4 text-foreground">{label}</span>
+      <span className="text-[12px] font-medium leading-4 text-[#1a2740]">{label}</span>
     </>
   );
 
@@ -507,7 +507,7 @@ export function SiteHeaderClient({ viewer }: { viewer: AuthViewer | null }) {
                 Katalog
               </button>
 
-              <div className="flex h-12 flex-1 items-center overflow-hidden rounded-[18px] border border-line bg-white shadow-sm">
+              <div className="flex h-12 flex-1 items-center overflow-hidden rounded-[18px] border border-[#d9e4f0] bg-white shadow-[0_10px_24px_rgba(13,31,55,0.06)]">
                 <input
                   aria-label="Mahsulot qidirish"
                   name="query"
@@ -551,9 +551,9 @@ export function SiteHeaderClient({ viewer }: { viewer: AuthViewer | null }) {
                   href={chip.href}
                   className={cn(
                     "inline-flex h-10 items-center rounded-full px-5 text-sm font-medium transition",
-                    chip.active
-                      ? "bg-catalog text-white"
-                      : "border border-line bg-white text-foreground hover:border-accent/35 hover:text-accent",
+                      chip.active
+                        ? "bg-catalog text-white shadow-[0_14px_28px_rgba(85,187,60,0.2)]"
+                        : "border border-[#dde6f0] bg-white text-foreground hover:border-accent/35 hover:bg-[#f9fbff] hover:text-accent",
                   )}
                 >
                   {chip.label}

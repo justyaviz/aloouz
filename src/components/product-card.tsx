@@ -24,10 +24,10 @@ export function ProductCard({ product }: ProductCardProps) {
   ].filter((item): item is { months: number; amount: number } => item !== null);
 
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-[22px] border border-line bg-white p-3 shadow-[0_16px_34px_rgba(13,31,55,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_50px_rgba(13,31,55,0.12)] sm:rounded-[24px] sm:p-3.5">
+    <article className="flex h-full flex-col overflow-hidden rounded-[24px] border border-[#dfe7f1] bg-white p-3.5 shadow-[0_18px_38px_rgba(13,31,55,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_26px_55px_rgba(13,31,55,0.12)] sm:rounded-[26px] sm:p-4">
       <div className="mb-2.5 flex items-start justify-between gap-3">
         <div className="flex flex-wrap gap-2">
-          <span className="rounded-full bg-[#eef6ff] px-2.5 py-1 text-[10px] font-semibold text-accent sm:px-3 sm:text-[11px]">
+          <span className="rounded-full bg-[#edf6ff] px-2.5 py-1 text-[10px] font-semibold text-accent sm:px-3 sm:text-[11px]">
             {product.badge}
           </span>
           {discount ? (
@@ -49,9 +49,12 @@ export function ProductCard({ product }: ProductCardProps) {
         toneTo={product.toneTo}
         imageUrl={product.imageUrl}
         imageAlt={product.name}
+        productName={product.name}
+        brand={product.brand}
+        categorySlug={product.categorySlug}
       />
 
-      <div className="flex flex-1 flex-col pt-3.5">
+      <div className="flex flex-1 flex-col pt-4">
         <div className="flex items-center justify-between gap-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted sm:text-[11px] sm:tracking-[0.18em]">
           <span>{product.brand}</span>
           <span className="hidden sm:inline">{product.branchStock ?? product.stock} dona mavjud</span>
@@ -107,7 +110,7 @@ export function ProductCard({ product }: ProductCardProps) {
         <div className="mt-3 grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-center">
           <Link
             href={`/product/${product.slug}`}
-            className="inline-flex items-center justify-center gap-2 rounded-2xl border border-line bg-white px-4 py-3 text-sm font-semibold text-foreground transition hover:border-accent/35 hover:text-accent"
+            className="inline-flex items-center justify-center gap-2 rounded-2xl border border-[#dfe7f1] bg-[#f9fbff] px-4 py-3 text-sm font-semibold text-foreground transition hover:border-accent/35 hover:bg-white hover:text-accent"
           >
             <ArrowRightIcon className="h-4 w-4" />
             Batafsil

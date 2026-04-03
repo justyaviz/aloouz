@@ -1365,6 +1365,9 @@ function ProductsWorkspace({
                 toneTo={productForm.toneTo}
                 imageUrl={productForm.imageUrl || previewProduct?.imageUrl}
                 imageAlt={productForm.name || previewProduct?.name || "Mahsulot"}
+                productName={productForm.name || previewProduct?.name || "Mahsulot"}
+                brand={productForm.brand || previewProduct?.brand}
+                categorySlug={productForm.categorySlug || previewProduct?.categorySlug}
               />
             </div>
 

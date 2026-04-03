@@ -15,6 +15,7 @@ import { SectionHeading } from "@/components/section-heading";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { formatMonthly, formatSum } from "@/lib/format";
+import { getCategoryArtwork } from "@/lib/product-art";
 import { getStorefrontSnapshot } from "@/lib/storefront";
 import type { Product } from "@/data/store";
 
@@ -81,35 +82,8 @@ function sanitizePublicCopy(value: string | undefined, fallback: string) {
   return copy;
 }
 
-const fallbackCategoryArt: Record<string, string> = {
-  "aqlli-soatlar": "https://assets.asaxiy.uz/product/main_image/desktop/5fe341384ffd9.jpg.webp",
-  quloqchinlar: "https://assets.asaxiy.uz/product/main_image/desktop/66fd42db59f30.jpg.webp",
-  planshetlar: "https://assets.asaxiy.uz/product/main_image/desktop/676bdf90d5a5b.jpg.webp",
-  klaviaturalar: "https://assets.asaxiy.uz/product/main_image/desktop/667936df8f134.jpg.webp",
-  kalonkalar: "https://assets.asaxiy.uz/product/main_image/desktop/6548a78510fb6.jpeg.webp",
-};
-
-function pickCategoryImage(products: Product[], categorySlug: string, heroImage?: string) {
-  const byBrand = (brands: string[]) =>
-    products.find(
-      (product) =>
-        product.imageUrl &&
-        brands.some((brand) => product.brand.toLowerCase() === brand.toLowerCase()),
-    )?.imageUrl;
-
-  if (categorySlug === "iphone") {
-    return byBrand(["Apple"]) ?? heroImage;
-  }
-
-  if (categorySlug === "android") {
-    return byBrand(["Samsung", "Xiaomi", "Redmi", "HONOR", "OPPO"]) ?? heroImage;
-  }
-
-  if (categorySlug === "smartfonlar") {
-    return byBrand(["HONOR", "Samsung", "Apple", "Xiaomi", "Redmi", "OPPO"]) ?? heroImage;
-  }
-
-  return fallbackCategoryArt[categorySlug] ?? heroImage;
+function pickCategoryImage(_products: Product[], categorySlug: string, heroImage?: string) {
+  return getCategoryArtwork(categorySlug) ?? heroImage;
 }
 
 export default async function Home() {
@@ -168,6 +142,8 @@ export default async function Home() {
 
     return {
       id: product.slug,
+      brand: product.brand,
+      categorySlug: product.categorySlug,
       eyebrow: relatedPromo?.eyebrow ?? "Texno hayotga ulanish!",
       title:
         index === 0 && heroDiscount > 0
@@ -278,6 +254,9 @@ export default async function Home() {
                   toneTo={productOfDay.toneTo}
                   imageUrl={productOfDay.imageUrl}
                   imageAlt={productOfDay.name}
+                  productName={productOfDay.name}
+                  brand={productOfDay.brand}
+                  categorySlug={productOfDay.categorySlug}
                 />
               </div>
 
@@ -337,7 +316,7 @@ export default async function Home() {
           <SectionHeading
             eyebrow="Ommabop kategoriyalar"
             title="Bir klikda kerakli bo'limga o'ting"
-            description="Kategoriyalar ixcham va oson ko'rinadigan kartalarga ajratildi."
+            description="Asosiy bo'limlar tez topilishi uchun icon, rang va vizual assetlar bir xil tizimga keltirildi."
             ctaLabel="Barcha katalog"
             ctaHref="/catalog"
           />
@@ -347,7 +326,7 @@ export default async function Home() {
               <Link
                 key={category.slug}
                 href={`/catalog?category=${category.slug}`}
-                className="relative flex min-h-[102px] items-center justify-between gap-3 overflow-hidden rounded-[22px] border border-line bg-[#f7f9fc] px-4 py-4 transition hover:-translate-y-1 hover:bg-white hover:shadow-[0_14px_35px_rgba(13,31,55,0.08)] sm:min-h-[116px] sm:gap-4 sm:rounded-[24px] sm:px-5 sm:py-5"
+                className="relative flex min-h-[108px] items-center justify-between gap-3 overflow-hidden rounded-[22px] border border-[#dde6f0] bg-white px-4 py-4 transition hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(13,31,55,0.08)] sm:min-h-[120px] sm:gap-4 sm:rounded-[24px] sm:px-5 sm:py-5"
               >
                 <div
                   className="absolute -right-6 -top-3 h-20 w-20 opacity-[0.08]"
@@ -366,15 +345,16 @@ export default async function Home() {
                     {categoryCaptions[index] ?? category.description}
                   </p>
                 </div>
-                <div
-                  className="pointer-events-none absolute bottom-2.5 right-2.5 h-16 w-20 shrink-0 rounded-[18px] border border-white/70 shadow-[0_10px_24px_rgba(13,31,55,0.08)] sm:bottom-3 sm:right-3 sm:h-20 sm:w-24"
-                  style={{
-                    background: `linear-gradient(135deg, ${category.toneFrom}, ${category.toneTo})`,
-                  }}
-                >
+                <div className="pointer-events-none absolute bottom-1 right-1 h-[88px] w-[112px] shrink-0 sm:bottom-2 sm:right-2 sm:h-[100px] sm:w-[128px]">
+                  <div
+                    className="absolute inset-5 rounded-full opacity-80 blur-2xl"
+                    style={{
+                      background: `radial-gradient(circle, ${category.toneTo} 0%, transparent 72%)`,
+                    }}
+                  />
                   {categoryIllustrations[category.slug] ? (
                     <div
-                      className="h-full w-full bg-center bg-contain bg-no-repeat"
+                      className="relative h-full w-full bg-center bg-contain bg-no-repeat"
                       style={{
                         backgroundImage: `url('${categoryIllustrations[category.slug]}')`,
                       }}
@@ -390,7 +370,7 @@ export default async function Home() {
           <SectionHeading
             eyebrow="Yangiliklar"
             title="Yangi kelgan smartfonlar va tez sotilayotgan modellar"
-            description="Birinchi ekran ostida foydalanuvchi darhol jonli mahsulot shelf'ini ko'rishi uchun kartalarni ixchamlashtirdik va vizual ritmni tozaladik."
+            description="Har kartada toza vizual, kattaroq mahsulot rasmi va tez tushuniladigan narx bloklari ko'rsatiladi."
             ctaLabel="Katalogga o'tish"
             ctaHref="/catalog"
           />
@@ -411,7 +391,7 @@ export default async function Home() {
           <SectionHeading
             eyebrow="alooBlog"
             title="Yangilik, maslahat va sotuv g'oyalarini bir joyga yig'dik"
-            description="Faqat mahsulot emas, balki tanlash bo'yicha foydali kontent ham shu sahifada ko'rinadi."
+            description="Mahsulot tanlash, aksiyalar va texno yangiliklar bir xil uslubda alooBlog ichida jamlanadi."
             ctaLabel="Barcha maqolalar"
             ctaHref="/blog"
           />

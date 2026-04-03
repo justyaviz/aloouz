@@ -770,6 +770,7 @@ export function CustomerCabinet({ viewer, data }: CustomerCabinetProps) {
                                   toneTo={previewItem.toneTo}
                                   imageUrl={previewItem.imageUrl}
                                   imageAlt={previewItem.productName}
+                                  productName={previewItem.productName}
                                 />
                               </div>
                               <div className="min-w-0">
@@ -846,6 +847,7 @@ export function CustomerCabinet({ viewer, data }: CustomerCabinetProps) {
                         toneTo={comment.toneTo}
                         imageUrl={comment.imageUrl}
                         imageAlt={comment.productName}
+                        productName={comment.productName}
                       />
                     </div>
                     <div className="min-w-0">

@@ -182,15 +182,18 @@ export function CheckoutView({ products, viewer, singleProductSlug }: CheckoutVi
                 className="grid gap-3 rounded-[22px] border border-line bg-[#fbfdff] p-4"
               >
                 <div className="grid grid-cols-[88px_minmax(0,1fr)] gap-3">
-                  <ProductVisual
-                    compact
-                    kind={product.kind}
-                    label={product.heroLabel}
-                    toneFrom={product.toneFrom}
-                    toneTo={product.toneTo}
-                    imageUrl={product.imageUrl}
-                    imageAlt={product.name}
-                  />
+                    <ProductVisual
+                      compact
+                      kind={product.kind}
+                      label={product.heroLabel}
+                      toneFrom={product.toneFrom}
+                      toneTo={product.toneTo}
+                      imageUrl={product.imageUrl}
+                      imageAlt={product.name}
+                      productName={product.name}
+                      brand={product.brand}
+                      categorySlug={product.categorySlug}
+                    />
                   <div className="min-w-0">
                     <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
                       {product.brand}

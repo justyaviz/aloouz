@@ -85,15 +85,18 @@ export function CartView({ products }: { products: Product[] }) {
               key={product.slug}
               className="grid gap-4 rounded-[28px] border border-line bg-white p-5 shadow-[0_12px_30px_rgba(13,31,55,0.06)] md:grid-cols-[180px_minmax(0,1fr)_auto]"
             >
-              <ProductVisual
-                compact
-                kind={product.kind}
-                label={product.heroLabel}
-                toneFrom={product.toneFrom}
-                toneTo={product.toneTo}
-                imageUrl={product.imageUrl}
-                imageAlt={product.name}
-              />
+                <ProductVisual
+                  compact
+                  kind={product.kind}
+                  label={product.heroLabel}
+                  toneFrom={product.toneFrom}
+                  toneTo={product.toneTo}
+                  imageUrl={product.imageUrl}
+                  imageAlt={product.name}
+                  productName={product.name}
+                  brand={product.brand}
+                  categorySlug={product.categorySlug}
+                />
 
               <div className="min-w-0">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
