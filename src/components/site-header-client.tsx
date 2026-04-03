@@ -156,7 +156,7 @@ function Shortcut({ href, label, icon: Icon, count, onClick }: ShortcutProps) {
     "group relative flex min-w-0 flex-col items-center gap-2 rounded-[20px] px-2 py-2 text-center transition hover:-translate-y-0.5";
   const content = (
     <>
-      <span className="flex h-11 w-11 items-center justify-center rounded-[16px] border border-[#d9e4f0] bg-white text-[#123b72] shadow-[0_10px_22px_rgba(13,31,55,0.08)] transition group-hover:border-accent group-hover:bg-accent group-hover:text-white">
+      <span className="flex h-11 w-11 items-center justify-center rounded-[16px] border border-[#e0e7ef] bg-[#fbfcfe] text-[#28415f] shadow-[0_8px_18px_rgba(13,31,55,0.05)] transition group-hover:border-support group-hover:bg-support group-hover:text-white">
         <Icon className="h-5 w-5" />
       </span>
       {count && count > 0 ? (
@@ -430,9 +430,9 @@ export function SiteHeaderClient({ viewer }: { viewer: AuthViewer | null }) {
                   key={item.label}
                   href={item.href}
                   className={cn(
-                    "transition hover:text-foreground",
+                  "transition hover:text-foreground",
                     item.pill &&
-                      "rounded-full bg-[#123a72] px-3 py-1.5 font-semibold text-white hover:text-white",
+                      "rounded-full bg-[#f4f7fb] px-3 py-1.5 font-semibold text-foreground hover:text-foreground",
                   )}
                 >
                   {item.label}
@@ -499,8 +499,8 @@ export function SiteHeaderClient({ viewer }: { viewer: AuthViewer | null }) {
                 type="button"
                 onClick={() => setCatalogMenuOpen((current) => !current)}
                 className={cn(
-                  "inline-flex h-12 items-center justify-center gap-2 rounded-[18px] px-6 text-sm font-semibold text-white shadow-[0_14px_28px_rgba(94,182,73,0.24)] transition",
-                  catalogMenuOpen ? "bg-[#479d34]" : "bg-catalog hover:bg-[#479d34]",
+                  "inline-flex h-12 items-center justify-center gap-2 rounded-[18px] px-6 text-sm font-semibold text-white shadow-[0_14px_28px_rgba(255,92,31,0.22)] transition",
+                  catalogMenuOpen ? "bg-[#e65a20]" : "bg-catalog hover:bg-[#e65a20]",
                 )}
               >
                 <MenuIcon className="h-5 w-5" />
@@ -552,7 +552,7 @@ export function SiteHeaderClient({ viewer }: { viewer: AuthViewer | null }) {
                   className={cn(
                     "inline-flex h-10 items-center rounded-full px-5 text-sm font-medium transition",
                       chip.active
-                        ? "bg-catalog text-white shadow-[0_14px_28px_rgba(85,187,60,0.2)]"
+                        ? "bg-support text-white shadow-[0_14px_28px_rgba(255,92,31,0.18)]"
                         : "border border-[#dde6f0] bg-white text-foreground hover:border-accent/35 hover:bg-[#f9fbff] hover:text-accent",
                   )}
                 >

@@ -417,8 +417,8 @@ export default async function Home() {
           <section id="about" className="shell reveal-up reveal-up-delay-2 pt-10">
             <SectionHeading
               eyebrow="Brend tanlovi"
-              title="Asosiy brendlar uchun alohida premium bloklar"
-              description="Brendlar aralashib ketmasligi uchun asosiy yo'nalishlar mustaqil showcase bloklarda ko'rsatildi."
+              title="Har bir asosiy brend uchun alohida vitrina"
+              description="Uzum, Yandex va Asaxiy uslubiga yaqinroq marketplace ritmi uchun brendlar alohida oq kartalarda berildi."
             />
 
             <div className="grid gap-4 xl:grid-cols-3">
@@ -490,29 +490,29 @@ export default async function Home() {
           />
 
           <div className="grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
-            <article className="overflow-hidden rounded-[32px] bg-[linear-gradient(135deg,#0d2341_0%,#113a6d_46%,#0f67c6_100%)] p-6 text-white shadow-[0_24px_56px_rgba(8,29,56,0.18)] sm:p-8">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-white/65">
+            <article className="overflow-hidden rounded-[32px] border border-line bg-white p-6 shadow-[0_18px_42px_rgba(13,31,55,0.06)] sm:p-8">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-accent">
                 Smart tanlov
               </p>
-              <h2 className="mt-4 max-w-lg font-display text-[2.4rem] font-semibold tracking-[-0.05em] text-white">
-                Premium xarid oqimini soddalashtiradigan storefront
+              <h2 className="mt-4 max-w-lg font-display text-[2.35rem] font-semibold tracking-[-0.05em] text-foreground">
+                Xaridni tezlashtiradigan marketplace oqimi
               </h2>
-              <p className="mt-4 max-w-lg text-sm leading-8 text-white/78">
-                Brend, narx, aylik to'lov va stock bir ko'rishda tushunarli bo'lishi uchun sahifa qayta yig'ildi.
+              <p className="mt-4 max-w-lg text-sm leading-8 text-muted">
+                Qidiruv, kategoriya, mahsulot kartasi va savat bir xil market ritmida ishlashi uchun bosh sahifa soddalashtirildi.
               </p>
 
               <div className="mt-7 grid gap-3 sm:grid-cols-3">
-                <div className="rounded-[22px] border border-white/10 bg-white/10 px-4 py-4">
-                  <p className="text-[11px] uppercase tracking-[0.18em] text-white/60">Mahsulot</p>
-                  <p className="mt-2 text-2xl font-semibold">{products.length}+</p>
+                <div className="rounded-[22px] border border-line bg-[#f8fbff] px-4 py-4">
+                  <p className="text-[11px] uppercase tracking-[0.18em] text-muted">Mahsulot</p>
+                  <p className="mt-2 text-2xl font-semibold text-foreground">{products.length}+</p>
                 </div>
-                <div className="rounded-[22px] border border-white/10 bg-white/10 px-4 py-4">
-                  <p className="text-[11px] uppercase tracking-[0.18em] text-white/60">Brend</p>
-                  <p className="mt-2 text-2xl font-semibold">{brands.length}+</p>
+                <div className="rounded-[22px] border border-line bg-[#fff8f4] px-4 py-4">
+                  <p className="text-[11px] uppercase tracking-[0.18em] text-muted">Brend</p>
+                  <p className="mt-2 text-2xl font-semibold text-foreground">{brands.length}+</p>
                 </div>
-                <div className="rounded-[22px] border border-white/10 bg-white/10 px-4 py-4">
-                  <p className="text-[11px] uppercase tracking-[0.18em] text-white/60">Yetkazish</p>
-                  <p className="mt-2 text-2xl font-semibold">90 min</p>
+                <div className="rounded-[22px] border border-line bg-[#f6fbf6] px-4 py-4">
+                  <p className="text-[11px] uppercase tracking-[0.18em] text-muted">Yetkazish</p>
+                  <p className="mt-2 text-2xl font-semibold text-foreground">90 min</p>
                 </div>
               </div>
             </article>
@@ -554,20 +554,20 @@ export default async function Home() {
           />
 
           <div className="grid gap-4 xl:grid-cols-[1.08fr_0.92fr]">
-            <article className="overflow-hidden rounded-[32px] bg-[linear-gradient(145deg,#0f2b52_0%,#0f67c6_58%,#dbeeff_100%)] p-8 text-white shadow-[0_22px_54px_rgba(10,44,96,0.16)]">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/68">
+            <article className="overflow-hidden rounded-[32px] border border-line bg-white p-8 shadow-[0_18px_42px_rgba(13,31,55,0.06)]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-accent">
                 {featureArticle?.tag ?? "Editorial"}
               </p>
-              <h2 className="mt-4 max-w-[520px] font-display text-[2.5rem] font-semibold tracking-[-0.05em] text-white">
+              <h2 className="mt-4 max-w-[520px] font-display text-[2.5rem] font-semibold tracking-[-0.05em] text-foreground">
                 {featureArticle?.title ?? "2026-yil uchun eng yaxshi smartfon tanlovi"}
               </h2>
-              <p className="mt-4 max-w-[520px] text-sm leading-8 text-white/78">
+              <p className="mt-4 max-w-[520px] text-sm leading-8 text-muted">
                 {featureArticle?.summary ??
                   "Smartfon tanlash, aksiyalar va xarid bo'yicha foydali kontent alooBlog ichida yig'iladi."}
               </p>
               <Link
                 href="/blog"
-                className="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-accent transition hover:bg-[#eef6ff]"
+                className="mt-8 inline-flex items-center gap-2 rounded-full bg-support px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#e45d07]"
               >
                 O'qishni boshlash
                 <ArrowRightIcon className="h-4 w-4" />
