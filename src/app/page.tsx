@@ -245,17 +245,17 @@ export default async function Home() {
 
       <main className="page-enter pb-20">
         <section className="shell pt-5 sm:pt-6">
-          <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_320px] xl:items-stretch">
+          <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_300px] xl:items-stretch">
             <HeroCarousel slides={heroSlides} />
 
-            <aside className="reveal-up reveal-up-delay-1 flex rounded-[28px] border border-[#d9e5f2] bg-white p-5 shadow-[0_18px_38px_rgba(13,31,55,0.08)] xl:min-h-[18.6rem]">
+            <aside className="reveal-up reveal-up-delay-1 flex rounded-[28px] border border-[#d9e5f2] bg-white p-5 shadow-[0_18px_38px_rgba(13,31,55,0.08)] xl:min-h-[17.2rem]">
               <div className="flex w-full flex-col">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-accent">
                       Kun mahsulotlari
                     </p>
-                    <h2 className="mt-1.5 font-display text-[1.42rem] font-semibold tracking-[-0.04em] text-foreground">
+                    <h2 className="mt-1.5 font-display text-[1.28rem] font-semibold tracking-[-0.04em] text-foreground">
                       Kun taklifi
                     </h2>
                   </div>
@@ -299,7 +299,7 @@ export default async function Home() {
 
                 <Link
                   href={`/product/${productOfDay.slug}`}
-                  className="mt-3 block line-clamp-2 font-display text-[1rem] font-semibold leading-7 tracking-tight text-foreground transition hover:text-accent"
+                  className="mt-3 block line-clamp-2 font-display text-[0.98rem] font-semibold leading-7 tracking-tight text-foreground transition hover:text-accent"
                 >
                   {productOfDay.name}
                 </Link>
@@ -316,7 +316,7 @@ export default async function Home() {
 
                 <div className="mt-1 flex items-end justify-between gap-4">
                   <div>
-                    <p className="text-[2rem] font-semibold leading-none tracking-tight text-foreground">
+                    <p className="text-[1.7rem] font-semibold leading-none tracking-tight text-foreground">
                       {formatSum(productOfDay.price)}
                     </p>
                     <p className="mt-2 text-[12px] text-muted">
@@ -328,7 +328,7 @@ export default async function Home() {
                   <AddToCartButton productSlug={productOfDay.slug} mode="icon" />
                 </div>
 
-                <div className="mt-auto flex items-center justify-center gap-3 pt-5">
+                <div className="mt-auto flex items-center justify-center gap-3 pt-4">
                   <button
                     type="button"
                     className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#e1e8f0] bg-white text-muted shadow-[0_8px_20px_rgba(13,31,55,0.06)]"

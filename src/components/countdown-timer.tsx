@@ -43,19 +43,19 @@ export function CountdownTimer({ className, compact = false }: CountdownTimerPro
 
     return (
       <div className={className}>
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1">
           {groups.map((group, groupIndex) => (
             <Fragment key={`${group}-${groupIndex}`}>
               {group.split("").map((digit, digitIndex) => (
                 <div
                   key={`${groupIndex}-${digitIndex}`}
-                  className="flex h-11 w-11 items-center justify-center rounded-[12px] border border-[#dfe6ef] bg-[#f5f7fa] text-[1.05rem] font-semibold tracking-[0.08em] text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]"
+                  className="flex h-10 w-10 items-center justify-center rounded-[12px] border border-[#dfe6ef] bg-[#f5f7fa] text-[0.98rem] font-semibold tracking-[0.08em] text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]"
                 >
                   {digit}
                 </div>
               ))}
               {groupIndex < groups.length - 1 ? (
-                <span className="px-0.5 text-[1.1rem] font-semibold text-[#97a6b6]">:</span>
+                <span className="px-0.5 text-[1rem] font-semibold text-[#97a6b6]">:</span>
               ) : null}
             </Fragment>
           ))}

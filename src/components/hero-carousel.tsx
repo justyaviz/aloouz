@@ -87,7 +87,7 @@ export function HeroCarousel({ slides }: { slides: HeroCarouselSlide[] }) {
         </>
       ) : null}
 
-      <div className="relative min-h-[13rem] sm:min-h-[15rem] lg:min-h-[18.6rem]">
+      <div className="relative min-h-[13rem] sm:min-h-[15rem] lg:min-h-[17.2rem]">
         {slides.map((slide, index) => (
           <div
             key={slide.id}
@@ -96,11 +96,11 @@ export function HeroCarousel({ slides }: { slides: HeroCarouselSlide[] }) {
               index === activeIndex ? "opacity-100" : "pointer-events-none opacity-0",
             )}
           >
-            <div className="grid h-full lg:grid-cols-[0.56fr_0.44fr]">
-              <div className="relative z-10 flex flex-col justify-center overflow-hidden bg-[linear-gradient(132deg,#e31334_0%,#ca1332_26%,#ffffff_27%,#ffffff_100%)] px-6 py-6 sm:px-7 lg:min-h-[18.6rem] lg:rounded-r-[40px]">
-                <div className="absolute inset-y-0 left-0 w-[62%] bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.08),transparent_42%),linear-gradient(145deg,#ff0a32_0%,#db1735_60%,#c11331_100%)]" />
-                <div className="absolute left-[44%] top-0 h-full w-20 -skew-x-[20deg] bg-white/20 blur-[1px]" />
-                <div className="absolute bottom-0 left-0 h-28 w-40 rounded-full bg-[#ff5773]/28 blur-3xl" />
+            <div className="grid h-full lg:grid-cols-[0.48fr_0.52fr]">
+              <div className="relative z-10 flex flex-col justify-center overflow-hidden bg-[linear-gradient(138deg,#e90d32_0%,#d41231_62%,#c5102e_100%)] px-7 py-6 lg:min-h-[17.2rem]">
+                <div className="absolute inset-y-0 right-[-42px] w-28 -skew-x-[20deg] bg-white/16" />
+                <div className="absolute left-0 top-0 h-full w-full bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.12),transparent_42%)]" />
+                <div className="absolute -left-8 bottom-0 h-24 w-36 rounded-full bg-[#ff6781]/26 blur-3xl" />
 
                 <div className="relative flex flex-wrap items-center gap-2">
                   <span className="rounded-full border border-white/18 bg-white/12 px-3 py-1 text-[8px] font-semibold uppercase tracking-[0.22em] text-white">
@@ -113,13 +113,13 @@ export function HeroCarousel({ slides }: { slides: HeroCarouselSlide[] }) {
                   ) : null}
                 </div>
 
-                <p className="relative mt-4 text-[10px] font-semibold uppercase tracking-[0.24em] text-white/74">
+                <p className="relative mt-4 text-[10px] font-semibold uppercase tracking-[0.24em] text-white/78">
                   {slide.eyebrow}
                 </p>
-                <h1 className="relative mt-2 max-w-[360px] text-balance font-display text-[1.7rem] font-semibold leading-[0.92] tracking-[-0.06em] text-white sm:text-[2rem] lg:text-[2.25rem]">
+                <h1 className="relative mt-2 max-w-[320px] text-balance font-display text-[1.55rem] font-semibold leading-[0.94] tracking-[-0.06em] text-white sm:text-[1.8rem] lg:text-[2rem]">
                   {slide.title}
                 </h1>
-                <p className="relative mt-3 line-clamp-3 max-w-[360px] text-[13px] leading-7 text-white/82">
+                <p className="relative mt-3 line-clamp-2 max-w-[320px] text-[13px] leading-6 text-white/82">
                   {slide.description}
                 </p>
 
@@ -132,14 +132,14 @@ export function HeroCarousel({ slides }: { slides: HeroCarouselSlide[] }) {
                   </Link>
                   <Link
                     href={slide.secondaryHref}
-                    className="hidden items-center justify-center whitespace-nowrap rounded-[18px] border border-white/24 bg-black/18 px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-black/24 sm:inline-flex"
+                    className="hidden items-center justify-center whitespace-nowrap rounded-[18px] border border-white/24 bg-white/10 px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-white/16 sm:inline-flex"
                   >
                     {slide.secondaryLabel}
                   </Link>
                 </div>
               </div>
 
-              <div className="relative z-10 flex items-center bg-[linear-gradient(180deg,#f7fbff_0%,#eef4fb_100%)] px-5 py-5 lg:px-4">
+              <div className="relative z-10 flex items-center bg-[linear-gradient(180deg,#f7fbff_0%,#eef4fb_100%)] px-6 py-6">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(22,144,245,0.1),transparent_38%)]" />
                 <div className="relative w-full">
                   <ProductVisual
@@ -171,7 +171,7 @@ export function HeroCarousel({ slides }: { slides: HeroCarouselSlide[] }) {
               aria-label={`${index + 1}-banner`}
               className={cn(
                 "h-2.5 w-2.5 rounded-full transition",
-                index === activeIndex ? "bg-white" : "bg-white/45",
+                index === activeIndex ? "bg-[#f0562f]" : "bg-[#d8e0e8]",
               )}
             />
           ))}
