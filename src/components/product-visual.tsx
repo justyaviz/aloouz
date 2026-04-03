@@ -34,9 +34,9 @@ export function ProductVisual({
   const visualSize = size ?? (compact ? "compact" : "default");
   const heightClass =
     visualSize === "hero"
-      ? "h-[10.8rem] rounded-[20px] sm:h-[11.6rem] lg:h-[12.4rem]"
+      ? "h-[8.9rem] rounded-[18px] sm:h-[9.6rem] lg:h-[10.4rem]"
       : visualSize === "deal"
-        ? "h-[7.9rem] rounded-[16px] sm:h-[8.5rem] xl:h-[8.4rem]"
+        ? "h-[6.6rem] rounded-[15px] sm:h-[7rem] xl:h-[7rem]"
         : visualSize === "compact"
           ? "h-[15.6rem] rounded-[22px] sm:h-[16.2rem]"
           : "h-[27rem] rounded-[36px]";
@@ -44,9 +44,9 @@ export function ProductVisual({
     visualSize === "compact"
       ? "p-2.5 sm:p-3"
       : visualSize === "deal"
-        ? "p-1.5 sm:p-2"
+        ? "p-1.5"
         : visualSize === "hero"
-          ? "p-2 sm:p-2.5"
+          ? "p-1.5 sm:p-2"
           : "p-8";
   const labelClass =
     visualSize === "deal"
@@ -56,9 +56,9 @@ export function ProductVisual({
       : "bottom-4 left-4 px-4 py-2 text-xs";
   const imageScaleClass =
     visualSize === "hero"
-      ? "scale-[1.12]"
+      ? "scale-[1.05]"
       : visualSize === "deal"
-        ? "scale-[1.12]"
+        ? "scale-[1.03]"
         : visualSize === "compact"
           ? "scale-[1.24]"
           : "scale-100";
